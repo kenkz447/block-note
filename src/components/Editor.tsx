@@ -5,15 +5,6 @@ import { useDarkMode } from 'usehooks-ts';
 export function Editor() {
   // Creates a new editor instance.
   const editor = useCreateBlockNote({
-    initialContent: [
-      {
-        type: "heading",
-        content: "Hi there!",
-      },
-      {
-        type: "paragraph",
-      }
-    ]
   });
 
   const { isDarkMode } = useDarkMode()
