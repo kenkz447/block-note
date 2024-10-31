@@ -1,22 +1,20 @@
-import { useEffect } from 'react';
 import './App.css'
 
-import { Editor } from './components/Editor'; 
 import { SidebarInset, SidebarProvider } from './components/ui/sidebar';
-import { AppSidebar } from './components/AppSideBar';
+import { AppSidebar } from './components/side-bar/app-sidebar';
+import { TopBar } from './components/top-bar/TopBar';
+import { EditorContainer, EditorProvider } from './libs/editor';
 
 export default function App() {
-  useEffect(() => {
-  }, []);
-
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <div className='py-3'>
-          <Editor />
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
+    <EditorProvider>
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          <TopBar />
+          <EditorContainer />
+        </SidebarInset>
+      </SidebarProvider>
+    </EditorProvider>
   );
 }
