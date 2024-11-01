@@ -12,6 +12,7 @@
     white-space: nowrap;
     list-style: none;
     outline: 0;
+    display: flex;
   }
   .rc-tree .rc-tree-treenode .draggable {
     color: #333;

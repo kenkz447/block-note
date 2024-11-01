@@ -37,11 +37,10 @@ import { useForm } from "react-hook-form"
 import { firstBy } from "thenby"
 import { arrayToTree } from "performant-array-to-tree"
 import Tree from "rc-tree"
+import { Link } from '@tanstack/react-router'
 
 const schema = z.object({
-  name: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
+  name: z.string().min(1),
 })
 
 export function NavProjects() {
@@ -106,7 +105,9 @@ export function NavProjects() {
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Documents</SidebarGroupLabel>
       <SidebarMenu>
-        <Entries />
+        <div className="overflow-x-auto">
+          <Entries />
+        </div>
         <SidebarMenuItem>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -195,15 +196,25 @@ const Entries = () => {
 
   const renderTreeNode = (entry: EntryTreeNode) => {
     const renderTitle = () => {
+      const title = (
+        <span>
+          {entry.id} - <RxdbObserver doc={entry._doc} field="name" defaultValue={`New ${entry.type}`} />
+        </span>
+      );
+
       return (
         <SidebarMenuItem key={entry.id}>
           <SidebarMenuButton asChild>
-            <a>
-              {entry.type === 'folder' ? <Folder /> : <FileText />}
-              <span>
-                {entry.id} - <RxdbObserver doc={entry._doc} field="name" defaultValue={`New ${entry.type}`} />
-              </span>
-            </a>
+            {
+              entry.type === 'folder'
+                ? (<span> <Folder /> {title} </span>)
+                : (
+                  <Link to='/' search={{ entry: entry.id }}>
+                    <FileText />
+                    {title}
+                  </Link>
+                )
+            }
           </SidebarMenuButton>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -240,7 +251,7 @@ const Entries = () => {
       <Tree.TreeNode
         key={entry.id}
         title={renderTitle()}
-        expanded={true}
+        isLeaf={entry.type === 'document'}
       >
         {entry.children.map(renderTreeNode)}
       </Tree.TreeNode>
@@ -253,8 +264,7 @@ const Entries = () => {
       draggable={true}
       showLine={true}
       expandAction="click"
-      defaultExpandAll={true}
-      
+      defaultExpandedKeys={tree.map((entry) => entry.id)}
       onDrop={(info) => {
         const draggingEntry = entries.find((entry) => entry.id === info.dragNode.key)
 

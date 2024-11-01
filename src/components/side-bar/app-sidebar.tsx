@@ -2,7 +2,6 @@ import * as React from "react"
 import {
   AudioWaveform,
   Command,
-  Frame,
   GalleryVerticalEnd,
   Settings2,
 } from "lucide-react"
@@ -55,24 +54,17 @@ const data = {
         }
       ],
     },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    }
-  ],
+  ]
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavProjects projects={data.projects} />
+        <NavProjects />
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
