@@ -3,7 +3,7 @@ import { AffineEditorContainer } from '@blocksuite/presets';
 import { Doc, Schema } from '@blocksuite/store';
 import { DocCollection, Text } from '@blocksuite/store';
 import { AffineSchemas } from '@blocksuite/blocks';
-import { IndexeddbPersistence, storeState } from 'y-indexeddb';
+import { IndexeddbPersistence } from 'y-indexeddb';
 
 export interface EditorContextType {
   editor: AffineEditorContainer | null;
