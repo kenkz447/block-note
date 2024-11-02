@@ -53,7 +53,7 @@
   }
   .rc-tree .rc-tree-treenode .rc-tree-node-content-wrapper {
     position: relative;
-    display: inline-block;
+    display: flex;
     width: 100%;
     margin: 0;
     padding: 0;
@@ -166,8 +166,7 @@
     vertical-align: top;
   }
   .rc-tree-title {
-    display: inline-block;
-    width: 100%;
+      width: 100%;
   }
   .rc-tree-indent {
     display: inline-block;

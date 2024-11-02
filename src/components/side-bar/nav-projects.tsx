@@ -105,7 +105,7 @@ export function NavProjects() {
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Documents</SidebarGroupLabel>
       <SidebarMenu>
-        <div className="overflow-x-auto">
+        <div className="overflow-hidden">
           <Entries />
         </div>
         <SidebarMenuItem>
@@ -203,7 +203,7 @@ const Entries = () => {
       );
 
       return (
-        <SidebarMenuItem key={entry.id}>
+        <SidebarMenuItem key={entry.id} className="grid">
           <SidebarMenuButton asChild>
             {
               entry.type === 'folder'
@@ -251,7 +251,7 @@ const Entries = () => {
       <Tree.TreeNode
         key={entry.id}
         title={renderTitle()}
-        isLeaf={entry.type === 'document'}
+        isLeaf={entry.type !== 'folder'}
       >
         {entry.children.map(renderTreeNode)}
       </Tree.TreeNode>
@@ -260,47 +260,58 @@ const Entries = () => {
 
   return (
     <Tree
+      defaultExpandAll={true}
       autoExpandParent={true}
       draggable={true}
       showLine={true}
       expandAction="click"
       defaultExpandedKeys={tree.map((entry) => entry.id)}
-      onDrop={(info) => {
+      allowDrop={({ dropNode }) => {
+        const dropEntry = entries.find((entry) => entry.id === dropNode.key)
+        return dropEntry?.type === 'folder'
+      }}
+      onDrop={async (info) => {
         const draggingEntry = entries.find((entry) => entry.id === info.dragNode.key)
 
-        if (info.dropToGap) {
-          const beforeEntry = info.dropPosition === -1 ? null : entries.find((entry) => entry.id === info.node.key)
-          const sameLevelEntries = entries.filter((entry) => entry.parent === beforeEntry?.parent)
-          const beforeEntryIndex = beforeEntry === null ? -1 : sameLevelEntries.findIndex((entry) => entry.id === beforeEntry?.id)
-          const afterEntry = sameLevelEntries[beforeEntryIndex + 1]
+        const isFirstInRoot = info.dropPosition === -1;
+        if (isFirstInRoot) {
+          const rootEntries = entries.filter((entry) => entry.parent === null)
+          const firstEntry = rootEntries[0]
 
-          if (draggingEntry === afterEntry) {
-            return;
-          }
-
-          const newOrder = !afterEntry
-            ? (beforeEntry?.order ?? 0) + 1
-            : ((beforeEntry?.order ?? 0) + (afterEntry?.order ?? 1)) / 2
-
-          draggingEntry?._doc.update({
+          return await draggingEntry?._doc.update({
             $set: {
-              order: newOrder,
+              order: firstEntry ? firstEntry.order - 1 : 0,
               parent: null
             }
           })
         }
-        else {
-          const parentEntry = entries.find((entry) => entry.id === info.node.key)
-          const childrenEntries = entries.filter((entry) => entry.parent === parentEntry?.id)
-          const lastChild = childrenEntries[childrenEntries.length - 1]
 
-          draggingEntry?._doc.update({
+        const isFirstInParent = info.dropToGap === false;
+        if (isFirstInParent) {
+          const parentEntry = entries.find((entry) => entry.id === info.node.key)
+          const children = entries.filter((entry) => entry.parent === parentEntry?.id)
+          const firstChild = children[0]
+          return await draggingEntry?._doc.update({
             $set: {
-              order: (lastChild?.order ?? 0) + 1,
+              order: firstChild ? firstChild.order - 1 : 0,
               parent: parentEntry?.id
             }
           })
         }
+
+        const fromEntry = entries.find((entry) => entry.id === info.node.key)
+        if (!fromEntry) {
+          return
+        }
+        const sibling = entries.filter((entry) => entry.parent === fromEntry.parent)
+        const dropTo = sibling[info.dropPosition]
+
+        return await draggingEntry?._doc.update({
+          $set: {
+            order: dropTo ? (fromEntry.order + dropTo.order) / 2 : fromEntry.order + 1,
+            parent: fromEntry?.parent
+          }
+        })
       }}
     >
       {tree.map(renderTreeNode)}
