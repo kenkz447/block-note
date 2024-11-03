@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/libs/shadcn-ui/components/dialog"
 import { usePopupDialogContext } from "../hooks/popup-use-contexts"
 import { PopupDialogProps } from "../popup-contexts";
 

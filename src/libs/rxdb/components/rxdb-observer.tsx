@@ -8,12 +8,12 @@ interface RxdbObserverProps {
 }
 
 export const RxdbObserver = (props: RxdbObserverProps) => {
-    const { doc, field,defaultValue } = props;
-    const [value, setValue] = useState(defaultValue);
+    const { doc, field, defaultValue } = props;
+    const [value, setValue] = useState();
 
     useEffect(() => {
         const subscription = doc.get$(field).subscribe((newValue) => {
-            setValue(newValue);
+            setValue(newValue ?? defaultValue);
         });
         return () => {
             subscription.unsubscribe();

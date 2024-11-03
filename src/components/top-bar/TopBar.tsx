@@ -1,5 +1,5 @@
-import { SidebarTrigger } from '@/components/ui/sidebar';
-import { Separator } from '@/components/ui/separator';
+import { SidebarTrigger } from '@/libs/shadcn-ui/components/sidebar';
+import { Separator } from '@/libs/shadcn-ui/components/separator';
 
 export function TopBar() {
     return (
