@@ -1,11 +1,8 @@
-import { createContext } from "react";
+import React, { createContext } from "react";
 
 export interface PopupDialogProps {
     visible: boolean;
-    title: string;
-    description?: string;
-    renderBody?: () => React.ReactNode;
-    renderActions?: () => React.ReactNode;
+    content: React.ReactNode;
 }
 
 export interface PopupDialogContextType {

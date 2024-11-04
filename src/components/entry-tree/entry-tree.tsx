@@ -1,60 +1,15 @@
 import { usePopupDialog } from "@/libs/popup"
-import { Entry, generateRxId, RxdbObserver, useRxdbContext, WithRxDoc } from "@/libs/rxdb"
-import { Button } from "@/libs/shadcn-ui/components/button"
+import { Entry, EntryTreeNode, generateRxId, useRxdbContext, WithRxDoc } from "@/libs/rxdb"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "@/libs/shadcn-ui/components/dropdown-menu"
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/libs/shadcn-ui/components/form"
-import { Input } from "@/libs/shadcn-ui/components/input"
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu"
-import { FilePlus, FileText, Folder, FolderOpen, FolderPlus, Menu, MoreHorizontal, Plus, Trash, TriangleAlert } from "lucide-react"
+import { FilePlus, FolderPlus, Plus, TriangleAlert } from "lucide-react"
 import { arrayToTree } from "performant-array-to-tree"
 import Tree from "rc-tree"
-import { useCallback, useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
+import React, { useEffect, useState } from "react"
 import { RxDocument } from "rxdb"
 import { firstBy } from "thenby"
-import { z } from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-
-interface EntryTreeItemProps {
-    entry: WithRxDoc<Entry>
-    expanded: boolean
-}
-
-const schema = z.object({
-    name: z.string().min(1),
-})
-
-
-function EntryTreeItem({ entry, expanded }: EntryTreeItemProps) {
-    const onDeleteEntry = useCallback(() => {
-        entry._doc.remove()
-    }, [])
-
-    const icon = entry.type === 'folder'
-        ? expanded ? <FolderOpen size={16} /> : <Folder size={16} />
-        : <FileText size={16} />
-
-    return (
-        <div className="h-[32px] flex items-center pr-2 gap-2">
-            <div>{icon}</div>
-            <div className="grow grid">
-                <div className="block whitespace-nowrap	overflow-hidden text-ellipsis">
-                    <RxdbObserver doc={entry._doc} field="name" defaultValue={`New ${entry.type}`} />
-                </div>
-            </div>
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button className="opacity-0 group-hover:opacity-100" variant="link" size='iconSm' >
-                        <MoreHorizontal size={16} />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" side="right">
-                    <DropdownMenuItem onClick={() => onDeleteEntry()}><Trash />Delete</DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        </div>
-    );
-}
+import { CreateEntryForm } from "@/components/forms/create-entry-form"
+import { EntryTreeItem } from "./entry-tree-item"
 
 export function EntryTree() {
     const rxdbContext = useRxdbContext()
@@ -64,24 +19,6 @@ export function EntryTree() {
     const [entries, setEntries] = useState<WithRxDoc<Entry>[] | undefined>(undefined)
     const [openKeys, setOpenKeys] = useState<React.Key[]>([])
 
-    type EntryTreeNode = WithRxDoc<Entry> & { children: EntryTreeNode[] }
-
-
-    const renderTreeNode = (entry: EntryTreeNode) => {
-        return (
-            <Tree.TreeNode
-                domRef={(e) => {
-                    e?.setAttribute('tabindex', '0');
-                }}
-                key={entry.id}
-                title={<EntryTreeItem entry={entry} expanded={openKeys.includes(entry.id)} />}
-                isLeaf={entry.type !== 'folder'}
-                className="group"
-            >
-                {entry.children.map(renderTreeNode)}
-            </Tree.TreeNode>
-        )
-    }
 
     useEffect(() => {
         const fetchEntries = async () => {
@@ -123,14 +60,9 @@ export function EntryTree() {
 
     }, [entriesCollection])
 
-
     const { openDialog, closeDialog } = usePopupDialog()
 
-    const form = useForm({
-        resolver: zodResolver(schema),
-    })
-
-    const onNewEntries = (type: string) => {
+    const onNewEntry = (type: string) => {
         const createEntry = async (formValues: Partial<Entry>) => {
             const now = new Date();
 
@@ -143,33 +75,10 @@ export function EntryTree() {
             });
 
             closeDialog()
-            form.reset()
         }
 
         openDialog({
-            title: `New ${type}`,
-            description: type === 'folder' ? 'Create a folder to organize your documents' : 'Create a new document',
-            renderBody: () => (
-                <Form {...form}>
-                    <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormControl>
-                                    <Input placeholder="Name" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </Form>
-            ),
-            renderActions: () => (
-                <Button onClick={form.handleSubmit(createEntry)}>
-                    Create
-                </Button>
-            )
+            content: <CreateEntryForm type={type} onSubmit={createEntry} />
         })
     }
 
@@ -182,6 +91,22 @@ export function EntryTree() {
     }
 
     const tree = arrayToTree(entries, { dataField: null, parentId: 'parent' }) as EntryTreeNode[]
+
+    const renderTreeNode = (entry: EntryTreeNode) => {
+        return (
+            <Tree.TreeNode
+                domRef={(e) => {
+                    e?.setAttribute('tabindex', '0');
+                }}
+                key={entry.id}
+                title={<EntryTreeItem entry={entry} expanded={openKeys.includes(entry.id)} />}
+                isLeaf={entry.type !== 'folder'}
+                className="group"
+            >
+                {entry.children.map(renderTreeNode)}
+            </Tree.TreeNode>
+        )
+    }
 
     return (
         <Tree
@@ -269,8 +194,8 @@ export function EntryTree() {
                         </div>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start" side="right">
-                        <DropdownMenuItem onClick={() => onNewEntries('folder')}><FolderPlus /> Folder</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => onNewEntries('document')}><FilePlus /> Document</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => onNewEntry('folder')}><FolderPlus /> Folder</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => onNewEntry('document')}><FilePlus /> Document</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             )} />

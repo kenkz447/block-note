@@ -5,7 +5,7 @@ import { EditorProvider } from '@/libs/editor';
 import { RxdbProvider } from '@/libs/rxdb/components/rxdb-provider';
 import { PopupProvider } from '@/libs/popup';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/libs/shadcn-ui/components/resizable';
-import { EntryTree } from '@/libs/tree/components/tree-entry';
+import { EntryTree } from '@/components/entry-tree/entry-tree';
 
 export const Route = createRootRoute({
     component: () => (

@@ -10,3 +10,5 @@ export interface Entry {
     parent: string
     createdAt: string
 }
+
+export type EntryTreeNode = WithRxDoc<Entry> & { children: EntryTreeNode[] }
