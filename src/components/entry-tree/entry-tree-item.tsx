@@ -1,12 +1,14 @@
 import { DeleteEntryForm } from "@/components/forms/delete-entry-form";
 import { UpdateEntryForm } from "@/components/forms/update-entry-form";
 import { usePopupDialog } from "@/libs/popup";
-import { Entry, EntryTreeNode, RxdbObserver, WithRxDoc } from "@/libs/rxdb";
+import { Entry, EntryTreeNode, generateRxId, RxdbObserver, useRxdbContext, WithRxDoc } from "@/libs/rxdb";
 import { Button } from "@/libs/shadcn-ui/components/button";
-import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger } from "@/libs/shadcn-ui/components/dropdown-menu";
-import { DropdownMenuContent } from "@radix-ui/react-dropdown-menu";
+import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuSeparator } from "@/libs/shadcn-ui/components/dropdown-menu";
 import { FileText, Folder, FolderOpen, MoreHorizontal, SquarePen, Trash } from "lucide-react";
 import { useCallback } from "react";
+import { CreateEntryForm } from "../forms/create-entry-form";
+import { useEntryPage } from "@/hooks/editor/use-entry-page";
+import { cn } from "@/libs/shadcn-ui/utils";
 
 interface EntryTreeItemProps {
     entry: EntryTreeNode
@@ -14,7 +16,34 @@ interface EntryTreeItemProps {
 }
 
 export function EntryTreeItem({ entry, expanded }: EntryTreeItemProps) {
+    const navigateToEntry = useEntryPage()
+
     const { openDialog, closeDialog } = usePopupDialog()
+
+    const rxdbContext = useRxdbContext()
+    const { entries: entriesCollection } = rxdbContext.db.collections
+
+    const onCreateEntry = useCallback((type: string) => {
+        const createEntry = async (formValues: Partial<Entry>) => {
+            const now = new Date();
+
+            const newEntry = await entriesCollection.insert({
+                id: generateRxId(),
+                type: type,
+                name: formValues.name,
+                parent: entry.id,
+                order: now.getTime(),
+                createdAt: now.toISOString(),
+            });
+
+            closeDialog()
+            navigateToEntry(newEntry.id)
+        }
+
+        openDialog({
+            content: <CreateEntryForm type={type} onSubmit={createEntry} />
+        })
+    }, [openDialog, entriesCollection, entry.id, closeDialog, navigateToEntry])
 
     const showUpdateForm = useCallback((entry: WithRxDoc<Entry>) => {
         const updateEntry = async (formValues: Partial<Entry>) => {
@@ -25,12 +54,13 @@ export function EntryTreeItem({ entry, expanded }: EntryTreeItemProps) {
             });
 
             closeDialog()
+            navigateToEntry(null)
         }
 
         openDialog({
             content: <UpdateEntryForm entry={entry} onSubmit={updateEntry} />
         })
-    }, [openDialog, closeDialog])
+    }, [openDialog, closeDialog, navigateToEntry])
 
     const onDeleteEntry = useCallback(() => {
         if (entry.children.length === 0) {
@@ -56,7 +86,7 @@ export function EntryTreeItem({ entry, expanded }: EntryTreeItemProps) {
         <div className="h-[32px] flex items-center pr-2 gap-2">
             <div>{icon}</div>
             <div className="grow grid">
-                <div className="block whitespace-nowrap	overflow-hidden text-ellipsis">
+                <div className={cn('block whitespace-nowrap	overflow-hidden text-ellipsis')}>
                     <RxdbObserver doc={entry._doc} field="name" defaultValue={`New ${entry.type}`} />
                 </div>
             </div>
@@ -67,6 +97,15 @@ export function EntryTreeItem({ entry, expanded }: EntryTreeItemProps) {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" side="right" onClick={(e) => e.stopPropagation()}>
+                    {
+                        entry.type === 'folder' && (
+                            <>
+                                <DropdownMenuItem onClick={() => onCreateEntry('folder')}> <Folder />New Folder</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => onCreateEntry('entry')}> <FileText />New Entry</DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                            </>
+                        )
+                    }
                     <DropdownMenuItem onClick={() => showUpdateForm(entry)}> <SquarePen />Rename</DropdownMenuItem>
                     <DropdownMenuItem onClick={() => onDeleteEntry()}><Trash />Delete</DropdownMenuItem>
                 </DropdownMenuContent>

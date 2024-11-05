@@ -10,8 +10,14 @@ import { RxDocument } from "rxdb"
 import { firstBy } from "thenby"
 import { CreateEntryForm } from "@/components/forms/create-entry-form"
 import { EntryTreeItem } from "./entry-tree-item"
+import { useSearch } from "@tanstack/react-router";
+import { cn } from "@/libs/shadcn-ui/utils"
+import { useEntryPage } from "@/hooks/editor/use-entry-page"
 
 export function EntryTree() {
+    const { entryId } = useSearch({ from: '/' })
+    const navigateToEntry = useEntryPage()
+
     const rxdbContext = useRxdbContext()
 
     const { entries: entriesCollection } = rxdbContext.db.collections
@@ -93,15 +99,24 @@ export function EntryTree() {
     const tree = arrayToTree(entries, { dataField: null, parentId: 'parent' }) as EntryTreeNode[]
 
     const renderTreeNode = (entry: EntryTreeNode) => {
+        const isActive = entryId === entry.id;
+
         return (
             <Tree.TreeNode
                 domRef={(e) => {
-                    e?.setAttribute('tabindex', '0');
+                    if (!e) return;
+                    e.setAttribute('tabindex', '0');
+                    e.onclick = () => {
+                        if (entry.type !== 'document') {
+                            return;
+                        }
+                        navigateToEntry(entry.id);
+                    }
                 }}
                 key={entry.id}
                 title={<EntryTreeItem entry={entry} expanded={openKeys.includes(entry.id)} />}
                 isLeaf={entry.type !== 'folder'}
-                className="group"
+                className={cn('group', { 'bg-accent': isActive })}
             >
                 {entry.children.map(renderTreeNode)}
             </Tree.TreeNode>

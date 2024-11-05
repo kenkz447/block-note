@@ -4,7 +4,7 @@ import { DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogConte
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/libs/shadcn-ui/components/form";
 import { Input } from "@/libs/shadcn-ui/components/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -22,12 +22,19 @@ const createSchema = z.object({
 })
 
 export function UpdateEntryForm({ entry, onSubmit }: UpdateEntryFormProps) {
+    const defaultValues = useMemo(() => {
+        return {
+            name: entry.name
+        }
+    }, [entry])
+
     const {
         reset,
         formState,
         ...form
     } = useForm<UpdateEntryValues>({
         resolver: zodResolver(createSchema),
+        defaultValues
     });
 
     useEffect(() => {

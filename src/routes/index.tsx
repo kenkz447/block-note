@@ -6,14 +6,14 @@ import { Link } from '@tanstack/react-router';
 export const Route = createFileRoute('/')({
   component: RouteComponent,
   validateSearch: z.object({
-    entry: z.string().optional(),
+    entryId: z.string().optional(),
   })
 })
 
 function RouteComponent() {
-  const { entry } = Route.useSearch();
+  const { entryId } = Route.useSearch();
 
-  if (!entry) {
+  if (!entryId) {
     // return (
     //   <div className='home-container'>
     //     <div className='mb-8'>

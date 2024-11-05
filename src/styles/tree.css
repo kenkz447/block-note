@@ -1,13 +1,11 @@
-
-
 .rc-tree-list {
   --rc-indent-size: 16px;
   --rc-drop-bg-color: rgb(147 197 253);
   --rc-line-color: #d9d9d9;
   --rc-node-height: 32px;
-  --rc-node-hover-bg: hsl(var(--sidebar-accent));
-  --rc-node-hover-color: hsl(var(--sidebar-accent-foreground));
-  --rc-node-focus-bg: rgb(239 246 255);
+  --rc-node-hover-bg: hsl(var(--accent));
+  --rc-node-hover-color: hsl(var(--accent-foreground));
+  --rc-node-focus-bg: hsl(var(--accent));
 }
 
 .rc-tree-treenode {
