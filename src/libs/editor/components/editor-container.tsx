@@ -1,7 +1,13 @@
 import { useEffect, useRef } from "react";
 import { useEditorContext } from "../hooks/useEditorContext";
+import { Entry } from "@/libs/rxdb";
+import { IndexeddbPersistence } from "y-indexeddb";
 
-export function EditorContainer() {
+interface EditorContainerProps {
+    readonly entry: Entry;
+}
+
+export function EditorContainer({ entry }: EditorContainerProps) {
 
     const { editor } = useEditorContext();
 
@@ -15,6 +21,6 @@ export function EditorContainer() {
     }, [editor]);
 
     return (
-        <div className="editor-container" ref={editorContainerRef}></div>
+        <div className="editor-container h-full" ref={editorContainerRef}></div>
     )
 }

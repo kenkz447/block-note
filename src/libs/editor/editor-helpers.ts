@@ -12,39 +12,34 @@ export interface EditorContextType {
 }
 
 export function initEditor() {
-
   const schema = new Schema().register(AffineSchemas);
   const collection = new DocCollection({ schema });
 
   collection.meta.initialize();
 
-  collection.slots.docAdded.on((x) => {
-    console.log('docAdded', x);
-  });
-
   const editor = new AffineEditorContainer();
 
   const doc = collection.createDoc({ id: 'getting-started' });
 
-  const provider = new IndexeddbPersistence('provider-demo', doc.spaceDoc);
-  // initDoc(doc);
+  // const provider = new IndexeddbPersistence('provider-demo', doc.spaceDoc);
+  // // initDoc(doc);
 
-  provider.on('synced', () => {
-    doc.load(() => {
-      if (doc.blocks.size === 0) {
-        const pageBlockId = doc.addBlock('affine:page', {
-          title: new Text('Getting Started'),
-        });
-        doc.addBlock('affine:surface', {}, pageBlockId);
-        const noteId = doc.addBlock('affine:note', {}, pageBlockId);
-        doc.addBlock(
-          'affine:paragraph',
-          { text: new Text('Hello World!') },
-          noteId
-        );
-      }
-    });
-  });
+  // provider.on('synced', () => {
+  //   doc.load(() => {
+  //     if (doc.blocks.size === 0) {
+  //       const pageBlockId = doc.addBlock('affine:page', {
+  //         title: new Text('Getting Started'),
+  //       });
+  //       doc.addBlock('affine:surface', {}, pageBlockId);
+  //       const noteId = doc.addBlock('affine:note', {}, pageBlockId);
+  //       doc.addBlock(
+  //         'affine:paragraph',
+  //         { text: new Text('Hello World!') },
+  //         noteId
+  //       );
+  //     }
+  //   });
+  // });
 
   editor.doc = doc;
 

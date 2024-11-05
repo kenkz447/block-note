@@ -1,7 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { EditorContainer } from '@/libs/editor'
 import { z } from 'zod'
-import { Link } from '@tanstack/react-router';
+import { Entry, useRxdbContext } from '@/libs/rxdb';
+import { useEffect, useState } from 'react';
+import { EditorProvider } from '@/libs/editor';
 
 export const Route = createFileRoute('/')({
   component: RouteComponent,
@@ -13,34 +15,32 @@ export const Route = createFileRoute('/')({
 function RouteComponent() {
   const { entryId } = Route.useSearch();
 
-  if (!entryId) {
-    // return (
-    //   <div className='home-container'>
-    //     <div className='mb-8'>
-    //       <h1 className='text-3xl mb-2 font-bold'>Natalia</h1>
-    //       <p className='text-xl text-muted-foreground'>Write with ease</p>
-    //     </div>
-    //     <div className='mb-8'>
-    //       <h4 className='text-xl mb-2'>Start</h4>
-    //       <ul>
-    //         <li className='mb-1'>
-    //           <Link className='mb-1'>New Document</Link>
-    //         </li>
-    //         <li>
-    //           <Link className=''>Open Draft</Link>
-    //         </li>
-    //       </ul>
-    //     </div>
-    //     <div className='mb-8'>
-    //       <h4 className='text-xl mb-2'>Recent</h4>
-    //       <div>
-    //         <p className=''>Empty</p>
-    //       </div>
-    //     </div>
+  const rxdbContext = useRxdbContext()
+  const { entries: entriesCollection } = rxdbContext.db.collections
 
-    //   </div>
-    // )
+  const [entry, setEntry] = useState<Entry>()
+
+  useEffect(() => {
+    if (!entryId) {
+      return;
+    }
+
+    const sub = entriesCollection.findOne(entryId).$.subscribe((entry) => {
+      setEntry(entry)
+    })
+
+    return () => {
+      sub.unsubscribe()
+    }
+  }, [entryId])
+
+  if (!entry) {
+    return null;
   }
 
-  return <EditorContainer />
+  return (
+    <EditorProvider key={entry.id} entry={entry}>
+      <EditorContainer entry={entry} />
+    </EditorProvider>
+  )
 }
