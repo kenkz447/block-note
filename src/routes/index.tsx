@@ -3,7 +3,6 @@ import { EditorContainer } from '@/libs/editor'
 import { z } from 'zod'
 import { Entry, useRxdbContext } from '@/libs/rxdb';
 import { useEffect, useState } from 'react';
-import { EditorProvider } from '@/libs/editor';
 
 export const Route = createFileRoute('/')({
   component: RouteComponent,
@@ -32,15 +31,13 @@ function RouteComponent() {
     return () => {
       sub.unsubscribe()
     }
-  }, [entryId])
+  }, [entriesCollection, entryId])
 
   if (!entry) {
     return null;
   }
 
   return (
-    <EditorProvider key={entry.id} entry={entry}>
-      <EditorContainer entry={entry} />
-    </EditorProvider>
+    <EditorContainer entry={entry} />
   )
 }

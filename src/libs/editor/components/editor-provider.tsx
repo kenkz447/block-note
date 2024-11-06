@@ -1,59 +1,35 @@
-import '@blocksuite/presets/themes/affine.css';
+import React, { useCallback, useEffect, useState } from "react";
+import { EditorContext, EditorContextType } from '../editor-context';
+import { createDefaultDocCollection, initDefaultDocCollection } from '../utils/editor-collection-utils';
+import { effects as blocksEffects } from '@blocksuite/blocks/effects';
+import { effects as presetsEffects } from '@blocksuite/presets/effects';
+import { setupEditor } from "../utils/editor-utils";
 
-import React, { useMemo } from "react";
-import { EditorContext } from '../editor-context';
-import { Entry } from '@/libs/rxdb';
-import { AffineSchemas } from '@blocksuite/blocks';
-import { Doc, DocCollection, Schema, Text } from '@blocksuite/store';
-import { AffineEditorContainer } from '@blocksuite/presets';
-import { IndexeddbPersistence } from 'y-indexeddb';
+blocksEffects();
+presetsEffects();
 
-interface EditorProviderProps {
-  readonly entry: Entry;
-}
+export function EditorProvider({ children }: React.PropsWithChildren) {
 
-export function EditorProvider({ entry, children }: React.PropsWithChildren<EditorProviderProps>) {
+  const [context, setContext] = useState<EditorContextType>();
 
-  const context = useMemo(() => {
-    const schema = new Schema().register(AffineSchemas);
-    const collection = new DocCollection({ schema });
+  const setUpEditor = useCallback(async () => {
+    const collection = await createDefaultDocCollection();
+    await initDefaultDocCollection(collection);
+    const editor = setupEditor(collection)
 
-    collection.meta.initialize();
-
-
-    const doc = collection.createDoc({ id: entry.id });
-
-    const provider = new IndexeddbPersistence(`doc_${doc.id}`, doc.spaceDoc);
-    // initDoc(doc);
-
-    provider.on('synced', () => {
-      doc.load(() => {
-        if (doc.blocks.size === 0) {
-          const pageBlockId = doc.addBlock('affine:page', {
-            title: new Text(entry.name),
-          });
-          doc.addBlock('affine:surface', {}, pageBlockId);
-          const noteId = doc.addBlock('affine:note', {}, pageBlockId);
-          doc.addBlock(
-            'affine:paragraph',
-            { text: new Text('Hello World!') },
-            noteId
-          );
-        }
-      });
+    setContext({
+      editor,
+      collection,
     });
-
-    const editor = new AffineEditorContainer();
-
-    editor.doc = doc;
-
-    editor.slots.docLinkClicked.on(({ docId }) => {
-      const target = collection.getDoc(docId) as Doc;
-      editor.doc = target;
-    });
-
-    return { editor, collection };
   }, []);
+
+  useEffect(() => {
+    setUpEditor();
+  }, [setUpEditor]);
+
+  if (!context) {
+    return null;
+  }
 
   return (
     <EditorContext.Provider value={context}>

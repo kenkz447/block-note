@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useEditorContext } from "../hooks/useEditorContext";
 import { Entry } from "@/libs/rxdb";
-import { IndexeddbPersistence } from "y-indexeddb";
 
 interface EditorContainerProps {
     readonly entry: Entry;
@@ -9,7 +8,7 @@ interface EditorContainerProps {
 
 export function EditorContainer({ entry }: EditorContainerProps) {
 
-    const { editor } = useEditorContext();
+    const { editor, collection } = useEditorContext();
 
     const editorContainerRef = useRef<HTMLDivElement>(null);
 
@@ -19,6 +18,18 @@ export function EditorContainer({ entry }: EditorContainerProps) {
             editorContainerRef.current.appendChild(editor);
         }
     }, [editor]);
+
+    useEffect(() => {
+        const doc = collection.getDoc(entry.id);
+        if (!doc) {
+            console.error(`Failed to get doc: ${entry.id}`);
+            return;
+        }
+
+        doc.load();
+        doc.resetHistory();
+        editor.doc = doc;
+    }, [collection, editor, entry]);
 
     return (
         <div className="editor-container h-full" ref={editorContainerRef}></div>

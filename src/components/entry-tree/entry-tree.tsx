@@ -13,18 +13,20 @@ import { EntryTreeItem } from "./entry-tree-item"
 import { useSearch } from "@tanstack/react-router";
 import { cn } from "@/libs/shadcn-ui/utils"
 import { useEntryPage } from "@/hooks/editor/use-entry-page"
+import { useEditorContext } from "@/libs/editor/hooks/useEditorContext"
+import { createDefaultDoc } from "@blocksuite/blocks"
 
 export function EntryTree() {
     const { entryId } = useSearch({ from: '/' })
     const navigateToEntry = useEntryPage()
 
+    const { collection } = useEditorContext()
     const rxdbContext = useRxdbContext()
 
     const { entries: entriesCollection } = rxdbContext.db.collections
 
     const [entries, setEntries] = useState<WithRxDoc<Entry>[] | undefined>(undefined)
     const [openKeys, setOpenKeys] = useState<React.Key[]>([])
-
 
     useEffect(() => {
         const fetchEntries = async () => {
@@ -68,19 +70,21 @@ export function EntryTree() {
 
     const { openDialog, closeDialog } = usePopupDialog()
 
-    const onNewEntry = (type: string) => {
+    const onNewEntry = (type: string, parent?: string) => {
         const createEntry = async (formValues: Partial<Entry>) => {
             const now = new Date();
 
-            await entriesCollection.insert({
+            const newEntry = await entriesCollection.insert({
                 id: generateRxId(),
                 type: type,
                 name: formValues.name,
                 order: now.getTime(),
+                parent: parent || null,
                 createdAt: now.toISOString(),
             });
 
             closeDialog()
+            createDefaultDoc(collection, { id: newEntry.id })
         }
 
         openDialog({
