@@ -32,8 +32,10 @@ export class WebSocketAwarenessSource implements AwarenessSource {
     );
   };
 
-  private _onWebSocket = (event: MessageEvent<string>) => {
-    const data = JSON.parse(event.data) as WebSocketMessage;
+  private _onWebSocket = async (event: MessageEvent<Blob>) => {
+    const rawData = await event.data.text();
+
+    const data = JSON.parse(rawData) as WebSocketMessage;
 
     if (data.channel !== 'awareness') return;
     const { type } = data.payload;

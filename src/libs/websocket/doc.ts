@@ -6,8 +6,11 @@ import { diffUpdate, encodeStateVectorFromUpdate, mergeUpdates } from 'yjs';
 import type { WebSocketMessage } from './types';
 
 export class WebSocketDocSource implements DocSource {
-  private _onMessage = (event: MessageEvent<string>) => {
-    const data = JSON.parse(event.data) as WebSocketMessage;
+  private _onMessage = async (event: MessageEvent<Blob>) => {
+    const rawData = await event.data.text();
+    const data = JSON.parse(rawData) as WebSocketMessage;
+    console.log(data);
+    
 
     if (data.channel !== 'doc') return;
 
@@ -87,8 +90,10 @@ export class WebSocketDocSource implements DocSource {
     const abortController = new AbortController();
     this.ws.addEventListener(
       'message',
-      (event: MessageEvent<string>) => {
-        const data = JSON.parse(event.data) as WebSocketMessage;
+      async (event: MessageEvent<Blob>) => {
+        const rawData = await event.data.text();
+
+        const data = JSON.parse(rawData) as WebSocketMessage;
 
         if (data.channel !== 'doc' || data.payload.type !== 'update') return;
 

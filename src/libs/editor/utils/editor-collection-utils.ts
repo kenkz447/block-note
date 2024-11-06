@@ -34,7 +34,7 @@ export async function createDefaultDocCollection() {
     let awarenessSources: DocCollectionOptions['awarenessSources'];
     const room = params.get('entryId');
     if (room) {
-        const ws = new WebSocket(new URL(`/room/${room}`, BASE_WEBSOCKET_URL));
+        const ws = new WebSocket(new URL(`roomId=${room}`, BASE_WEBSOCKET_URL));
         await new Promise((resolve, reject) => {
             ws.addEventListener('open', resolve);
             ws.addEventListener('error', reject);
