@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { FirebaseUser, getAuth } from '@/helpers/firebase';
+import { FirebaseUser, getAuth } from '@/bootstraps/firebase';
 
 export const useCurrentUser = () => {
     const [currentUser, setCurrentUser] = useState<FirebaseUser | null>(null);
