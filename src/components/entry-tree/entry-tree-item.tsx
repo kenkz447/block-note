@@ -10,7 +10,6 @@ import { CreateEntryForm } from "../forms/create-entry-form";
 import { useEntryPage } from "@/hooks/editor/use-entry-page";
 import { cn } from "@/libs/shadcn-ui/utils";
 import { useSearch } from "@tanstack/react-router";
-import { useEditorContext } from "@/libs/editor/hooks/useEditorContext";
 
 interface EntryTreeItemProps {
     entry: EntryTreeNode
@@ -20,7 +19,6 @@ interface EntryTreeItemProps {
 export function EntryTreeItem({ entry, expanded }: EntryTreeItemProps) {
     const { entryId: currentEntryId } = useSearch({ from: '/' })
 
-    const { collection } = useEditorContext()
     const navigateToEntry = useEntryPage()
 
     const { openDialog, closeDialog } = usePopupDialog()
@@ -75,7 +73,6 @@ export function EntryTreeItem({ entry, expanded }: EntryTreeItemProps) {
         const handleDelete = async () => {
             await entry._doc.remove()
             closeDialog()
-            collection.removeDoc(entry.id)
             if (entry.id === currentEntryId) {
                 navigateToEntry(null)
             }
@@ -84,7 +81,7 @@ export function EntryTreeItem({ entry, expanded }: EntryTreeItemProps) {
         openDialog({
             content: <DeleteEntryForm entry={entry} onSubmit={handleDelete} />
         })
-    }, [closeDialog, collection, currentEntryId, entry, navigateToEntry, openDialog])
+    }, [closeDialog, currentEntryId, entry, navigateToEntry, openDialog])
 
     const icon = entry.type === 'folder'
         ? expanded ? <FolderOpen size={16} /> : <Folder size={16} />

@@ -13,14 +13,11 @@ import { EntryTreeItem } from "./entry-tree-item"
 import { useSearch } from "@tanstack/react-router";
 import { cn } from "@/libs/shadcn-ui/utils"
 import { useEntryPage } from "@/hooks/editor/use-entry-page"
-import { useEditorContext } from "@/libs/editor/hooks/useEditorContext"
-import { createDefaultDoc } from "@blocksuite/blocks"
 
 export function EntryTree() {
     const { entryId } = useSearch({ from: '/' })
     const navigateToEntry = useEntryPage()
 
-    const { collection } = useEditorContext()
     const rxdbContext = useRxdbContext()
 
     const { entries: entriesCollection } = rxdbContext.db.collections
@@ -74,7 +71,7 @@ export function EntryTree() {
         const createEntry = async (formValues: Partial<Entry>) => {
             const now = new Date();
 
-            const newEntry = await entriesCollection.insert({
+            await entriesCollection.insert({
                 id: generateRxId(),
                 type: type,
                 name: formValues.name,
@@ -84,7 +81,6 @@ export function EntryTree() {
             });
 
             closeDialog()
-            createDefaultDoc(collection, { id: newEntry.id })
         }
 
         openDialog({

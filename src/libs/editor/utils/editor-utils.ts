@@ -106,7 +106,7 @@ export const setupEditor = (collection: DocCollection) => {
         OverrideThemeExtension(themeExtension),
     ]);
     editor.doc = doc;
-    editor.mode = 'edgeless';
+    editor.mode = 'page';
     editor.std
         .get(RefNodeSlotsProvider)
         .docLinkClicked.on(({ pageId: docId }) => {

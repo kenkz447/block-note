@@ -32,7 +32,7 @@ export async function createDefaultDocCollection() {
         main: new IndexedDBDocSource(),
     };
     let awarenessSources: DocCollectionOptions['awarenessSources'];
-    const room = params.get('entryId');
+    const room = "jgHupDU1wQP6cxzqfoLFVRJsUyF3"
     if (room) {
         const ws = new WebSocket(new URL(`roomId=${room}`, BASE_WEBSOCKET_URL));
         await new Promise((resolve, reject) => {
