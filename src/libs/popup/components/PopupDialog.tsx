@@ -1,5 +1,5 @@
 import { Dialog } from "@/libs/shadcn-ui/components/dialog"
-import { usePopupDialogContext } from "../hooks/popup-use-contexts"
+import { usePopupDialogContext } from "../hooks/usePopupContexts"
 
 export const PopupDialog = () => {
     const popupDialogContext = usePopupDialogContext();

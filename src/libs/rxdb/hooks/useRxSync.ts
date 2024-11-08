@@ -13,14 +13,22 @@ export const useRxSync = () => {
   const { entries: entriesCollection } = db;
 
   return useCallback(async () => {
+
+    const entryCollectionF = collection(firestore, 'workspaces', currentUser!.uid, 'entries');
+    // const pullQuery = query(entryCollectionF);
+    // const lastChangeQuery = query(pullQuery, orderBy('serverTimestamp', "desc"), limit(1));
+    // onSnapshot(lastChangeQuery, (snapshot) => {
+    //   console.log(snapshot.docs[0].data());
+    // });
+
     replicateFirestore(
       {
-        replicationIdentifier: projectId,
+        replicationIdentifier: `https://firestore.googleapis.com/${projectId}`,
         collection: entriesCollection,
         firestore: {
           projectId: projectId,
           database: firestore,
-          collection: collection(firestore, 'workspaces', currentUser!.uid, 'entries')
+          collection: entryCollectionF
         },
         pull: {},
         push: {},

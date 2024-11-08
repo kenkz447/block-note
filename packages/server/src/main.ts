@@ -24,3 +24,5 @@ wss.on('connection', function connection(ws, req) {
     delete rooms[roomId][connectionId]
   });
 });
+
+console.log('Server started at ws://localhost:8080');

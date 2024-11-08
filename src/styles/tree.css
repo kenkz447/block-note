@@ -1,11 +1,10 @@
 .rc-tree-list {
   --rc-indent-size: 16px;
-  --rc-drop-bg-color: rgb(147 197 253);
-  --rc-line-color: #d9d9d9;
-  --rc-node-height: 32px;
-  --rc-node-hover-bg: hsl(var(--accent));
-  --rc-node-hover-color: hsl(var(--accent-foreground));
-  --rc-node-focus-bg: hsl(var(--accent));
+  --rc-drop-bg-color: hsl(var(--sidebar-accent));
+  --rc-line-color: hsl(var(--border));
+  --rc-node-height: 36px;
+  --rc-node-hover-bg: hsl(var(--sidebar-accent));
+  --rc-node-hover-color: hsl(var(--sidebar-accent-foreground));
 }
 
 .rc-tree-treenode {
@@ -15,13 +14,13 @@
   height: var(--rc-node-height);
 }
 
-.rc-tree-treenode:hover {
+.rc-tree-title:hover {
   background-color: var(--rc-node-hover-bg);
   color: var(--rc-node-hover-color);
 }
 
-.rc-tree-treenode:focus {
-  background-color: var(--rc-node-focus-bg);
+.rc-tree-treenode-selected .rc-tree-title {
+  font-weight: bold;
 }
 
 .rc-tree-indent {
@@ -43,6 +42,7 @@
   display: block;
   position: absolute;
   top: 1px;
+  left: 8px;
   z-index: 0;
 }
 
@@ -67,6 +67,14 @@
 
 .rc-tree-title {
   width: 100%;
+  height: var(--rc-node-height);
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 1px;
+  margin-right: 16px;
 }
 
 .rc-tree .rc-tree-treenode .rc-tree-node-content-wrapper {

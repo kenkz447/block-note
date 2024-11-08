@@ -1,5 +1,5 @@
 import { useContext } from "react"
-import { RxdbContext } from "../rxdb-context"
+import { RxdbContext } from "../rxdbContexts"
 
 export const useRxdbContext = () => {
     const context = useContext(RxdbContext)

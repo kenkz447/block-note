@@ -1,7 +1,2 @@
-export * from "./hooks/popup-use-dialog";
-
-import { PopupProvider } from "./components/popup-provider";
-
-export {
-    PopupProvider
-}
+export * from "./hooks/usePopupDialog";
+export * from "./components/PopupProvider";

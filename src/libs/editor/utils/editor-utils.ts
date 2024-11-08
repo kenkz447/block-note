@@ -107,16 +107,6 @@ export const setupEditor = (collection: DocCollection) => {
     ]);
     editor.doc = doc;
     editor.mode = 'page';
-    editor.std
-        .get(RefNodeSlotsProvider)
-        .docLinkClicked.on(({ pageId: docId }) => {
-            const target = collection.getDoc(docId);
-            if (!target) {
-                throw new Error(`Failed to jump to doc ${docId}`);
-            }
-            target.load();
-            editor.doc = target;
-        });
 
     return editor;
 }

@@ -1,7 +1,7 @@
 import { DeleteEntryForm } from "@/components/forms/delete-entry-form";
 import { UpdateEntryForm } from "@/components/forms/update-entry-form";
 import { usePopupDialog } from "@/libs/popup";
-import { Entry, EntryTreeNode, generateRxId, RxdbObserver, useRxdbContext, WithRxDoc } from "@/libs/rxdb";
+import { Entry, EntryTreeNode, generateRxId, useEntries } from "@/libs/rxdb";
 import { Button } from "@/libs/shadcn-ui/components/button";
 import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuSeparator } from "@/libs/shadcn-ui/components/dropdown-menu";
 import { FileText, Folder, FolderOpen, MoreHorizontal, SquarePen, Trash } from "lucide-react";
@@ -23,37 +23,32 @@ export function EntryTreeItem({ entry, expanded }: EntryTreeItemProps) {
 
     const { openDialog, closeDialog } = usePopupDialog()
 
-    const rxdbContext = useRxdbContext()
-    const { entries: entriesCollection } = rxdbContext.db.collections
+    const { insert, update, remove } = useEntries()
 
     const onCreateEntry = useCallback((type: string) => {
         const createEntry = async (formValues: Partial<Entry>) => {
-            const now = new Date();
-
-            const newEntry = await entriesCollection.insert({
+            const newEntry = await insert({
                 id: generateRxId(),
                 type: type,
-                name: formValues.name,
                 parent: entry.id,
-                order: now.getTime(),
-                createdAt: now.toISOString(),
+                name: formValues.name
             });
 
             closeDialog()
-            navigateToEntry(newEntry.id)
+            if (type !== 'folder') {
+                navigateToEntry(newEntry.id)
+            }
         }
 
         openDialog({
             content: <CreateEntryForm type={type} onSubmit={createEntry} />
         })
-    }, [openDialog, entriesCollection, entry.id, closeDialog, navigateToEntry])
+    }, [openDialog, insert, entry.id, closeDialog, navigateToEntry])
 
-    const showUpdateForm = useCallback((entry: WithRxDoc<Entry>) => {
+    const showUpdateForm = useCallback((entry: Entry) => {
         const updateEntry = async (formValues: Partial<Entry>) => {
-            await entry._doc.update({
-                $set: {
-                    name: formValues.name
-                }
+            await update(entry.id, {
+                name: formValues.name
             });
 
             closeDialog()
@@ -62,16 +57,16 @@ export function EntryTreeItem({ entry, expanded }: EntryTreeItemProps) {
         openDialog({
             content: <UpdateEntryForm entry={entry} onSubmit={updateEntry} />
         })
-    }, [openDialog, closeDialog])
+    }, [openDialog, update, closeDialog])
 
     const onDeleteEntry = useCallback(() => {
         if (entry.children.length === 0) {
-            entry._doc.remove()
+            remove(entry.id)
             return;
         }
 
         const handleDelete = async () => {
-            await entry._doc.remove()
+            await remove(entry.id)
             closeDialog()
             if (entry.id === currentEntryId) {
                 navigateToEntry(null)
@@ -81,23 +76,23 @@ export function EntryTreeItem({ entry, expanded }: EntryTreeItemProps) {
         openDialog({
             content: <DeleteEntryForm entry={entry} onSubmit={handleDelete} />
         })
-    }, [closeDialog, currentEntryId, entry, navigateToEntry, openDialog])
+    }, [closeDialog, currentEntryId, entry, navigateToEntry, openDialog, remove])
 
     const icon = entry.type === 'folder'
         ? expanded ? <FolderOpen size={16} /> : <Folder size={16} />
         : <FileText size={16} />
 
     return (
-        <div className="h-[32px] flex items-center pr-2 gap-2">
+        <div className="flex items-center pr-2 gap-2 ">
             <div>{icon}</div>
             <div className="grow grid">
                 <div className={cn('block whitespace-nowrap	overflow-hidden text-ellipsis')}>
-                    <RxdbObserver doc={entry._doc} field="name" defaultValue={`New ${entry.type}`} />
+                    {entry.name}
                 </div>
             </div>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button className="opacity-0 group-hover:opacity-100" variant="link" size='iconSm' >
+                    <Button className="opacity-0 group-hover:opacity-100 data-[state=open]:opacity-100 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground" variant="link" size='iconSm' >
                         <MoreHorizontal size={16} />
                     </Button>
                 </DropdownMenuTrigger>

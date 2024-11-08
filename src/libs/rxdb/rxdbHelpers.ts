@@ -1,6 +1,6 @@
 import { addRxPlugin, createRxDatabase } from 'rxdb';
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
-import { rxdbSchema } from './rxdb-schema';
+import { rxdbSchema } from './rxdbSchema';
 import { wrappedKeyCompressionStorage } from 'rxdb/plugins/key-compression';
 import { RxDBUpdatePlugin } from 'rxdb/plugins/update';
 

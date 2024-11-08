@@ -1,5 +1,5 @@
 import { useEditorContext } from "@/libs/editor/hooks/useEditorContext";
-import { useRxdbContext } from "@/libs/rxdb/hooks/rxdb-use-context";
+import { useRxdbContext } from "@/libs/rxdb/hooks/useRxdbContext";
 import { createDefaultDoc } from "@blocksuite/blocks";
 import React, { useEffect } from "react";
 

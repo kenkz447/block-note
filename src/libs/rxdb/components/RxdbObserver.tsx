@@ -18,7 +18,7 @@ export const RxdbObserver = (props: RxdbObserverProps) => {
         return () => {
             subscription.unsubscribe();
         };
-    }, [doc, field]);
+    }, [defaultValue, doc, field]);
 
     return <>{value}</>;
 };

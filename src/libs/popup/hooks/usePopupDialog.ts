@@ -1,5 +1,5 @@
 import React from "react";
-import { usePopupDialogContext } from "./popup-use-contexts"
+import { usePopupDialogContext } from "./usePopupContexts"
 
 export const usePopupDialog = () => {
     const popupDialogContext = usePopupDialogContext();

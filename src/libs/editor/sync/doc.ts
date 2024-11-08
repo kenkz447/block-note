@@ -9,7 +9,6 @@ export class WebSocketDocSource implements DocSource {
   private _onMessage = async (event: MessageEvent<Blob>) => {
     const rawData = await event.data.text();
     const data = JSON.parse(rawData) as WebSocketMessage;
-    console.log(data);
 
     if (data.channel !== 'doc') return;
 

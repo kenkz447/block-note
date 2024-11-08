@@ -1,8 +1,9 @@
-export * from './rxdb-types';
+export * from './rxdbTypes';
+export * from './hooks/useEntries';
 
-import { RxdbObserver } from "./components/rxdb-observer";
-import { useRxdbContext } from "./hooks/rxdb-use-context";
-import { generateRxId } from "./rxdb-helpers";
+import { RxdbObserver } from "./components/RxdbObserver";
+import { useRxdbContext } from "./hooks/useRxdbContext";
+import { generateRxId } from "./rxdbHelpers";
 
 export {
     useRxdbContext,

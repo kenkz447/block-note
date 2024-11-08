@@ -16,8 +16,8 @@ import {
     IndexedDBDocSource,
 } from '@blocksuite/sync';
 
-import { WebSocketAwarenessSource } from '@/libs/websocket/awareness';
-import { WebSocketDocSource } from '@/libs/websocket/doc';
+import { WebSocketAwarenessSource } from '../sync/awareness';
+import { WebSocketDocSource } from '../sync/doc';
 import { env } from '@/config/env';
 
 const BASE_WEBSOCKET_URL = new URL(env.sync.websocket);

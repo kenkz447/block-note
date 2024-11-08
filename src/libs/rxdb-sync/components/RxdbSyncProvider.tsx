@@ -1,8 +1,7 @@
 import { useCurrentUser } from "@/libs/auth";
-import { useRxdbContext } from "@/libs/rxdb/hooks/rxdb-use-context";
+import { useRxdbContext } from "@/libs/rxdb/hooks/useRxdbContext";
 import React, { useEffect } from "react";
 import { useRxSync } from "../hooks/useRxSync";
-
 
 export function RxdbSyncProvider({ children }: React.PropsWithChildren) {
     const db = useRxdbContext();
