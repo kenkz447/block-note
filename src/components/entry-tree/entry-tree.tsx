@@ -1,27 +1,68 @@
 import { Entry, EntryTreeNode, useEntries } from "@/libs/rxdb"
-import { InboxIcon, TriangleAlert } from "lucide-react"
+import { InboxIcon } from "lucide-react"
 import { arrayToTree } from "performant-array-to-tree"
 import Tree from "rc-tree"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useMemo, useRef, useState } from "react"
 import { EntryTreeItem } from "./entry-tree-item"
 import { useSearch } from "@tanstack/react-router";
 import { cn } from "@/libs/shadcn-ui/utils"
 import { useEntryPage } from "@/hooks/editor/use-entry-page"
 
-export function EntryTree() {
+interface EntryTreeProps {
+    readonly search?: string
+}
+
+export function EntryTree({ search }: EntryTreeProps) {
     const { entryId } = useSearch({ from: '/' })
     const navigateToEntry = useEntryPage()
     const { update, subscribe } = useEntries()
 
     const [entries, setEntries] = useState<Entry[] | undefined>(undefined)
-    const [openKeys, setOpenKeys] = useState<React.Key[]>([])
+    const [openKeys, setOpenKeys] = useState<React.Key[]>(() => {
+        return localStorage.getItem('openKeys')?.split(',') ?? []
+    })
+
+    const tree = useMemo(() => {
+        const _tree = arrayToTree(entries ?? [], { dataField: null, parentId: 'parent' }) as EntryTreeNode[];
+        return _tree;
+    }, [entries])
 
     useEffect(() => {
-        const sub = subscribe(setEntries)
+        const sub = subscribe((entries) => {
+            let filteredEntries = entries ?? [];
+            if (!search) {
+                setEntries(filteredEntries)
+                return;
+            }
+
+            filteredEntries = entries.filter((entry) => {
+                if (entry.type === 'folder') {
+                    return true
+                }
+
+                return entry.name.toLowerCase().includes(search.toLowerCase())
+            })
+
+            filteredEntries = filteredEntries?.filter((entry) => {
+                if (entry.type !== 'folder') {
+                    return true
+                }
+
+                const children = filteredEntries.filter((child) => child.parent === entry.id)
+                return children.length > 0
+            });
+
+            setEntries(filteredEntries)
+            setOpenKeys(filteredEntries.filter((entry) => entry.type === 'folder').map((entry) => entry.id))
+        });
         return () => {
             sub.unsubscribe();
         };
-    }, [subscribe])
+    }, [search, subscribe])
+
+    useEffect(() => {
+        localStorage.setItem('openKeys', openKeys.join(','))
+    }, [openKeys])
 
     if (!entries) {
         return (
@@ -30,8 +71,6 @@ export function EntryTree() {
             </div>
         )
     }
-
-    const tree = arrayToTree(entries, { dataField: null, parentId: 'parent' }) as EntryTreeNode[]
 
     const renderTreeNode = (entry: EntryTreeNode) => {
         const isActive = entryId === entry.id;

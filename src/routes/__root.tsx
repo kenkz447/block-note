@@ -1,21 +1,25 @@
 import { createRootRoute, Outlet } from '@tanstack/react-router'
 import { RxdbProvider } from '@/libs/rxdb/components/RxdbProvider';
 import { PopupProvider } from '@/libs/popup';
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/libs/shadcn-ui/components/resizable';
 import { EditorProvider } from '@/libs/editor';
 import { useCurrentUser } from '@/libs/auth';
 import { RxdbSyncProvider } from '@/libs/rxdb-sync';
 import { AuthProvider } from '@/libs/auth/components/AuthProvider';
 import { EditorBridgeProvider, RxdbBridgeProvider } from '@/libs/rxdb-bridge';
-import { Sidebar } from '@/components/sidebar/Sidebar';
-import { TopBar } from '@/components/top-bar/TopBar';
+import { MasterLayout } from '@/components/layout/MasterLayout';
+import { MasterLayoutMobile } from '@/components/layout/MasterLayoutMobile';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 function App() {
+    const isMobile = useIsMobile();
+
     const { currentUser } = useCurrentUser();
 
     if (currentUser === undefined) {
         return null;
     }
+
+    const Layout = isMobile ? MasterLayoutMobile : MasterLayout;
 
     return (
         <RxdbProvider>
@@ -24,16 +28,9 @@ function App() {
                     <RxdbBridgeProvider>
                         <EditorBridgeProvider>
                             <PopupProvider>
-                                <ResizablePanelGroup autoSaveId="main-layout" direction="horizontal">
-                                    <ResizablePanel collapsible={true} minSize={15} maxSize={50} defaultSize={20} className='bg-sidebar'>
-                                        <Sidebar />
-                                    </ResizablePanel>
-                                    <ResizableHandle />
-                                    <ResizablePanel>
-                                        <TopBar />
-                                        <Outlet />
-                                    </ResizablePanel>
-                                </ResizablePanelGroup>
+                                <Layout>
+                                    <Outlet />
+                                </Layout>
                             </PopupProvider>
                         </EditorBridgeProvider>
                     </RxdbBridgeProvider>
