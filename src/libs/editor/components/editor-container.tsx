@@ -1,14 +1,15 @@
 import { useEffect, useRef } from "react";
 import { useEditorContext } from "../hooks/useEditorContext";
 import { Entry } from "@/libs/rxdb";
+import { AffineEditorContainer } from "@blocksuite/presets";
 
 interface EditorContainerProps {
     readonly entry: Entry;
+    readonly editor: AffineEditorContainer;
 }
 
-export function EditorContainer({ entry }: EditorContainerProps) {
-
-    const { editor, collection } = useEditorContext();
+export function EditorContainer({ entry, editor }: EditorContainerProps) {
+    const { collection } = useEditorContext();
 
     const editorContainerRef = useRef<HTMLDivElement>(null);
 

@@ -2,7 +2,7 @@ import { Entry, EntryTreeNode, useEntries } from "@/libs/rxdb"
 import { InboxIcon } from "lucide-react"
 import { arrayToTree } from "performant-array-to-tree"
 import Tree from "rc-tree"
-import React, { useEffect, useMemo, useRef, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import { EntryTreeItem } from "./entry-tree-item"
 import { useSearch } from "@tanstack/react-router";
 import { cn } from "@/libs/shadcn-ui/utils"

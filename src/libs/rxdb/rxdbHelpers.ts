@@ -6,13 +6,13 @@ import { RxDBUpdatePlugin } from 'rxdb/plugins/update';
 
 addRxPlugin(RxDBUpdatePlugin);
 
-export const initRxdb = async () => {
+export const initRxdb = async (dbName: string) => {
     const storageWithKeyCompression = wrappedKeyCompressionStorage({
         storage: getRxStorageDexie()
     });
 
     const db = await createRxDatabase({
-        name: 'mydatabase',
+        name: dbName,
         storage: storageWithKeyCompression,
         eventReduce: true
     });

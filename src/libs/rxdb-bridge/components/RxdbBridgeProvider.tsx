@@ -18,14 +18,20 @@ export function RxdbBridgeProvider({ children }: React.PropsWithChildren) {
                 if (e.documentData.type === 'folder') {
                     return;
                 }
-                const doc = createDefaultDoc(editorCollection, { id: e.documentId })
-                doc.load();
+                const isDocExists = editorCollection.getDoc(e.documentId);
+                if (isDocExists) {
+                    return;
+                }
+                createDefaultDoc(editorCollection, { id: e.documentId })
             }),
             db.collections.entries.remove$.subscribe((e) => {
                 if (e.documentData.type === 'folder') {
                     return;
                 }
-
+                const isDocExists = editorCollection.getDoc(e.documentId);
+                if (!isDocExists) {
+                    return;
+                }
                 editorCollection.removeDoc(e.documentId)
             })
         ];

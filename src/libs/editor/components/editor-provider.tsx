@@ -1,42 +1,69 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { EditorContext, EditorContextType } from '../editor-context';
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { EditorContext } from '../editor-context';
 import { createDefaultDocCollection, initDefaultDocCollection } from '../utils/editor-collection-utils';
 import { effects as blocksEffects } from '@blocksuite/blocks/effects';
 import { effects as presetsEffects } from '@blocksuite/presets/effects';
-import { setupEditor } from "../utils/editor-utils";
-import { useEventListener } from "@/hooks/useEvent";
 import { useCurrentUser } from "@/libs/auth";
+import { DocCollection } from "@blocksuite/store";
 
 blocksEffects();
 presetsEffects();
 
+const ANONYMOUS_COLECTION_NAME = 'blocksuite-anonymous';
+
 export function EditorProvider({ children }: React.PropsWithChildren) {
   const { currentUser } = useCurrentUser();
 
-  const [context, setContext] = useState<EditorContextType>();
+  const collections = useRef<DocCollection[]>([]);
+  const [activeCollectionId, setActiveCollectionId] = useState<string>();
+  const [collection, setCollection] = useState<DocCollection>();
 
-  const setupContext = useCallback(async () => {
-    const collection = await createDefaultDocCollection(currentUser?.uid);
+  const setupCollection = useCallback(async (collectionId: string) => {
+    const syncEnable = !!currentUser;
+    const collection = await createDefaultDocCollection(collectionId, syncEnable);
     await initDefaultDocCollection(collection);
-    const editor = setupEditor(collection)
 
-    setContext({
-      editor,
-      collection,
-    });
-
-  }, [currentUser?.uid]);
+    setCollection(collection);
+  }, [currentUser]);
 
   useEffect(() => {
-    setupContext();
-  }, [setupContext]);
+    if (!activeCollectionId) {
+      return;
+    }
 
-  if (!context) {
+    const existingcollection = collections.current.find((collection) => collection.id === activeCollectionId);
+
+    if (existingcollection) {
+      setCollection(existingcollection);
+    }
+    else {
+      setupCollection(activeCollectionId);
+    }
+
+  }, [activeCollectionId, setupCollection]);
+
+  useEffect(() => {
+    collection?.start();
+    return () => {
+      collection?.waitForGracefulStop().then(collection?.forceStop);
+    };
+  }, [collection]);
+
+  useEffect(() => {
+    if (!currentUser) {
+      setActiveCollectionId(ANONYMOUS_COLECTION_NAME);
+    }
+    else {
+      setActiveCollectionId(currentUser.uid);
+    }
+  }, [currentUser]);
+
+  if (!collection || !collection.meta) {
     return null;
   }
 
   return (
-    <EditorContext.Provider value={context}>
+    <EditorContext.Provider value={{ collection }}>
       {children}
     </EditorContext.Provider>
   );

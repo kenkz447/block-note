@@ -22,7 +22,7 @@ import { env } from '@/config/env';
 
 const BASE_WEBSOCKET_URL = new URL(env.sync.websocket);
 
-export async function createDefaultDocCollection(workspace: string | undefined) {
+export async function createDefaultDocCollection(collectionId: string, syncEnable: boolean) {
     const idGenerator: IdGeneratorType = IdGeneratorType.NanoID;
     const schema = new Schema();
     schema.register(AffineSchemas);
@@ -33,8 +33,8 @@ export async function createDefaultDocCollection(workspace: string | undefined) 
     };
     let awarenessSources: DocCollectionOptions['awarenessSources'];
 
-    if (workspace) {
-        const ws = new WebSocket(new URL(`roomId=${workspace}`, BASE_WEBSOCKET_URL));
+    if (syncEnable) {
+        const ws = new WebSocket(new URL(`roomId=${collectionId}`, BASE_WEBSOCKET_URL));
         await new Promise((resolve, reject) => {
             ws.addEventListener('open', resolve);
             ws.addEventListener('error', reject);
@@ -52,7 +52,7 @@ export async function createDefaultDocCollection(workspace: string | undefined) 
                     shadows: [new BroadcastChannelDocSource()],
                 };
                 awarenessSources = [
-                    new BroadcastChannelAwarenessSource('quickEdgeless'),
+                    new BroadcastChannelAwarenessSource(collectionId),
                 ];
             });
     }
@@ -64,11 +64,11 @@ export async function createDefaultDocCollection(workspace: string | undefined) 
     );
 
     const options: DocCollectionOptions = {
-        id: 'quickEdgeless',
+        id: collectionId,
         schema,
         idGenerator,
         blobSources: {
-            main: new IndexedDBBlobSource('quickEdgeless'),
+            main: new IndexedDBBlobSource(collectionId),
         },
         docSources,
         awarenessSources,

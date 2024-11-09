@@ -89,9 +89,15 @@ export const useEntries = () => {
         return subscription;
     }, [db.collections.entries]);
 
+    const checkEntryExists = useCallback(async (entryId: string) => {
+        const doc = await db.collections.entries.findOne(entryId).exec() as RxDocument<Entry>;
+        return !!doc;
+    }, [db.collections.entries]);
+
     return {
         subscribe,
         subscribeSingle,
+        checkEntryExists,
         insert,
         update,
         remove,

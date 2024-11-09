@@ -1,41 +1,46 @@
-import { PropsWithChildren, useCallback, useEffect, useState } from "react";
+import { PropsWithChildren, useEffect, useState } from "react";
 import { RxdbContext } from "../rxdbContexts";
 import { initRxdb } from "../rxdbHelpers";
 import { RxDatabase } from "rxdb";
-import { useEventListener } from "@/hooks/useEvent";
+import { useCurrentUser } from "@/libs/auth";
+
+const ANONYMOUS_DB_NAME = 'anonymous';
 
 export const RxdbProvider = ({ children }: PropsWithChildren) => {
+    const { currentUser } = useCurrentUser();
+
+    const [activeDbName, setActiveDbName] = useState<string>();
     const [db, setDb] = useState<RxDatabase>();
 
-    const resetDb = useCallback(async () => {
-        await db?.remove();
-        await db?.destroy();
-        setDb(undefined);
-    }, [db]);
-
-    useEventListener({
-        event: 'LOGGED_OUT',
-        listen: resetDb
-    });
-
-    useEventListener({
-        event: 'LOGGED_IN',
-        listen: resetDb
-    });
-
     useEffect(() => {
-        if (db) {
+        if (!activeDbName || db) {
             return;
         }
 
-        const init = async () => {
-            const db = await initRxdb();
+        initRxdb(activeDbName).then((db) => {
             setDb(db);
-        };
-        init();
-    }, [db]);
+        });
 
-    if (!db) {
+    }, [activeDbName, db]);
+
+    useEffect(() => {
+        if (activeDbName !== db?.name) {
+            db?.destroy().then(() => {
+                setDb(undefined);
+            });
+        }
+    }, [activeDbName, db]);
+
+    useEffect(() => {
+        if (!currentUser) {
+            setActiveDbName(ANONYMOUS_DB_NAME);
+        }
+        else {
+            setActiveDbName(currentUser.uid);
+        }
+    }, [currentUser]);
+
+    if (!db || db.destroyed) {
         return null;
     }
 
