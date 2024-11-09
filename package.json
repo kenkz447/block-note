@@ -30,6 +30,7 @@
     "@toeverything/theme": "^1.0.17",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "eventemitter3": "^5.0.1",
     "firebase": "10.14.1",
     "lucide-react": "^0.454.0",
     "performant-array-to-tree": "^1.11.0",

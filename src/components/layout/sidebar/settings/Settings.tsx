@@ -3,14 +3,21 @@ import { Button } from "@/libs/shadcn-ui/components/button";
 import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/libs/shadcn-ui/components/dialog";
 import { Separator } from "@/libs/shadcn-ui/components/separator";
 import { useCallback } from "react";
+import { useNavigate } from '@tanstack/react-router';
 
-export function Settings() {
+interface SettingsProps {
+    readonly hide: () => void
+}
+
+export function Settings({ hide }: SettingsProps) {
     const { signOut } = useCurrentUser()
+    const navigate = useNavigate()
 
     const onSignOut = useCallback(async () => {
         await signOut()
-        location.href = '/'
-    }, [signOut])
+        navigate({ from: '/' })
+        hide()
+    }, [hide, navigate, signOut])
 
     return (
         <DialogContent className="w-9/12 max-w-[1024px]">

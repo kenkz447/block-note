@@ -167,7 +167,7 @@ export function EntryTree({ search }: EntryTreeProps) {
                         </div>
                         <div className="space-y-2 text-center">
                             <h2 className="text-2xl font-semibold tracking-tight">No data found</h2>
-                            <p className="text-gray-500 dark:text-gray-400">
+                            <p className="text-gray-500 dark:text-gray-400 line-clamp-2">
                                 It looks like there's no data to display. Try adding some new items.
                             </p>
                         </div>

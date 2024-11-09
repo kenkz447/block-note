@@ -40,9 +40,9 @@ export function Sidebar() {
 
     const showSettings = useCallback(() => {
         openDialog({
-            content: <Settings />
+            content: <Settings hide={closeDialog}/>
         })
-    }, [openDialog])
+    }, [closeDialog, openDialog])
 
     return (
         <div className='h-full flex flex-col'>

@@ -4,16 +4,19 @@ import { createDefaultDocCollection, initDefaultDocCollection } from '../utils/e
 import { effects as blocksEffects } from '@blocksuite/blocks/effects';
 import { effects as presetsEffects } from '@blocksuite/presets/effects';
 import { setupEditor } from "../utils/editor-utils";
+import { useEventListener } from "@/hooks/useEvent";
+import { useCurrentUser } from "@/libs/auth";
 
 blocksEffects();
 presetsEffects();
 
 export function EditorProvider({ children }: React.PropsWithChildren) {
+  const { currentUser } = useCurrentUser();
 
   const [context, setContext] = useState<EditorContextType>();
 
-  const setUpEditor = useCallback(async () => {
-    const collection = await createDefaultDocCollection();
+  const setupContext = useCallback(async () => {
+    const collection = await createDefaultDocCollection(currentUser?.uid);
     await initDefaultDocCollection(collection);
     const editor = setupEditor(collection)
 
@@ -21,11 +24,12 @@ export function EditorProvider({ children }: React.PropsWithChildren) {
       editor,
       collection,
     });
-  }, []);
+
+  }, [currentUser?.uid]);
 
   useEffect(() => {
-    setUpEditor();
-  }, [setUpEditor]);
+    setupContext();
+  }, [setupContext]);
 
   if (!context) {
     return null;

@@ -22,7 +22,7 @@ import { env } from '@/config/env';
 
 const BASE_WEBSOCKET_URL = new URL(env.sync.websocket);
 
-export async function createDefaultDocCollection() {
+export async function createDefaultDocCollection(workspace: string | undefined) {
     const idGenerator: IdGeneratorType = IdGeneratorType.NanoID;
     const schema = new Schema();
     schema.register(AffineSchemas);
@@ -32,9 +32,9 @@ export async function createDefaultDocCollection() {
         main: new IndexedDBDocSource(),
     };
     let awarenessSources: DocCollectionOptions['awarenessSources'];
-    const room = "jgHupDU1wQP6cxzqfoLFVRJsUyF3"
-    if (room) {
-        const ws = new WebSocket(new URL(`roomId=${room}`, BASE_WEBSOCKET_URL));
+
+    if (workspace) {
+        const ws = new WebSocket(new URL(`roomId=${workspace}`, BASE_WEBSOCKET_URL));
         await new Promise((resolve, reject) => {
             ws.addEventListener('open', resolve);
             ws.addEventListener('error', reject);

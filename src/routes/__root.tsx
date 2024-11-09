@@ -9,11 +9,35 @@ import { EditorBridgeProvider, RxdbBridgeProvider } from '@/libs/rxdb-bridge';
 import { MasterLayout } from '@/components/layout/MasterLayout';
 import { MasterLayoutMobile } from '@/components/layout/MasterLayoutMobile';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useEventListener } from '@/hooks/useEvent';
+import { useCallback } from 'react';
 
 function App() {
     const isMobile = useIsMobile();
 
     const { currentUser } = useCurrentUser();
+
+    // const resetApp = useCallback(async () => {
+    //     const allDb = await indexedDB.databases()
+    //     allDb.forEach(async ({ name }) => {
+    //         if (name?.startsWith('firebase')) {
+    //             return;
+    //         }
+
+    //         indexedDB.deleteDatabase(name!);
+    //     })
+    //     location.href = '/';
+    // }, []);
+
+    // useEventListener({
+    //     event: 'LOGGED_IN',
+    //     listen: resetApp
+    // })
+
+    // useEventListener({
+    //     event: 'LOGGED_OUT',
+    //     listen: resetApp
+    // })
 
     if (currentUser === undefined) {
         return null;

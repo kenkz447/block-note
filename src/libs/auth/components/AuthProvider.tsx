@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AuthContext, AuthContextType } from "../authContext";
 import { getAuth, User } from "firebase/auth";
-import { cleanIndexedDb } from "@/helpers/indexedDbHelpers";
+import { useEventEmitter } from "@/hooks/useEvent";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+    const emitSignedOut = useEventEmitter('LOGGED_OUT');
+
     const [currentUser, setCurrentUser] = useState<User | null>();
 
     useEffect(() => {
@@ -17,10 +19,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const signOut = useCallback(async () => {
         const auth = getAuth();
-
         await auth.signOut();
-        await cleanIndexedDb();
-    }, []);
+        emitSignedOut();
+    }, [emitSignedOut]);
 
     const contextValue = useMemo((): AuthContextType => {
         return {
