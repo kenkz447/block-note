@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { EditorContainer } from '@/libs/editor'
 import { z } from 'zod'
-import { Entry, useRxdbContext } from '@/libs/rxdb';
+import { Entry, useEntries, useRxdbContext } from '@/libs/rxdb';
 import { useEffect, useMemo, useState } from 'react';
 import { useEditorContext } from '@/libs/editor/hooks/useEditorContext';
 import { RefNodeSlotsProvider } from '@blocksuite/blocks';
@@ -17,34 +17,44 @@ export const Route = createFileRoute('/')({
 function RouteComponent() {
   const { entryId } = Route.useSearch();
   const navigate = useNavigate()
-  
+
+
   const { collection } = useEditorContext()
-  const editor = useMemo(() => setupEditor(collection), [collection]);
+  const { db } = useRxdbContext()
 
-  const rxdbContext = useRxdbContext()
-  const { entries: entriesCollection } = rxdbContext.db.collections
+  const { subscribeSingle } = useEntries()
 
-  const [entry, setEntry] = useState<Entry>()
-
-  useEffect(() => {
-    if (!entryId) {
+  const editor = useMemo(() => {
+    if (!collection) {
       return;
     }
 
-    const sub = entriesCollection.findOne(entryId).$.subscribe((entry) => {
-      setEntry(entry)
-    })
+    return setupEditor(collection);
+  }, [collection]);
+
+  const [entry, setEntry] = useState<Entry | null>()
+
+  useEffect(() => {
+    if (!entryId || !db) {
+      return;
+    }
+
+    const sub = subscribeSingle(entryId, setEntry)
 
     return () => {
       sub.unsubscribe()
     }
-  }, [entriesCollection, entryId])
+  }, [subscribeSingle, entryId, db])
 
   useEffect(() => {
+    if (!editor) {
+      return;
+    }
+
     const disposable = editor.std
       .get(RefNodeSlotsProvider)
       .docLinkClicked.on(({ pageId: docId }) => {
-        const target = collection.getDoc(docId);
+        const target = collection!.getDoc(docId);
         if (!target) {
           throw new Error(`Failed to jump to doc ${docId}`);
         }
@@ -62,7 +72,7 @@ function RouteComponent() {
     }
   }, [collection, editor, navigate])
 
-  if (!entry) {
+  if (!entry || !editor) {
     return null;
   }
 

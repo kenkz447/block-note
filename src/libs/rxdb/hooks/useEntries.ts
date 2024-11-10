@@ -3,6 +3,7 @@ import { useRxdbContext } from "./useRxdbContext";
 import { RxDocument } from "rxdb";
 import { Entry } from "../rxdbTypes";
 import { firstBy } from "thenby";
+import { ensureCollectionExist } from "../rxdbUtils";
 
 interface InsertEntryParams {
     id: string;
@@ -19,22 +20,27 @@ interface UpdateEntryParams {
 
 const DEFAULT_ENTRY_NAME = 'Untitled Document';
 
+
 export const useEntries = () => {
     const { db } = useRxdbContext();
 
     const insert = useCallback(async (params: InsertEntryParams): Promise<Entry> => {
+        ensureCollectionExist(db, 'entries');
+
         const now = new Date();
 
-        return await db.collections.entries.insert({
+        return await db!.collections.entries.insert({
             ...params,
             name: params.name || DEFAULT_ENTRY_NAME,
             order: now.getTime(),
             createdAt: now.toISOString(),
         });
-    }, [db.collections]);
+    }, [db]);
 
     const update = useCallback(async (entryId: string, params: UpdateEntryParams) => {
-        const doc = await db.collections.entries.findOne(entryId).exec() as RxDocument<Entry>;
+        ensureCollectionExist(db, 'entries');
+
+        const doc = await db!.collections.entries.findOne(entryId).exec() as RxDocument<Entry>;
         if (!doc) {
             throw new Error(`Entry not found: ${entryId}`);
         }
@@ -42,20 +48,24 @@ export const useEntries = () => {
         return doc.update({
             $set: params
         });
-    }, [db.collections.entries]);
+    }, [db]);
 
     const remove = useCallback(async (entryId: string) => {
-        const doc = await db.collections.entries.findOne(entryId).exec() as RxDocument<Entry>;
+        ensureCollectionExist(db, 'entries');
+
+        const doc = await db!.collections.entries.findOne(entryId).exec() as RxDocument<Entry>;
         if (!doc) {
             throw new Error(`Entry not found: ${entryId}`);
         }
 
         return doc.remove();
-    }, [db.collections.entries]);
+    }, [db]);
 
     const subscribe = useCallback((callback: (entry: Entry[]) => void) => {
+        ensureCollectionExist(db, 'entries');
+
         const getEntries = async () => {
-            const entriesData = await db.collections.entries.find().exec() as RxDocument<Entry>[]
+            const entriesData = await db!.collections.entries.find().exec() as RxDocument<Entry>[]
             const entries = entriesData.map((doc) => doc._data);
 
             const sortedEntries = entries.sort(
@@ -71,13 +81,15 @@ export const useEntries = () => {
 
         getEntries();
 
-        const subscription = db.collections.entries.$.subscribe(getEntries)
+        const subscription = db!.collections.entries.$.subscribe(getEntries)
 
         return subscription;
-    }, [db.collections.entries]);
+    }, [db]);
 
     const subscribeSingle = useCallback((entryId: string, callback: (entry: Entry | null) => void) => {
-        const subscription = db.collections.entries.findOne(entryId).$.subscribe((doc: RxDocument<Entry>) => {
+        ensureCollectionExist(db, 'entries');
+
+        const subscription = db!.collections.entries.findOne(entryId).$.subscribe((doc: RxDocument<Entry>) => {
             if (!doc) {
                 callback(null);
                 return;
@@ -87,12 +99,14 @@ export const useEntries = () => {
         });
 
         return subscription;
-    }, [db.collections.entries]);
+    }, [db]);
 
     const checkEntryExists = useCallback(async (entryId: string) => {
-        const doc = await db.collections.entries.findOne(entryId).exec() as RxDocument<Entry>;
+        ensureCollectionExist(db, 'entries');
+
+        const doc = await db!.collections.entries.findOne(entryId).exec() as RxDocument<Entry>;
         return !!doc;
-    }, [db.collections.entries]);
+    }, [db]);
 
     return {
         subscribe,

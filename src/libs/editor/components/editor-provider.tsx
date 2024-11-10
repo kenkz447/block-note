@@ -3,31 +3,43 @@ import { EditorContext } from '../editor-context';
 import { createDefaultDocCollection, initDefaultDocCollection } from '../utils/editor-collection-utils';
 import { effects as blocksEffects } from '@blocksuite/blocks/effects';
 import { effects as presetsEffects } from '@blocksuite/presets/effects';
-import { useCurrentUser } from "@/libs/auth";
 import { DocCollection } from "@blocksuite/store";
+import { User } from "firebase/auth";
 
 blocksEffects();
 presetsEffects();
 
 const ANONYMOUS_COLECTION_NAME = 'blocksuite-anonymous';
 
-export function EditorProvider({ children }: React.PropsWithChildren) {
-  const { currentUser } = useCurrentUser();
+interface EditorProviderProps {
+  readonly currentUser: User | null;
+  readonly sync: boolean;
+}
 
+export function EditorProvider({ currentUser, sync, children }: React.PropsWithChildren<EditorProviderProps>) {
   const collections = useRef<DocCollection[]>([]);
   const [activeCollectionId, setActiveCollectionId] = useState<string>();
   const [collection, setCollection] = useState<DocCollection>();
 
   const setupCollection = useCallback(async (collectionId: string) => {
-    const syncEnable = !!currentUser;
-    const collection = await createDefaultDocCollection(collectionId, syncEnable);
+    const collection = await createDefaultDocCollection(collectionId, sync);
     await initDefaultDocCollection(collection);
 
     setCollection(collection);
-  }, [currentUser]);
+  }, [sync]);
 
   useEffect(() => {
-    if (!activeCollectionId) {
+    if (activeCollectionId !== collection?.id) {
+      collection?.waitForGracefulStop().then(() => {
+        collection?.forceStop();
+        setCollection(undefined);
+      });
+    }
+  }, [activeCollectionId, collection]);
+
+  useEffect(() => {
+    const skipCreateColleciton = !activeCollectionId || collection;
+    if (skipCreateColleciton) {
       return;
     }
 
@@ -40,14 +52,7 @@ export function EditorProvider({ children }: React.PropsWithChildren) {
       setupCollection(activeCollectionId);
     }
 
-  }, [activeCollectionId, setupCollection]);
-
-  useEffect(() => {
-    collection?.start();
-    return () => {
-      collection?.waitForGracefulStop().then(collection?.forceStop);
-    };
-  }, [collection]);
+  }, [activeCollectionId, collection, setupCollection]);
 
   useEffect(() => {
     if (!currentUser) {
@@ -57,10 +62,6 @@ export function EditorProvider({ children }: React.PropsWithChildren) {
       setActiveCollectionId(currentUser.uid);
     }
   }, [currentUser]);
-
-  if (!collection || !collection.meta) {
-    return null;
-  }
 
   return (
     <EditorContext.Provider value={{ collection }}>

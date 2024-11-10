@@ -7,6 +7,10 @@ export function EditorBridgeProvider({ children }: React.PropsWithChildren) {
     const { insert, checkEntryExists } = useEntries();
 
     useEffect(() => {
+        if (!collection) {
+            return;
+        }
+
         const disposable = collection.slots.docAdded.on(async (docId) => {
             const isEntryExists = await checkEntryExists(docId);
             if (isEntryExists) {
