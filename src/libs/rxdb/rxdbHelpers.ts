@@ -32,7 +32,7 @@ export const initRxdb = async (dbName: string) => {
 
 export const syncRxdb = (db: RxDatabase) => {
     const projectId = env.firebaseConfig.projectId;
-    const remoteEntriesCollection = collection(firestore, 'workspaces', db.name, 'entries');
+    const remoteEntriesCollection = collection(firestore, 'workspaces', db.name, 'projects', db.name, 'entries');
 
     replicateFirestore(
         {

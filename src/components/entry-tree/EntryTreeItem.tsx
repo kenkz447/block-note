@@ -1,12 +1,12 @@
-import { DeleteEntryForm } from "@/components/forms/delete-entry-form";
-import { UpdateEntryForm } from "@/components/forms/update-entry-form";
+import { DeleteEntryForm } from "@/components/forms/DeleteEntryForm";
+import { UpdateEntryForm } from "@/components/forms/updateEntryForm";
 import { usePopupDialog } from "@/libs/popup";
 import { Entry, EntryTreeNode, generateRxId, useEntries } from "@/libs/rxdb";
 import { Button } from "@/libs/shadcn-ui/components/button";
 import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuSeparator } from "@/libs/shadcn-ui/components/dropdown-menu";
 import { FileText, Folder, FolderOpen, MoreHorizontal, SquarePen, Trash } from "lucide-react";
 import { useCallback } from "react";
-import { CreateEntryForm } from "../forms/create-entry-form";
+import { CreateEntryForm } from "../forms/createEntryForm";
 import { useEntryPage } from "@/hooks/routes/useEntryPage";
 import { cn } from "@/libs/shadcn-ui/utils";
 import { useSearch } from "@tanstack/react-router";

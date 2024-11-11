@@ -2,10 +2,10 @@ import { Button } from "@/libs/shadcn-ui/components/button";
 import { EntryTree } from "../../entry-tree/EntryTree";
 import { useCurrentUser, useGoogleSignIn } from "@/libs/auth";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/libs/shadcn-ui/components/dropdown-menu";
-import { ChevronsUpDown, Circle, FileText, FolderPlus, Plus, SquareEqual } from "lucide-react";
+import { ChevronsUpDown, Circle, FilePlus, FileText, FolderPlus, Plus, PlusSquare, SquareEqual } from "lucide-react";
 import { usePopupDialog } from "@/libs/popup";
 import { Entry, generateRxId, useEntries } from "@/libs/rxdb";
-import { CreateEntryForm } from "../../forms/create-entry-form";
+import { CreateEntryForm } from "../../forms/createEntryForm";
 import { Input } from "@/libs/shadcn-ui/components/input";
 import { useCallback, useState } from "react";
 import { Avatar, AvatarImage } from "@/libs/shadcn-ui/components/avatar";
@@ -74,23 +74,29 @@ export function Sidebar() {
             }
             <div className="grow flex flex-col">
                 <div className="grow">
-                    <div className="flex gap-2 px-[16px] text-xs font-medium text-sidebar-foreground/70 mb-4">
+                    <div className="flex gap-2 px-[16px] mb-4">
                         <Input placeholder="Search" onChange={(e) => setSearch(e.currentTarget.value)} />
                         <div>
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <Button variant="outline" size="icon" className="hover:bg-sidebar-accent data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
+                                    <Button variant="outline" size="icon" className="text-sidebar-foreground/70 hover:bg-sidebar-accent data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
                                         <Plus />
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent side="right" align="start" className="w-[150px]">
-                                    <DropdownMenuItem onClick={() => onNewEntry('folder')}><FolderPlus />New Folder</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => onNewEntry('version')}><SquareEqual />New Version</DropdownMenuItem>
                                     <Separator />
-                                    <DropdownMenuItem onClick={() => onNewEntry('document')}><FileText />New Document</DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => onNewEntry('document')}><SquareEqual />New Board</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => onNewEntry('folder')}><FolderPlus />New Folder</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => onNewEntry('document')}><FilePlus />New Document</DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         </div>
+                    </div>
+                    <div className="px-[16px] flex">
+                        <Button variant="link" size="icon" className="block hover:bg-sidebar-accent data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
+                            1.0.0
+                        </Button>
+                        <div className="grow"></div>
                     </div>
                     <EntryTree
                         search={search}
