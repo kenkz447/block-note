@@ -3,10 +3,10 @@ import { InboxIcon } from "lucide-react"
 import { arrayToTree } from "performant-array-to-tree"
 import Tree from "rc-tree"
 import React, { useEffect, useMemo, useState } from "react"
-import { EntryTreeItem } from "./entry-tree-item"
+import { EntryTreeItem } from "./EntryTreeItem"
 import { useSearch } from "@tanstack/react-router";
 import { cn } from "@/libs/shadcn-ui/utils"
-import { useEntryPage } from "@/hooks/editor/use-entry-page"
+import { useEntryPage } from "@/hooks/routes/useEntryPage"
 
 interface EntryTreeProps {
     readonly search?: string

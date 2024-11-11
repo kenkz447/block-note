@@ -1,16 +1,16 @@
 import { Button } from "@/libs/shadcn-ui/components/button";
-import { EntryTree } from "../../entry-tree/entry-tree";
+import { EntryTree } from "../../entry-tree/EntryTree";
 import { useCurrentUser, useGoogleSignIn } from "@/libs/auth";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/libs/shadcn-ui/components/dropdown-menu";
-import { ChevronsUpDown, Circle, FilePlus, FileText, FolderPlus, PlusCircle } from "lucide-react";
+import { ChevronsUpDown, Circle, FileText, FolderPlus, Plus, SquareEqual } from "lucide-react";
 import { usePopupDialog } from "@/libs/popup";
 import { Entry, generateRxId, useEntries } from "@/libs/rxdb";
 import { CreateEntryForm } from "../../forms/create-entry-form";
 import { Input } from "@/libs/shadcn-ui/components/input";
-import { Separator } from "@/libs/shadcn-ui/components/separator";
 import { useCallback, useState } from "react";
 import { Avatar, AvatarImage } from "@/libs/shadcn-ui/components/avatar";
 import { Settings } from "./settings/Settings";
+import { Separator } from "@/libs/shadcn-ui/components/separator";
 
 export function Sidebar() {
     const { currentUser } = useCurrentUser();
@@ -40,12 +40,12 @@ export function Sidebar() {
 
     const showSettings = useCallback(() => {
         openDialog({
-            content: <Settings hide={closeDialog}/>
+            content: <Settings hide={closeDialog} />
         })
     }, [closeDialog, openDialog])
 
     return (
-        <div className='h-full flex flex-col'>
+        <div className='h-full flex flex-col min-w-[255px]'>
             {
                 currentUser
                     ? (
@@ -74,29 +74,29 @@ export function Sidebar() {
             }
             <div className="grow flex flex-col">
                 <div className="grow">
-                    <div className="px-[16px] text-xs font-medium text-sidebar-foreground/70 mb-4">
+                    <div className="flex gap-2 px-[16px] text-xs font-medium text-sidebar-foreground/70 mb-4">
                         <Input placeholder="Search" onChange={(e) => setSearch(e.currentTarget.value)} />
+                        <div>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="outline" size="icon" className="hover:bg-sidebar-accent data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
+                                        <Plus />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent side="right" align="start" className="w-[150px]">
+                                    <DropdownMenuItem onClick={() => onNewEntry('folder')}><FolderPlus />New Folder</DropdownMenuItem>
+                                    <Separator />
+                                    <DropdownMenuItem onClick={() => onNewEntry('document')}><FileText />New Document</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => onNewEntry('document')}><SquareEqual />New Board</DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
                     </div>
                     <EntryTree
                         search={search}
                     />
                 </div>
                 <div className="p-4 flex flex-col gap-2">
-                    <Separator />
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="w-full flex items-center hover:bg-sidebar-accent data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
-                                <PlusCircle />
-                                <span className="inline grow text-left line-height-1">
-                                    New
-                                </span>
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent side="top" className="w-[--radix-popper-anchor-width]">
-                            <DropdownMenuItem onClick={() => onNewEntry('folder')}><FolderPlus /> Folder</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => onNewEntry('document')}><FilePlus /> Document</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
                     {
                         !currentUser && (
                             <Button onClick={googleSignIn} className="w-full">

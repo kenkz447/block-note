@@ -7,7 +7,7 @@ import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuConten
 import { FileText, Folder, FolderOpen, MoreHorizontal, SquarePen, Trash } from "lucide-react";
 import { useCallback } from "react";
 import { CreateEntryForm } from "../forms/create-entry-form";
-import { useEntryPage } from "@/hooks/editor/use-entry-page";
+import { useEntryPage } from "@/hooks/routes/useEntryPage";
 import { cn } from "@/libs/shadcn-ui/utils";
 import { useSearch } from "@tanstack/react-router";
 
@@ -60,7 +60,7 @@ export function EntryTreeItem({ entry, expanded }: EntryTreeItemProps) {
     }, [openDialog, update, closeDialog])
 
     const onDeleteEntry = useCallback(() => {
-        if (entry.children.length === 0) {
+        if (entry.type === 'folder' && entry.children.length === 0) {
             remove(entry.id)
             return;
         }

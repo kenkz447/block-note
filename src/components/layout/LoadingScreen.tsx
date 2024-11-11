@@ -15,16 +15,6 @@ export const LoadingScreen = ({ children }: LoadingScreenProps) => {
 
         return (
             <div className="fixed h-full w-full flex flex-col items-center justify-center">
-                <div className="mb-4">
-                    <div className="h-12 px-4 flex items-center justify-center mb-4">
-                        <span className="tracking-wide">D</span>
-                        <span className="tracking-wide relative text-orange-600">
-                            <Circle size={26} strokeWidth={1} />
-                            <FileText size={16} strokeWidth={1.8} className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]" />
-                        </span>
-                        <span className="tracking-wide">C SPACE</span>
-                    </div>
-                </div>
                 <div className="flex flex-col space-y-3">
                     <Skeleton className="h-[125px] w-[250px] rounded-xl" />
                     <div className="space-y-2">

@@ -1,11 +1,9 @@
 import './styles/index.css'
 import './styles/tree.css'
-
-import '@toeverything/theme/style.css'
+import './styles/editor.css'
 
 import './bootstraps/firebase'
 
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 

@@ -21,7 +21,7 @@ export function EditorContainer({ entry, editor }: EditorContainerProps) {
     }, [editor]);
 
     useEffect(() => {
-        const doc = collection.getDoc(entry.id);
+        const doc = collection!.getDoc(entry.id);
         if (!doc) {
             console.error(`Failed to get doc: ${entry.id}`);
             return;

@@ -18,7 +18,6 @@ function RouteComponent() {
   const { entryId } = Route.useSearch();
   const navigate = useNavigate()
 
-
   const { collection } = useEditorContext()
   const { db } = useRxdbContext()
 

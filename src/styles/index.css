@@ -85,6 +85,13 @@
   }
 }
 
+/** Modify the base layer */
+@layer base {
+  svg {
+    display: inline;
+  }
+}
+
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
@@ -97,19 +104,5 @@ body {
 }
 
 .home-container {
-  box-sizing: border-box;
-  font-family: var(--affine-font-family);
-  font-size: var(--affine-font-base);
-  line-height: var(--affine-line-height);
-  color: var(--affine-text-primary-color);
-  outline: none;
-  resize: none;
-  border: 0;
-  width: 100%;
-  max-width: var(--affine-editor-width);
-  margin-left: auto;
-  margin-right: auto;
-  padding: 38px 0;
-  padding-left: var(--affine-editor-side-padding, 24px);
-  padding-right: var(--affine-editor-side-padding, 24px);
+  --affine-editor-width: 100%;
 }
