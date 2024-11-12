@@ -6,7 +6,7 @@ import { useCurrentUser } from '@/libs/auth';
 import { AuthProvider } from '@/libs/auth/components/AuthProvider';
 import { MasterLayout } from '@/components/layout/MasterLayout';
 import { MasterLayoutMobile } from '@/components/layout/MasterLayoutMobile';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/layout/useMobile';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
 import { useRxdbContext } from '@/libs/rxdb';
 import { useEditorContext } from '@/libs/editor/hooks/useEditorContext';

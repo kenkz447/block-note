@@ -12,9 +12,9 @@ import { signal } from '@preact/signals-core';
 import { css, html, LitElement, type TemplateResult } from 'lit';
 import { customElement, query } from 'lit/decorators.js';
 
-import type { DocInfo, MessageData, MessageDataType } from './pdf/types.js';
+import type { DocInfo, MessageData, MessageDataType } from '../editorTypes.js';
 
-import { MessageOp, RenderKind, State } from './pdf/types.js';
+import { MessageOp, RenderKind, State } from '../editorTypes.js';
 
 const DPI = window.devicePixelRatio;
 

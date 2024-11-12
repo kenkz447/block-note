@@ -1,5 +1,5 @@
-import { EditorProvider } from './components/editor-provider';
-import { EditorContainer } from './components/editor-container';
+import { EditorProvider } from './components/EditorProvider';
+import { EditorContainer } from './components/EditorContainer';
 
 import { Doc } from '@blocksuite/store';
 

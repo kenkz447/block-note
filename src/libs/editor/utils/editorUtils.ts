@@ -1,14 +1,13 @@
 import { AffineEditorContainer } from '@blocksuite/presets';
-import { assertExists } from "@blocksuite/global/utils";
 import { BlockCollection, DocCollection } from "@blocksuite/store";
-import { AttachmentBlockService, CommunityCanvasTextFonts, DocModeExtension, EdgelessEditorBlockSpecs, FontConfigExtension, NotificationExtension, OverrideThemeExtension, PageEditorBlockSpecs, ParseDocUrlExtension, RefNodeSlotsExtension, RefNodeSlotsProvider, SpecProvider } from "@blocksuite/blocks";
-import { mockDocModeService, mockNotificationService, mockParseDocUrlService, themeExtension } from '../mock-services';
+import { AttachmentBlockService, CommunityCanvasTextFonts, DocModeExtension, EdgelessEditorBlockSpecs, FontConfigExtension, NotificationExtension, OverrideThemeExtension, PageEditorBlockSpecs, ParseDocUrlExtension, RefNodeSlotsExtension, SpecProvider } from "@blocksuite/blocks";
+import { mockDocModeService, mockNotificationService, mockParseDocUrlService, themeExtension } from '../editorServices';
 import {
     BlockFlavourIdentifier,
     BlockServiceIdentifier,
     type ExtensionType,
     StdIdentifier,
-  } from '@blocksuite/block-std';
+} from '@blocksuite/block-std';
 
 class CustomAttachmentBlockService extends AttachmentBlockService {
     override mounted(): void {
@@ -88,7 +87,11 @@ function patchPageRootSpec(editor: AffineEditorContainer, collection: DocCollect
 export const setupEditor = (collection: DocCollection) => {
     const blockCollection = collection.docs.values().next()
         .value as BlockCollection;
-    assertExists(blockCollection, 'Need to create a doc first');
+
+    if (!blockCollection) {
+        throw new Error('No block collection found');
+    }
+
     const doc = blockCollection.getDoc();
 
     const editor = new AffineEditorContainer();

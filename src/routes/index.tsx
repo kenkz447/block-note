@@ -5,7 +5,7 @@ import { Entry, useEntries, useRxdbContext } from '@/libs/rxdb';
 import { useEffect, useMemo, useState } from 'react';
 import { useEditorContext } from '@/libs/editor/hooks/useEditorContext';
 import { RefNodeSlotsProvider } from '@blocksuite/blocks';
-import { setupEditor } from '@/libs/editor/utils/editor-utils';
+import { setupEditor } from '@/libs/editor/utils/editorUtils';
 
 export const Route = createFileRoute('/')({
   component: RouteComponent,

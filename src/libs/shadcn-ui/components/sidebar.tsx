@@ -5,7 +5,7 @@ import { Slot } from "@radix-ui/react-slot"
 import { VariantProps, cva } from "class-variance-authority"
 import { PanelLeft } from "lucide-react"
 
-import { useIsMobile } from "@/hooks/use-mobile"
+import { useIsMobile } from "@/hooks/layout/useMobile"
 import { cn } from "@/libs/shadcn-ui/utils"
 import { Button } from "./button"
 import { Input } from "./input"

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { EditorContext } from '../editor-context';
-import { createDefaultDocCollection, initDefaultDocCollection } from '../utils/editor-collection-utils';
+import { EditorContext } from '../editorContext';
+import { createDefaultDocCollection, initDefaultDocCollection } from '../utils/docCollectionUtils';
 import { effects as blocksEffects } from '@blocksuite/blocks/effects';
 import { effects as presetsEffects } from '@blocksuite/presets/effects';
 import { DocCollection } from "@blocksuite/store";
@@ -9,7 +9,7 @@ import { User } from "firebase/auth";
 blocksEffects();
 presetsEffects();
 
-const ANONYMOUS_COLECTION_NAME = 'blocksuite-anonymous';
+const ANONYMOUS_COLLECTION_NAME = 'blocksuite-anonymous';
 
 interface EditorProviderProps {
   readonly currentUser: User | null;
@@ -38,15 +38,15 @@ export function EditorProvider({ currentUser, sync, children }: React.PropsWithC
   }, [activeCollectionId, collection]);
 
   useEffect(() => {
-    const skipCreateColleciton = !activeCollectionId || collection;
-    if (skipCreateColleciton) {
+    const skipCreateCollection = !activeCollectionId || collection;
+    if (skipCreateCollection) {
       return;
     }
 
-    const existingcollection = collections.current.find((collection) => collection.id === activeCollectionId);
+    const existingCollection = collections.current.find((collection) => collection.id === activeCollectionId);
 
-    if (existingcollection) {
-      setCollection(existingcollection);
+    if (existingCollection) {
+      setCollection(existingCollection);
     }
     else {
       setupCollection(activeCollectionId);
@@ -56,7 +56,7 @@ export function EditorProvider({ currentUser, sync, children }: React.PropsWithC
 
   useEffect(() => {
     if (!currentUser) {
-      setActiveCollectionId(ANONYMOUS_COLECTION_NAME);
+      setActiveCollectionId(ANONYMOUS_COLLECTION_NAME);
     }
     else {
       setActiveCollectionId(currentUser.uid);

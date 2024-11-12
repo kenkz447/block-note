@@ -20,7 +20,7 @@ import {
 import { type DocCollection, Slot } from '@blocksuite/store';
 import { signal } from '@preact/signals-core';
 
-import type { AttachmentViewerPanel } from './attachment-viewer-panel';
+import type { AttachmentViewerPanel } from './elements/AttachmentViewerPanel';
 
 function getModeFromStorage() {
   const mapJson = localStorage.getItem('playground:docMode');
