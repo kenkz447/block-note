@@ -1,47 +1,28 @@
 {
-  "name": "node-typescript-boilerplate",
-  "version": "0.0.0",
-  "description": "Minimalistic boilerplate to quick-start Node.js development in TypeScript.",
-  "type": "module",
-  "engines": {
-    "node": ">= 20.9 < 21"
-  },
-  "devDependencies": {
-    "@eslint/js": "~9.10",
-    "@types/eslint__js": "~8.42",
-    "@types/node": "~20",
-    "@typescript-eslint/parser": "~8.5",
-    "@vitest/coverage-v8": "~2.1",
-    "@vitest/eslint-plugin": "~1.1",
-    "eslint": "~9.10",
-    "globals": "~15.9",
-    "rimraf": "~6.0",
-    "ts-api-utils": "~1.3",
-    "typescript-eslint": "~8.5",
-    "typescript": "~5.5",
-    "vitest": "~2.1"
-  },
-  "scripts": {
-    "start": "nodemon build/src/main.js",
-    "clean": "rimraf coverage build tmp",
-    "prebuild": "npm run lint",
-    "build": "tsc -p tsconfig.json",
-    "build:watch": "tsc -w -p tsconfig.json",
-    "build:release": "npm run clean && tsc -p tsconfig.release.json",
-    "lint": "eslint .",
-    "test": "vitest run unit",
-    "test:coverage": "vitest run unit --coverage.enabled --coverage.all",
-    "prettier:check": "prettier \"{src,__{tests}__}/**/*.{ts,mts}\" --config .prettierrc --check",
-    "test:watch": "vitest unit"
-  },
-  "author": "Jakub Synowiec <jsynowiec@users.noreply.github.com>",
-  "license": "Apache-2.0",
-  "dependencies": {
-    "nodemon": "^3.1.7",
-    "tslib": "~2.7",
-    "ws": "^8.18.0"
-  },
-  "volta": {
-    "node": "20.17.0"
-  }
+    "name": "@docspace/server",
+    "version": "0.0.0",
+    "type": "module",
+    "engines": {
+        "node": ">= 20.9 < 21"
+    },
+    "devDependencies": {
+        "ts-api-utils": "~1.3"
+    },
+    "scripts": {
+        "start": "nodemon build/src/main.js",
+        "build": "tsc -p tsconfig.json",
+        "build:watch": "tsc -w -p tsconfig.json",
+        "build:release": "npm run clean && tsc -p tsconfig.release.json",
+        "lint": "eslint ."
+    },
+    "author": "Jakub Synowiec <jsynowiec@users.noreply.github.com>",
+    "license": "Apache-2.0",
+    "dependencies": {
+        "nodemon": "^3.1.7",
+        "tslib": "~2.7",
+        "ws": "^8.18.0"
+    },
+    "volta": {
+        "node": "20.17.0"
+    }
 }
