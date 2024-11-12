@@ -28,7 +28,7 @@ export const initRxdb = async (dbName: string) => {
     });
 
     return db;
-}
+};
 
 export const syncRxdb = (db: RxDatabase) => {
     const projectId = env.firebaseConfig.projectId;
@@ -48,10 +48,10 @@ export const syncRxdb = (db: RxDatabase) => {
             live: true,
             serverTimestampField: 'serverTimestamp'
         }
-    )
+    );
 };
 
 
 export const generateRxId = () => {
     return Math.random().toString(36).substring(7);
-}
+};

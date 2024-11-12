@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { EditorContext } from '../editorContext';
 import { createDefaultDocCollection, initDefaultDocCollection } from '../utils/docCollectionUtils';
 import { effects as blocksEffects } from '@blocksuite/blocks/effects';
 import { effects as presetsEffects } from '@blocksuite/presets/effects';
-import { DocCollection } from "@blocksuite/store";
-import { User } from "firebase/auth";
+import { DocCollection } from '@blocksuite/store';
+import { User } from 'firebase/auth';
 
 blocksEffects();
 presetsEffects();
@@ -17,55 +17,55 @@ interface EditorProviderProps {
 }
 
 export function EditorProvider({ currentUser, sync, children }: React.PropsWithChildren<EditorProviderProps>) {
-  const collections = useRef<DocCollection[]>([]);
-  const [activeCollectionId, setActiveCollectionId] = useState<string>();
-  const [collection, setCollection] = useState<DocCollection>();
+    const collections = useRef<DocCollection[]>([]);
+    const [activeCollectionId, setActiveCollectionId] = useState<string>();
+    const [collection, setCollection] = useState<DocCollection>();
 
-  const setupCollection = useCallback(async (collectionId: string) => {
-    const collection = await createDefaultDocCollection(collectionId, sync);
-    await initDefaultDocCollection(collection);
+    const setupCollection = useCallback(async (collectionId: string) => {
+        const collection = await createDefaultDocCollection(collectionId, sync);
+        await initDefaultDocCollection(collection);
 
-    setCollection(collection);
-  }, [sync]);
+        setCollection(collection);
+    }, [sync]);
 
-  useEffect(() => {
-    if (activeCollectionId !== collection?.id) {
-      collection?.waitForGracefulStop().then(() => {
-        collection?.forceStop();
-        setCollection(undefined);
-      });
-    }
-  }, [activeCollectionId, collection]);
+    useEffect(() => {
+        if (activeCollectionId !== collection?.id) {
+            collection?.waitForGracefulStop().then(() => {
+                collection?.forceStop();
+                setCollection(undefined);
+            });
+        }
+    }, [activeCollectionId, collection]);
 
-  useEffect(() => {
-    const skipCreateCollection = !activeCollectionId || collection;
-    if (skipCreateCollection) {
-      return;
-    }
+    useEffect(() => {
+        const skipCreateCollection = !activeCollectionId || collection;
+        if (skipCreateCollection) {
+            return;
+        }
 
-    const existingCollection = collections.current.find((collection) => collection.id === activeCollectionId);
+        const existingCollection = collections.current.find((collection) => collection.id === activeCollectionId);
 
-    if (existingCollection) {
-      setCollection(existingCollection);
-    }
-    else {
-      setupCollection(activeCollectionId);
-    }
+        if (existingCollection) {
+            setCollection(existingCollection);
+        }
+        else {
+            setupCollection(activeCollectionId);
+        }
 
-  }, [activeCollectionId, collection, setupCollection]);
+    }, [activeCollectionId, collection, setupCollection]);
 
-  useEffect(() => {
-    if (!currentUser) {
-      setActiveCollectionId(ANONYMOUS_COLLECTION_NAME);
-    }
-    else {
-      setActiveCollectionId(currentUser.uid);
-    }
-  }, [currentUser]);
+    useEffect(() => {
+        if (!currentUser) {
+            setActiveCollectionId(ANONYMOUS_COLLECTION_NAME);
+        }
+        else {
+            setActiveCollectionId(currentUser.uid);
+        }
+    }, [currentUser]);
 
-  return (
-    <EditorContext.Provider value={{ collection }}>
-      {children}
-    </EditorContext.Provider>
-  );
+    return (
+        <EditorContext.Provider value={{ collection }}>
+            {children}
+        </EditorContext.Provider>
+    );
 }

@@ -1,6 +1,6 @@
-import { useEventEmitter } from "@/hooks/useEvent";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { useCallback } from "react"
+import { useEventEmitter } from '@/hooks/useEvent';
+import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { useCallback } from 'react';
 
 export const useGoogleSignIn = () => {
     const emitSignedIn = useEventEmitter('LOGGED_IN');
@@ -13,7 +13,7 @@ export const useGoogleSignIn = () => {
             .then(async (result) => {
                 const credential = GoogleAuthProvider.credentialFromResult(result);
                 if (!credential) {
-                    throw new Error("Credential not found");
+                    throw new Error('Credential not found');
                 }
 
                 emitSignedIn();
@@ -23,4 +23,4 @@ export const useGoogleSignIn = () => {
     }, [emitSignedIn]);
 
     return showSignIn;
-}
+};

@@ -1,7 +1,6 @@
-import { useEditorContext } from "@/libs/editor/hooks/useEditorContext";
-import { useRxdbContext } from "@/libs/rxdb";
-import { Skeleton } from "@/libs/shadcn-ui/components/skeleton";
-import { Circle, FileText } from "lucide-react";
+import { useEditorContext } from '@/libs/editor/hooks/useEditorContext';
+import { useRxdbContext } from '@/libs/rxdb';
+import { Skeleton } from '@/libs/shadcn-ui/components/skeleton';
 
 interface LoadingScreenProps {
     readonly children?: React.ReactNode;
@@ -26,5 +25,5 @@ export const LoadingScreen = ({ children }: LoadingScreenProps) => {
         );
     }
 
-    return children
+    return children;
 };

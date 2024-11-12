@@ -1,7 +1,7 @@
-import { useCallback, useState } from "react";
-import { Header } from "./top-bar/Header";
-import { Sheet, SheetContent } from "@/libs/shadcn-ui/components/sheet";
-import { Sidebar } from "./sidebar/Sidebar";
+import { useCallback, useState } from 'react';
+import { Header } from './top-bar/Header';
+import { Sheet, SheetContent } from '@/libs/shadcn-ui/components/sheet';
+import { Sidebar } from './sidebar/Sidebar';
 
 export function MasterLayoutMobile({ children }: React.PropsWithChildren) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -19,5 +19,5 @@ export function MasterLayoutMobile({ children }: React.PropsWithChildren) {
             <Header toggleSidebar={toggleSidebar}  />
             {children}
         </div>
-    )
+    );
 }

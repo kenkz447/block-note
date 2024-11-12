@@ -1,8 +1,8 @@
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/libs/shadcn-ui/components/resizable";
-import { Header } from "./top-bar/Header";
-import React, { useCallback } from "react";
-import { Sidebar } from "./sidebar/Sidebar";
-import { ImperativePanelHandle } from "react-resizable-panels";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/libs/shadcn-ui/components/resizable';
+import { Header } from './top-bar/Header';
+import React, { useCallback } from 'react';
+import { Sidebar } from './sidebar/Sidebar';
+import { ImperativePanelHandle } from 'react-resizable-panels';
 
 export function MasterLayout({ children }: React.PropsWithChildren) {
 
@@ -26,7 +26,7 @@ export function MasterLayout({ children }: React.PropsWithChildren) {
                 minSize={15}
                 maxSize={50}
                 defaultSize={20}
-                className='bg-sidebar'
+                className="bg-sidebar"
             >
                 <Sidebar />
             </ResizablePanel>

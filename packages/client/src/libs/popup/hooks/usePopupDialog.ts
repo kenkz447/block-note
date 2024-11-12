@@ -1,5 +1,5 @@
-import React from "react";
-import { usePopupDialogContext } from "./usePopupContexts"
+import React from 'react';
+import { usePopupDialogContext } from './usePopupContexts';
 
 export const usePopupDialog = () => {
     const popupDialogContext = usePopupDialogContext();
@@ -8,4 +8,4 @@ export const usePopupDialog = () => {
         openDialog: popupDialogContext.openDialog,
         closeDialog: popupDialogContext.closeDialog,
     }), [popupDialogContext]);
-}
+};

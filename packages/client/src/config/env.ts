@@ -11,4 +11,4 @@ export const env = {
         server: import.meta.env.VITE_SYNC_SERVER,
         websocket: import.meta.env.VITE_SYNC_WS,
     }
-}
+};

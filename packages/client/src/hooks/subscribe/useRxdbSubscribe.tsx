@@ -1,33 +1,36 @@
-import { useEffect } from "react";
-import { RxDatabase } from "rxdb";
+import { useEffect } from 'react';
+import { RxDatabase } from 'rxdb';
 import type { DocCollection } from '@blocksuite/store';
 
 export function createDefaultDoc(
-  collection: DocCollection,
-  options: { id?: string; title?: string } = {}
+    collection: DocCollection,
+    options: { id?: string; title?: string } = {}
 ) {
-  const doc = collection.createDoc({ id: options.id });
+    const doc = collection.createDoc({ id: options.id });
 
-  doc.load();
-  const title = options.title ?? '';
-  const rootId = doc.addBlock('affine:page', {
-    title: new doc.Text(title)
-  });
-  collection.setDocMeta(doc.id, {
-    title,
-  });
+    doc.load();
+    const title = options.title ?? '';
+    const rootId = doc.addBlock('affine:page', {
+        title: new doc.Text(title)
+    });
+    collection.setDocMeta(doc.id, {
+        title,
+    });
 
-  // @ts-ignore FIXME: will be fixed when surface model migrated to affine-model
-  doc.addBlock('affine:surface', {}, rootId);
-  const noteId = doc.addBlock('affine:note', {
-    displayDocInfo: true
-  }, rootId);
-  doc.addBlock('affine:paragraph', {}, noteId);
-  // To make sure the content of new doc would not be clear
-  // By undo operation for the first time
-  doc.resetHistory();
+    doc.addBlock('affine:surface', {}, rootId);
 
-  return doc;
+    //@ts-expect-error should be fixed in the future
+    const noteId = doc.addBlock('affine:note', {
+        displayDocInfo: true
+    }, rootId);
+
+    doc.addBlock('affine:paragraph', {}, noteId);
+
+    // To make sure the content of new doc would not be clear
+    // By undo operation for the first time
+    doc.resetHistory();
+
+    return doc;
 }
 
 
@@ -52,7 +55,7 @@ export const useRxdbSubscribe = ({ db, docCollection }: RxdbSubscribeOptions) =>
                 if (isDocExists) {
                     return;
                 }
-                createDefaultDoc(docCollection, { id: e.documentId })
+                createDefaultDoc(docCollection, { id: e.documentId });
             }),
             db.collections.entries.remove$.subscribe((e) => {
                 if (e.documentData.type === 'folder') {
@@ -62,12 +65,12 @@ export const useRxdbSubscribe = ({ db, docCollection }: RxdbSubscribeOptions) =>
                 if (!isDocExists) {
                     return;
                 }
-                docCollection.removeDoc(e.documentId)
+                docCollection.removeDoc(e.documentId);
             })
         ];
 
         return () => {
             subscribes.forEach((s) => s.unsubscribe());
-        }
+        };
     }, [db, docCollection]);
 };

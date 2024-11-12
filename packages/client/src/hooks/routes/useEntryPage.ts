@@ -1,5 +1,5 @@
-import { useCallback } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { useCallback } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 
 export const useEntryPage = () => {
     const navigate = useNavigate();
@@ -7,16 +7,16 @@ export const useEntryPage = () => {
     return useCallback((entryId: string | null) => {
         if (!entryId) {
             return navigate({
-                to: "/",
+                to: '/',
                 replace: true
             });
         }
 
         navigate({
-            to: "/",
+            to: '/',
             search: {
                 entryId
             }
-        })
+        });
     }, [navigate]);
-}
+};

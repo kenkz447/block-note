@@ -1,12 +1,12 @@
-import { Entry } from "@/libs/rxdb";
-import { Button } from "@/libs/shadcn-ui/components/button";
-import { DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogContent } from "@/libs/shadcn-ui/components/dialog";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/libs/shadcn-ui/components/form";
-import { Input } from "@/libs/shadcn-ui/components/input";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useMemo } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { Entry } from '@/libs/rxdb';
+import { Button } from '@/libs/shadcn-ui/components/button';
+import { DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogContent } from '@/libs/shadcn-ui/components/dialog';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/libs/shadcn-ui/components/form';
+import { Input } from '@/libs/shadcn-ui/components/input';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect, useMemo } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 interface UpdateEntryValues {
     readonly name: string
@@ -19,14 +19,14 @@ interface UpdateEntryFormProps {
 
 const createSchema = z.object({
     name: z.string().min(1),
-})
+});
 
 export function UpdateEntryForm({ entry, onSubmit }: UpdateEntryFormProps) {
     const defaultValues = useMemo(() => {
         return {
             name: entry.name
-        }
-    }, [entry])
+        };
+    }, [entry]);
 
     const {
         reset,
@@ -74,5 +74,5 @@ export function UpdateEntryForm({ entry, onSubmit }: UpdateEntryFormProps) {
                 </form>
             </Form>
         </DialogContent>
-    )
+    );
 }

@@ -1,5 +1,5 @@
-import { useCallback, useEffect } from "react"
-import { EventEmitter } from "eventemitter3";
+import { useCallback, useEffect } from 'react';
+import { EventEmitter } from 'eventemitter3';
 
 type Event = 'LOGGED_IN' | 'LOGGED_OUT';
 
@@ -28,7 +28,7 @@ export const useEventListener = <TDetail = undefined>(options: UseEventOptions<T
     }, [event]);
 
     return { dispatch };
-}
+};
 
 export const useEventEmitter = <TDetail = undefined>(event: Event) => {
     const dispatch = useCallback((detail?: TDetail) => {
@@ -36,4 +36,4 @@ export const useEventEmitter = <TDetail = undefined>(event: Event) => {
     }, [event]);
 
     return dispatch;
-}
+};

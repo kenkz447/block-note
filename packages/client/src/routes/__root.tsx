@@ -1,4 +1,4 @@
-import { createRootRoute, Outlet } from '@tanstack/react-router'
+import { createRootRoute, Outlet } from '@tanstack/react-router';
 import { RxdbProvider } from '@/libs/rxdb/components/RxdbProvider';
 import { PopupProvider } from '@/libs/popup';
 import { EditorProvider } from '@/libs/editor';
@@ -49,9 +49,9 @@ function App() {
                 </PopupProvider>
             </EditorProvider>
         </RxdbProvider>
-    )
+    );
 }
 
 export const Route = createRootRoute({
     component: () => <AuthProvider><App /></AuthProvider>,
-})
+});

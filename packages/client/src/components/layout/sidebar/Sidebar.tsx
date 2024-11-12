@@ -1,25 +1,25 @@
-import { Button } from "@/libs/shadcn-ui/components/button";
-import { EntryTree } from "../../entry-tree/EntryTree";
-import { useCurrentUser, useGoogleSignIn } from "@/libs/auth";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/libs/shadcn-ui/components/dropdown-menu";
-import { ChevronsUpDown, Circle, FilePlus, FileText, FolderPlus, Plus, PlusSquare, SquareEqual } from "lucide-react";
-import { usePopupDialog } from "@/libs/popup";
-import { Entry, generateRxId, useEntries } from "@/libs/rxdb";
-import { CreateEntryForm } from "../../forms/createEntryForm";
-import { Input } from "@/libs/shadcn-ui/components/input";
-import { useCallback, useState } from "react";
-import { Avatar, AvatarImage } from "@/libs/shadcn-ui/components/avatar";
-import { Settings } from "./settings/Settings";
-import { Separator } from "@/libs/shadcn-ui/components/separator";
+import { Button } from '@/libs/shadcn-ui/components/button';
+import { EntryTree } from '../../entry-tree/EntryTree';
+import { useCurrentUser, useGoogleSignIn } from '@/libs/auth';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/libs/shadcn-ui/components/dropdown-menu';
+import { ChevronsUpDown, Circle, FilePlus, FileText, FolderPlus, Plus, SquareEqual } from 'lucide-react';
+import { usePopupDialog } from '@/libs/popup';
+import { Entry, generateRxId, useEntries } from '@/libs/rxdb';
+import { CreateEntryForm } from '../../forms/createEntryForm';
+import { Input } from '@/libs/shadcn-ui/components/input';
+import { useCallback, useState } from 'react';
+import { Avatar, AvatarImage } from '@/libs/shadcn-ui/components/avatar';
+import { Settings } from './settings/Settings';
+import { Separator } from '@/libs/shadcn-ui/components/separator';
 
 export function Sidebar() {
     const { currentUser } = useCurrentUser();
     const googleSignIn = useGoogleSignIn();
 
-    const { openDialog, closeDialog } = usePopupDialog()
-    const { insert } = useEntries()
+    const { openDialog, closeDialog } = usePopupDialog();
+    const { insert } = useEntries();
 
-    const [search, setSearch] = useState<string>()
+    const [search, setSearch] = useState<string>();
 
     const onNewEntry = useCallback((type: string) => {
         const createEntry = async (formValues: Partial<Entry>) => {
@@ -30,22 +30,22 @@ export function Sidebar() {
                 name: formValues.name
             });
 
-            closeDialog()
-        }
+            closeDialog();
+        };
 
         openDialog({
             content: <CreateEntryForm type={type} onSubmit={createEntry} />
-        })
-    }, [insert, openDialog, closeDialog])
+        });
+    }, [insert, openDialog, closeDialog]);
 
     const showSettings = useCallback(() => {
         openDialog({
             content: <Settings hide={closeDialog} />
-        })
-    }, [closeDialog, openDialog])
+        });
+    }, [closeDialog, openDialog]);
 
     return (
-        <div className='h-full flex flex-col min-w-[255px]'>
+        <div className="h-full flex flex-col min-w-[255px]">
             {
                 currentUser
                     ? (
@@ -113,5 +113,5 @@ export function Sidebar() {
                 </div>
             </div>
         </div>
-    )
+    );
 }

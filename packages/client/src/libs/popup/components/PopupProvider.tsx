@@ -1,6 +1,6 @@
-import { PropsWithChildren, useMemo, useState } from "react";
-import { PopupDialogContext, PopupDialogContextType, PopupDialogProps } from "../popupContexts";
-import { PopupDialog } from "./PopupDialog";
+import { PropsWithChildren, useMemo, useState } from 'react';
+import { PopupDialogContext, PopupDialogContextType, PopupDialogProps } from '../popupContexts';
+import { PopupDialog } from './PopupDialog';
 
 export const PopupProvider = ({ children }: PropsWithChildren) => {
     const [dialogProps, setDialogProps] = useState<PopupDialogProps>(() => ({
@@ -25,5 +25,5 @@ export const PopupProvider = ({ children }: PropsWithChildren) => {
             {children}
             <PopupDialog />
         </PopupDialogContext.Provider>
-    )
+    );
 };

@@ -1,4 +1,4 @@
-import { useAuthContext } from "./useAuthContext";
+import { useAuthContext } from './useAuthContext';
 
 export const useCurrentUser = () => {
     const { currentUser, signOut } = useAuthContext();
@@ -7,4 +7,4 @@ export const useCurrentUser = () => {
         currentUser,
         signOut
     };
-}
+};

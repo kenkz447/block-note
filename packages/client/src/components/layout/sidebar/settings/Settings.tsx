@@ -1,8 +1,8 @@
-import { useCurrentUser } from "@/libs/auth";
-import { Button } from "@/libs/shadcn-ui/components/button";
-import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/libs/shadcn-ui/components/dialog";
-import { Separator } from "@/libs/shadcn-ui/components/separator";
-import { useCallback } from "react";
+import { useCurrentUser } from '@/libs/auth';
+import { Button } from '@/libs/shadcn-ui/components/button';
+import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/libs/shadcn-ui/components/dialog';
+import { Separator } from '@/libs/shadcn-ui/components/separator';
+import { useCallback } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 
 interface SettingsProps {
@@ -10,14 +10,14 @@ interface SettingsProps {
 }
 
 export function Settings({ hide }: SettingsProps) {
-    const { signOut } = useCurrentUser()
-    const navigate = useNavigate()
+    const { signOut } = useCurrentUser();
+    const navigate = useNavigate();
 
     const onSignOut = useCallback(async () => {
-        await signOut()
-        navigate({ from: '/' })
-        hide()
-    }, [hide, navigate, signOut])
+        await signOut();
+        navigate({ from: '/' });
+        hide();
+    }, [hide, navigate, signOut]);
 
     return (
         <DialogContent className="w-9/12 max-w-[1024px]">
@@ -40,5 +40,5 @@ export function Settings({ hide }: SettingsProps) {
                 </div>
             </div>
         </DialogContent>
-    )
+    );
 }

@@ -1,6 +1,6 @@
-import { useEntries } from "@/libs/rxdb";
-import { DocCollection } from "@blocksuite/store";
-import { useEffect } from "react";
+import { useEntries } from '@/libs/rxdb';
+import { DocCollection } from '@blocksuite/store';
+import { useEffect } from 'react';
 
 interface RxdbSubscribeOptions {
     readonly docCollection: DocCollection;
@@ -29,6 +29,6 @@ export const useDocCollectionSubscribe = ({ docCollection }: RxdbSubscribeOption
 
         return () => {
             disposable.dispose();
-        }
+        };
     }, [checkEntryExists, docCollection, insert]);
 };

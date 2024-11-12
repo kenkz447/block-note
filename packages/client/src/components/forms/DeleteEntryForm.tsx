@@ -1,12 +1,12 @@
-import { Entry } from "@/libs/rxdb";
-import { Button } from "@/libs/shadcn-ui/components/button";
-import { Checkbox } from "@/libs/shadcn-ui/components/checkbox";
-import { DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogContent } from "@/libs/shadcn-ui/components/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/libs/shadcn-ui/components/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { Entry } from '@/libs/rxdb';
+import { Button } from '@/libs/shadcn-ui/components/button';
+import { Checkbox } from '@/libs/shadcn-ui/components/checkbox';
+import { DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogContent } from '@/libs/shadcn-ui/components/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/libs/shadcn-ui/components/form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 interface DeleteEntryValues {
     readonly confirm: boolean;
@@ -19,7 +19,7 @@ interface DeleteEntryConfirmFormProps {
 
 const schema = z.object({
     confirm: z.boolean().refine(value => value === true)
-})
+});
 
 export function DeleteEntryForm({ entry, onSubmit }: DeleteEntryConfirmFormProps) {
     const {
@@ -31,8 +31,8 @@ export function DeleteEntryForm({ entry, onSubmit }: DeleteEntryConfirmFormProps
     });
 
     const description = entry.type === 'folder'
-        ? `The folder is not empty, are you sure you want to delete?`
-        : `Are you sure you want to delete ${entry.type} ${entry.name}?`
+        ? 'The folder is not empty, are you sure you want to delete?'
+        : `Are you sure you want to delete ${entry.type} ${entry.name}?`;
 
     useEffect(() => {
         if (formState.isSubmitSuccessful) {
@@ -74,5 +74,5 @@ export function DeleteEntryForm({ entry, onSubmit }: DeleteEntryConfirmFormProps
                 </form>
             </Form>
         </DialogContent>
-    )
+    );
 }

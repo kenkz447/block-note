@@ -1,7 +1,7 @@
-import { useEffect, useRef } from "react";
-import { useEditorContext } from "../hooks/useEditorContext";
-import { Entry } from "@/libs/rxdb";
-import { AffineEditorContainer } from "@blocksuite/presets";
+import { useEffect, useRef } from 'react';
+import { useEditorContext } from '../hooks/useEditorContext';
+import { Entry } from '@/libs/rxdb';
+import { AffineEditorContainer } from '@blocksuite/presets';
 
 interface EditorContainerProps {
     readonly entry: Entry;
@@ -34,5 +34,5 @@ export function EditorContainer({ entry, editor }: EditorContainerProps) {
 
     return (
         <div className="editor-container h-full" ref={editorContainerRef}></div>
-    )
+    );
 }

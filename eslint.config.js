@@ -3,11 +3,15 @@ import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import tsEslint from 'typescript-eslint'
+import onlyWarn from 'eslint-plugin-only-warn'
 
 export default tsEslint.config(
-    { ignores: ['dist'] },
+    { ignores: ['dist', 'build'] },
     {
-        extends: [js.configs.recommended, ...tsEslint.configs.recommended],
+        extends: [
+            js.configs.recommended,
+            ...tsEslint.configs.recommended
+        ],
         files: ['**/*.{ts,tsx}'],
         languageOptions: {
             ecmaVersion: 2020,
@@ -16,6 +20,7 @@ export default tsEslint.config(
         plugins: {
             'react-hooks': reactHooks,
             'react-refresh': reactRefresh,
+            'only-warn': onlyWarn,
         },
         rules: {
             ...reactHooks.configs.recommended.rules,
@@ -23,6 +28,10 @@ export default tsEslint.config(
                 'warn',
                 { allowConstantExport: true },
             ],
+            'semi': "warn",
+            'indent': ['warn', 4],
+            'quotes': ['warn', 'single'],
+            'jsx-quotes': ['warn', 'prefer-double'],
         },
     },
 )

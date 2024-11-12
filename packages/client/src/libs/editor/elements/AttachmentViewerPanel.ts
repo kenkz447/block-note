@@ -4,9 +4,9 @@ import { humanFileSize } from '@blocksuite/affine-shared/utils';
 import { getAttachmentFileIcons } from '@blocksuite/blocks';
 import { SignalWatcher, WithDisposable } from '@blocksuite/global/utils';
 import {
-  ArrowDownBigIcon,
-  ArrowUpBigIcon,
-  CloseIcon,
+    ArrowDownBigIcon,
+    ArrowUpBigIcon,
+    CloseIcon,
 } from '@blocksuite/icons/lit';
 import { signal } from '@preact/signals-core';
 import { css, html, LitElement, type TemplateResult } from 'lit';
@@ -27,9 +27,9 @@ type FileInfo = {
 
 @customElement('attachment-viewer-panel')
 export class AttachmentViewerPanel extends SignalWatcher(
-  WithDisposable(LitElement)
+    WithDisposable(LitElement)
 ) {
-  static override styles = css`
+    static override styles = css`
     :host {
       dialog {
         padding: 0;
@@ -113,157 +113,157 @@ export class AttachmentViewerPanel extends SignalWatcher(
     }
   `;
 
-  #cursor = signal<number>(0);
+    #cursor = signal<number>(0);
 
-  #docInfo = signal<DocInfo | null>(null);
+    #docInfo = signal<DocInfo | null>(null);
 
-  #fileInfo = signal<FileInfo | null>(null);
+    #fileInfo = signal<FileInfo | null>(null);
 
-  #state = signal<State>(State.Connecting);
+    #state = signal<State>(State.Connecting);
 
-  #worker: Worker | null = null;
+    #worker: Worker | null = null;
 
-  clear = () => {
-    this.#dialog.close();
+    clear = () => {
+        this.#dialog.close();
 
-    this.#state.value = State.IDLE;
-    this.#worker?.terminate();
-    this.#worker = null;
+        this.#state.value = State.IDLE;
+        this.#worker?.terminate();
+        this.#worker = null;
 
-    this.#fileInfo.value = null;
-    this.#docInfo.value = null;
-    this.#cursor.value = 0;
+        this.#fileInfo.value = null;
+        this.#docInfo.value = null;
+        this.#cursor.value = 0;
 
-    const canvas = this.#page;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  };
-
-  goto(at: number) {
-    this.#cursor.value = at;
-    this.post(MessageOp.Render, {
-      index: at,
-      scale: 1 * DPI,
-      kind: RenderKind.Page,
-    });
-  }
-
-  open(model: AttachmentBlockModel) {
-    this.#dialog.showModal();
-
-    const { name, size } = model;
-
-    const fileType = name.split('.').pop() ?? '';
-    const icon = getAttachmentFileIcons(fileType);
-    const isPDF = fileType === 'pdf';
-
-    this.#fileInfo.value = {
-      name,
-      icon,
-      isPDF,
-      size: humanFileSize(size),
+        const canvas = this.#page;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
     };
 
-    if (!isPDF) return;
-    if (!model.sourceId) return;
-    if (this.#worker) return;
-
-    const process = async ({ data }: MessageEvent<MessageData>) => {
-      const { type } = data;
-
-      switch (type) {
-        case MessageOp.Init: {
-          console.debug('connecting');
-          this.#state.value = State.Connecting;
-          break;
-        }
-
-        case MessageOp.Inited: {
-          console.debug('connected');
-          this.#state.value = State.Connected;
-
-          const blob = await model.doc.blobSync.get(model.sourceId!);
-
-          if (!blob) return;
-          const buffer = await blob.arrayBuffer();
-
-          this.post(MessageOp.Open, buffer, [buffer]);
-          break;
-        }
-
-        case MessageOp.Opened: {
-          const info = data[type];
-          this.#cursor.value = 0;
-          this.#docInfo.value = info;
-          this.#state.value = State.Opened;
-          this.post(MessageOp.Render, {
-            index: 0,
+    goto(at: number) {
+        this.#cursor.value = at;
+        this.post(MessageOp.Render, {
+            index: at,
             scale: 1 * DPI,
             kind: RenderKind.Page,
-          });
-          break;
-        }
-
-        case MessageOp.Rendered: {
-          const { index, kind, imageData } = data[type];
-
-          if (index !== this.#cursor.value) return;
-
-          const canvas = this.#page;
-          if (!canvas) return;
-          const ctx = canvas.getContext('2d');
-          if (!ctx) return;
-
-          console.debug('render page', index, kind);
-          canvas.width = imageData.width;
-          canvas.height = imageData.height;
-
-          ctx.clearRect(0, 0, imageData.width, imageData.height);
-          ctx.putImageData(imageData, 0, 0);
-          break;
-        }
-      }
-    };
-
-    this.#worker = new Worker(new URL('./pdf/worker.ts', import.meta.url), {
-      type: 'module',
-    });
-
-    this.#worker.addEventListener('message', event => {
-      process(event).catch(console.error);
-    });
-  }
-
-  post<T extends MessageOp>(
-    type: T,
-    data?: MessageDataType[T],
-    transfers?: Transferable[]
-  ) {
-    if (!this.#worker) return;
-
-    const message = { type, [type]: data };
-    if (transfers?.length) {
-      this.#worker?.postMessage(message, transfers);
-      return;
+        });
     }
 
-    this.#worker?.postMessage(message);
-  }
+    open(model: AttachmentBlockModel) {
+        this.#dialog.showModal();
 
-  override render() {
-    const fileInfo = this.#fileInfo.value;
-    const isPDF = fileInfo?.isPDF ?? false;
-    const docInfo = this.#docInfo.value;
-    const cursor = this.#cursor.value;
-    const total = docInfo ? docInfo.total : 0;
-    const width = docInfo ? docInfo.width : 0;
-    const height = docInfo ? docInfo.height : 0;
-    const isEmpty = total === 0;
-    const print = (n: number) => (isEmpty ? '-' : n);
+        const { name, size } = model;
 
-    return html`
+        const fileType = name.split('.').pop() ?? '';
+        const icon = getAttachmentFileIcons(fileType);
+        const isPDF = fileType === 'pdf';
+
+        this.#fileInfo.value = {
+            name,
+            icon,
+            isPDF,
+            size: humanFileSize(size),
+        };
+
+        if (!isPDF) return;
+        if (!model.sourceId) return;
+        if (this.#worker) return;
+
+        const process = async ({ data }: MessageEvent<MessageData>) => {
+            const { type } = data;
+
+            switch (type) {
+            case MessageOp.Init: {
+                console.debug('connecting');
+                this.#state.value = State.Connecting;
+                break;
+            }
+
+            case MessageOp.Inited: {
+                console.debug('connected');
+                this.#state.value = State.Connected;
+
+                const blob = await model.doc.blobSync.get(model.sourceId!);
+
+                if (!blob) return;
+                const buffer = await blob.arrayBuffer();
+
+                this.post(MessageOp.Open, buffer, [buffer]);
+                break;
+            }
+
+            case MessageOp.Opened: {
+                const info = data[type];
+                this.#cursor.value = 0;
+                this.#docInfo.value = info;
+                this.#state.value = State.Opened;
+                this.post(MessageOp.Render, {
+                    index: 0,
+                    scale: 1 * DPI,
+                    kind: RenderKind.Page,
+                });
+                break;
+            }
+
+            case MessageOp.Rendered: {
+                const { index, kind, imageData } = data[type];
+
+                if (index !== this.#cursor.value) return;
+
+                const canvas = this.#page;
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                if (!ctx) return;
+
+                console.debug('render page', index, kind);
+                canvas.width = imageData.width;
+                canvas.height = imageData.height;
+
+                ctx.clearRect(0, 0, imageData.width, imageData.height);
+                ctx.putImageData(imageData, 0, 0);
+                break;
+            }
+            }
+        };
+
+        this.#worker = new Worker(new URL('./pdf/worker.ts', import.meta.url), {
+            type: 'module',
+        });
+
+        this.#worker.addEventListener('message', event => {
+            process(event).catch(console.error);
+        });
+    }
+
+    post<T extends MessageOp>(
+        type: T,
+        data?: MessageDataType[T],
+        transfers?: Transferable[]
+    ) {
+        if (!this.#worker) return;
+
+        const message = { type, [type]: data };
+        if (transfers?.length) {
+            this.#worker?.postMessage(message, transfers);
+            return;
+        }
+
+        this.#worker?.postMessage(message);
+    }
+
+    override render() {
+        const fileInfo = this.#fileInfo.value;
+        const isPDF = fileInfo?.isPDF ?? false;
+        const docInfo = this.#docInfo.value;
+        const cursor = this.#cursor.value;
+        const total = docInfo ? docInfo.total : 0;
+        const width = docInfo ? docInfo.width : 0;
+        const height = docInfo ? docInfo.height : 0;
+        const isEmpty = total === 0;
+        const print = (n: number) => (isEmpty ? '-' : n);
+
+        return html`
       <dialog>
         <div class="dialog">
           <header>
@@ -275,8 +275,8 @@ export class AttachmentViewerPanel extends SignalWatcher(
           </header>
           <main class="body">
             ${isPDF
-              ? html`<canvas class="page"></canvas>`
-              : html`<p class="error">This file format is not supported.</p>`}
+        ? html`<canvas class="page"></canvas>`
+        : html`<p class="error">This file format is not supported.</p>`}
             <div class="controls">
               <icon-button
                 .disabled=${isEmpty || cursor === 0}
@@ -308,7 +308,7 @@ export class AttachmentViewerPanel extends SignalWatcher(
         </div>
       </dialog>
     `;
-  }
+    }
 
   @query('dialog')
   accessor #dialog!: HTMLDialogElement;

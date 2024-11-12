@@ -1,10 +1,10 @@
-import { Button } from "@/libs/shadcn-ui/components/button";
-import { DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogContent } from "@/libs/shadcn-ui/components/dialog";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/libs/shadcn-ui/components/form";
-import { Input } from "@/libs/shadcn-ui/components/input";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { Button } from '@/libs/shadcn-ui/components/button';
+import { DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogContent } from '@/libs/shadcn-ui/components/dialog';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/libs/shadcn-ui/components/form';
+import { Input } from '@/libs/shadcn-ui/components/input';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 interface CreateEntryValues {
     readonly name: string
@@ -17,7 +17,7 @@ interface CreateEntryFormProps {
 
 const createSchema = z.object({
     name: z.string().min(1),
-})
+});
 
 export function CreateEntryForm({ type, onSubmit }: CreateEntryFormProps) {
     const {
@@ -28,7 +28,7 @@ export function CreateEntryForm({ type, onSubmit }: CreateEntryFormProps) {
         resolver: zodResolver(createSchema),
     });
 
-    const description = type === 'folder' ? 'Create a folder to organize your documents' : 'Create a new document'
+    const description = type === 'folder' ? 'Create a folder to organize your documents' : 'Create a new document';
 
     return (
         <DialogContent className="sm:max-w-[425px]">
@@ -61,5 +61,5 @@ export function CreateEntryForm({ type, onSubmit }: CreateEntryFormProps) {
                 </form>
             </Form>
         </DialogContent>
-    )
+    );
 }

@@ -1,23 +1,24 @@
 {
-    "name": "docspace",
-    "workspaces": [
-        "packages/*"
-    ],
-    "scripts": {
-        "client": "bun run --cwd packages/client",
-        "server": "bun run --cwd packages/server dev",
-        "theme": "bun run --cwd packages/theme"
-    },
-    "devDependencies": {
-        "@eslint/js": "~9.14.0",
-        "@types/eslint__js": "~8.42.3",
-        "@types/node": "~22.9.0",
-        "@typescript-eslint/parser": "~8.14.0",
-        "typescript": "~5.6.3",
-        "typescript-eslint": "~8.14.0",
-        "eslint": "~9.14.0",
-        "eslint-plugin-react-hooks": "^5.0.0",
-        "eslint-plugin-react-refresh": "^0.4.14",
-        "globals": "~15.12.0"
-    }
+  "name": "docspace",
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "client": "bun run --cwd packages/client",
+    "server": "bun run --cwd packages/server dev",
+    "theme": "bun run --cwd packages/theme"
+  },
+  "devDependencies": {
+    "@eslint/js": "~9.14.0",
+    "@types/node": "~22.9.0",
+    "@typescript-eslint/parser": "~8.14.0",
+    "eslint": "~9.14.0",
+    "eslint-plugin-only-warn": "^1.1.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.14",
+    "globals": "~15.12.0",
+    "typescript": "~5.6.3",
+    "typescript-eslint": "~8.14.0"
+  }
 }

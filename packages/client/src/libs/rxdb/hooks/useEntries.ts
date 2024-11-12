@@ -1,9 +1,9 @@
-import { useCallback } from "react";
-import { useRxdbContext } from "./useRxdbContext";
-import { RxDocument } from "rxdb";
-import { Entry } from "../rxdbTypes";
-import { firstBy } from "thenby";
-import { ensureCollectionExist } from "../rxdbUtils";
+import { useCallback } from 'react';
+import { useRxdbContext } from './useRxdbContext';
+import { RxDocument } from 'rxdb';
+import { Entry } from '../rxdbTypes';
+import { firstBy } from 'thenby';
+import { ensureCollectionExist } from '../rxdbUtils';
 
 interface InsertEntryParams {
     id: string;
@@ -65,23 +65,23 @@ export const useEntries = () => {
         ensureCollectionExist(db, 'entries');
 
         const getEntries = async () => {
-            const entriesData = await db!.collections.entries.find().exec() as RxDocument<Entry>[]
+            const entriesData = await db!.collections.entries.find().exec() as RxDocument<Entry>[];
             const entries = entriesData.map((doc) => doc._data);
 
             const sortedEntries = entries.sort(
                 firstBy<Entry>((a, b) => {
-                    const aId = a.order
-                    const bId = b.order
-                    return aId < bId ? -1 : aId > bId ? 1 : 0
+                    const aId = a.order;
+                    const bId = b.order;
+                    return aId < bId ? -1 : aId > bId ? 1 : 0;
                 })
-            )
+            );
 
             callback(sortedEntries);
-        }
+        };
 
         getEntries();
 
-        const subscription = db!.collections.entries.$.subscribe(getEntries)
+        const subscription = db!.collections.entries.$.subscribe(getEntries);
 
         return subscription;
     }, [db]);
@@ -116,4 +116,4 @@ export const useEntries = () => {
         update,
         remove,
     };
-}
+};

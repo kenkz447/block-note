@@ -1,8 +1,8 @@
-import { PropsWithChildren, useEffect, useState } from "react";
-import { RxdbContext } from "../rxdbContexts";
-import { initRxdb, syncRxdb } from "../rxdbHelpers";
-import { RxDatabase } from "rxdb";
-import { User } from "firebase/auth";
+import { PropsWithChildren, useEffect, useState } from 'react';
+import { RxdbContext } from '../rxdbContexts';
+import { initRxdb, syncRxdb } from '../rxdbHelpers';
+import { RxDatabase } from 'rxdb';
+import { User } from 'firebase/auth';
 
 const ANONYMOUS_DB_NAME = 'anonymous';
 
