@@ -4,7 +4,7 @@ import type { DocCollection } from '@blocksuite/store';
 
 export function createDefaultDoc(
     collection: DocCollection,
-    options: { id?: string; title?: string } = {}
+    options: { id?: string; title?: string; } = {}
 ) {
     const doc = collection.createDoc({ id: options.id });
 
@@ -45,7 +45,7 @@ export const useRxdbSubscribe = ({ db, docCollection }: RxdbSubscribeOptions) =>
      * the editor collection when a new entry is created in the database
      */
     useEffect(() => {
-        const subscribes = [
+        const entriesSubscribes = [
             // Create a new document in the editor collection when a new entry is created in the database
             db.collections.entries.insert$.subscribe((e) => {
                 if (e.documentData.type === 'folder') {
@@ -70,7 +70,7 @@ export const useRxdbSubscribe = ({ db, docCollection }: RxdbSubscribeOptions) =>
         ];
 
         return () => {
-            subscribes.forEach((s) => s.unsubscribe());
+            entriesSubscribes.forEach((s) => s.unsubscribe());
         };
     }, [db, docCollection]);
 };

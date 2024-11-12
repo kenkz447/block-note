@@ -1,5 +1,5 @@
 const entry = {
-    keyCompression: true,
+    keyCompression: false,
     version: 0,
     title: 'entry',
     primaryKey: 'id',
@@ -16,10 +16,34 @@ const entry = {
             type: 'string'
         },
         parent: {
-            type: 'string'
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ]
         },
         order: {
             type: 'number'
+        },
+        updates: {
+            type: 'array',
+            items: {
+                type: 'object',
+                properties: {
+                    timestamp: {
+                        type: 'number'
+                    },
+                    update: {
+                        type: 'array',
+                        items: {
+                            type: 'number'
+                        }
+                    }
+                }
+            }
         },
         createdAt: {
             type: 'string',
@@ -35,6 +59,41 @@ const entry = {
     ]
 };
 
+const docSchema = {
+    keyCompression: false,
+    version: 0,
+    title: 'doc',
+    primaryKey: 'id',
+    type: 'object',
+    properties: {
+        id: {
+            type: 'string',
+            maxLength: 100
+        },
+        updates: {
+            type: 'array',
+            items: {
+                type: 'object',
+                properties: {
+                    timestamp: {
+                        type: 'number'
+                    },
+                    update: {
+                        type: 'array',
+                        items: {
+                            type: 'number'
+                        }
+                    }
+                }
+            }
+        }
+    },
+    required: [
+        'id'
+    ]
+};
+
 export const rxdbSchema = {
-    entry
+    entry,
+    docs: docSchema
 };

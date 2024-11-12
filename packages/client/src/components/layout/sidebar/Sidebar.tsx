@@ -5,7 +5,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { ChevronsUpDown, Circle, FilePlus, FileText, FolderPlus, Plus, SquareEqual } from 'lucide-react';
 import { usePopupDialog } from '@/libs/popup';
 import { Entry, generateRxId, useEntries } from '@/libs/rxdb';
-import { CreateEntryForm } from '../../forms/createEntryForm';
+import { CreateEntryForm } from '../../forms/entry/CreateEntryForm';
 import { Input } from '@/libs/shadcn-ui/components/input';
 import { useCallback, useState } from 'react';
 import { Avatar, AvatarImage } from '@/libs/shadcn-ui/components/avatar';

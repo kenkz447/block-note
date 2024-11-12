@@ -7,12 +7,12 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 interface CreateEntryValues {
-    readonly name: string
+    readonly name: string;
 }
 
 interface CreateEntryFormProps {
-    readonly type: string
-    readonly onSubmit: (data: CreateEntryValues) => void
+    readonly type: string;
+    readonly onSubmit: (data: CreateEntryValues) => void;
 }
 
 const createSchema = z.object({

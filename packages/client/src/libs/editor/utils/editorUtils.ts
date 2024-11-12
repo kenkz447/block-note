@@ -92,8 +92,6 @@ export const setupEditor = (collection: DocCollection) => {
         throw new Error('No block collection found');
     }
 
-    const doc = blockCollection.getDoc();
-
     const editor = new AffineEditorContainer();
     const specs = getExampleSpecs();
     const refNodeSlotsExtension = RefNodeSlotsExtension();
@@ -108,7 +106,7 @@ export const setupEditor = (collection: DocCollection) => {
     SpecProvider.getInstance().extendSpec('edgeless:preview', [
         OverrideThemeExtension(themeExtension),
     ]);
-    editor.doc = doc;
+
     editor.mode = 'page';
 
     return editor;

@@ -7,7 +7,7 @@ import {
     encodeAwarenessUpdate,
 } from 'y-protocols/awareness';
 
-import type { WebSocketMessage } from './types';
+import type { WebSocketMessage } from '../editorTypes';
 
 type AwarenessChanges = Record<'added' | 'updated' | 'removed', number[]>;
 
@@ -64,7 +64,7 @@ export class WebSocketAwarenessSource implements AwarenessSource {
 
     awareness: Awareness | null = null;
 
-    constructor(readonly ws: WebSocket) {}
+    constructor(readonly ws: WebSocket) { }
 
     connect(awareness: Awareness): void {
         this.awareness = awareness;

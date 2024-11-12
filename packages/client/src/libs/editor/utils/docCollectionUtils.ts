@@ -7,31 +7,37 @@ import {
     IdGeneratorType,
     Job,
     Schema,
-    Text,
+    Text
 } from '@blocksuite/store';
 import {
+    AwarenessSource,
     BroadcastChannelAwarenessSource,
     BroadcastChannelDocSource,
     IndexedDBBlobSource,
     IndexedDBDocSource,
 } from '@blocksuite/sync';
 
-import { WebSocketAwarenessSource } from '../sync/awareness';
-import { WebSocketDocSource } from '../sync/doc';
+import { WebSocketAwarenessSource } from '../source/WebSocketAwarenessSource';
 import { env } from '@/config/env';
+import { RxdbDocSource } from '../source/RxdbDocSource';
+import { RxDatabase } from 'rxdb';
 
 const BASE_WEBSOCKET_URL = new URL(env.sync.websocket);
 
-export async function createDefaultDocCollection(collectionId: string, syncEnable: boolean) {
+export async function createDefaultDocCollection(db: RxDatabase, collectionId: string, syncEnable: boolean) {
     const idGenerator: IdGeneratorType = IdGeneratorType.NanoID;
     const schema = new Schema();
     schema.register(AffineSchemas);
 
     const params = new URLSearchParams(location.search);
+
     let docSources: DocCollectionOptions['docSources'] = {
         main: new IndexedDBDocSource(),
+        shadows: [new BroadcastChannelDocSource()],
     };
-    let awarenessSources: DocCollectionOptions['awarenessSources'];
+    let awarenessSources: AwarenessSource[] = [
+        new BroadcastChannelAwarenessSource(collectionId),
+    ];
 
     if (syncEnable) {
         const ws = new WebSocket(new URL(`roomId=${collectionId}`, BASE_WEBSOCKET_URL));
@@ -42,18 +48,9 @@ export async function createDefaultDocCollection(collectionId: string, syncEnabl
             .then(() => {
                 docSources = {
                     main: new IndexedDBDocSource(),
-                    shadows: [new WebSocketDocSource(ws)],
+                    shadows: [new RxdbDocSource(db)]
                 };
                 awarenessSources = [new WebSocketAwarenessSource(ws)];
-            })
-            .catch(() => {
-                docSources = {
-                    main: new IndexedDBDocSource(),
-                    shadows: [new BroadcastChannelDocSource()],
-                };
-                awarenessSources = [
-                    new BroadcastChannelAwarenessSource(collectionId),
-                ];
             });
     }
 
@@ -93,40 +90,38 @@ export async function createDefaultDocCollection(collectionId: string, syncEnabl
 }
 
 export async function initDefaultDocCollection(collection: DocCollection) {
-    const params = new URLSearchParams(location.search);
-
     await collection.waitForSynced();
 
-    const shouldInit = collection.docs.size === 0 && !params.get('entryId');
+    const shouldInit = collection.docs.size === 0;
     if (shouldInit) {
         collection.meta.initialize();
-        const doc = collection.createDoc({ id: 'doc:home' });
+        const doc = collection.createDoc({ id: '__default' });
         doc.load();
         const rootId = doc.addBlock('affine:page', {
             title: new Text(),
         });
         doc.addBlock('affine:surface', {}, rootId);
         doc.resetHistory();
-    } else {
-        // wait for data injected from provider
-        const firstPageId =
-            collection.docs.size > 0
-                ? collection.docs.keys().next().value
-                : await new Promise<string>(resolve =>
-                    collection.slots.docAdded.once(id => resolve(id))
-                );
-        if (!firstPageId) {
-            throw new Error('No first page id found');
-        }
-        const doc = collection.getDoc(firstPageId);
-        if (!doc) {
-            throw new Error(`Failed to get doc ${firstPageId}`);
-        }
-        doc.load();
-        // wait for data injected from provider
-        if (!doc.root) {
-            await new Promise(resolve => doc.slots.rootAdded.once(resolve));
-        }
-        doc.resetHistory();
+        return;
     }
+
+    // wait for data injected from provider
+    const firstPageId =
+        collection.docs.size > 0
+            ? collection.docs.keys().next().value
+            : await new Promise<string>(resolve =>
+                collection.slots.docAdded.once(id => resolve(id))
+            );
+    if (!firstPageId) {
+        throw new Error('No first page id found');
+    }
+    const doc = collection.getDoc(firstPageId);
+    if (!doc) {
+        throw new Error(`Failed to get doc ${firstPageId}`);
+    }
+    doc.load();
+    if (!doc.root) {
+        await new Promise(resolve => doc.slots.rootAdded.once(resolve));
+    }
+    doc.resetHistory();
 }

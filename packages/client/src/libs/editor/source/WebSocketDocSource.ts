@@ -3,7 +3,7 @@ import type { DocSource } from '@blocksuite/sync';
 import { assertExists } from '@blocksuite/global/utils';
 import { diffUpdate, encodeStateVectorFromUpdate, mergeUpdates } from 'yjs';
 
-import type { WebSocketMessage } from './types';
+import type { WebSocketMessage } from '../editorTypes';
 
 export class WebSocketDocSource implements DocSource {
     private _onMessage = async (event: MessageEvent<Blob>) => {
