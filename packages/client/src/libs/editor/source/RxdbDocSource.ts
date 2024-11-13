@@ -3,9 +3,6 @@ import { DocSource } from '@blocksuite/sync';
 import { RxCollection, RxDatabase, RxDocument } from 'rxdb';
 import { diffUpdate, encodeStateVectorFromUpdate, mergeUpdates } from 'yjs';
 
-export const dbVersion = 1;
-export const DEFAULT_DB_NAME = 'blocksuite-local';
-
 type UpdateMessage = {
     timestamp: number;
     update: Uint8Array;
@@ -21,7 +18,6 @@ export class RxdbDocSource implements DocSource {
     getLocalStore() {
         const docStore = this.db.collections.localDocs as RxCollection<Doc>;
         if (!docStore) {
-            console.error('Docs collection not found in database');
             throw new Error('Docs collection not found in database');
         }
 
@@ -111,6 +107,10 @@ export class RxdbDocSource implements DocSource {
                 });
             }
             else {
+                /**
+                 * Insert the document if it doesn't exist
+                 * This is the case when the document is a localDoc
+                 */
                 await store.insert({
                     id: docId,
                     updates: rows.map(({ timestamp, update }) => ({
@@ -125,7 +125,26 @@ export class RxdbDocSource implements DocSource {
         }
     }
 
-    subscribe() {
-        return () => { };
+    subscribe(cb: (docId: string, data: Uint8Array) => void) {
+        /**
+         * Subscribe to the db update event to update the document
+         */
+        const entriesStore = this.getEntryStore();
+
+        const sub = entriesStore.update$.subscribe((changeEvent) => {
+            const { documentData, documentId } = changeEvent;
+            if (documentData.type !== 'document') {
+                return;
+            }
+
+            const entryUpdates = documentData.updates ?? [];
+            const docUpdate = entryUpdates[0]?.update ?? [];
+
+            cb(documentId, new Uint8Array(docUpdate));
+        });
+
+        return () => {
+            sub.unsubscribe();
+        };
     }
 }
