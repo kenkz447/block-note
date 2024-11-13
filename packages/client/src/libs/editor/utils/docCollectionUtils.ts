@@ -12,9 +12,7 @@ import {
 import {
     AwarenessSource,
     BroadcastChannelAwarenessSource,
-    BroadcastChannelDocSource,
     IndexedDBBlobSource,
-    IndexedDBDocSource,
 } from '@blocksuite/sync';
 
 import { WebSocketAwarenessSource } from '../source/WebSocketAwarenessSource';
@@ -50,6 +48,9 @@ export async function createDefaultDocCollection(db: RxDatabase, collectionId: s
                     main: new RxdbDocSource(db)
                 };
                 awarenessSources = [new WebSocketAwarenessSource(ws)];
+            })
+            .catch(() => {
+                console.warn('Failed to connect to WebSocket server');
             });
     }
 

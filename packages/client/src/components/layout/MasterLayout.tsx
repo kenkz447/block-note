@@ -1,6 +1,6 @@
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/libs/shadcn-ui/components/resizable';
 import { Header } from './top-bar/Header';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Sidebar } from './sidebar/Sidebar';
 import { ImperativePanelHandle } from 'react-resizable-panels';
 
@@ -17,22 +17,29 @@ export function MasterLayout({ children }: React.PropsWithChildren) {
         }
     }, []);
 
+    const sidebarMinWidth = 255;
+    const sidebarDefaultWidth = 300;
+    const panelSizes = useMemo(() => {
+        return {
+            minPercent: sidebarMinWidth / window.innerWidth * 100,
+            defaultPercent: sidebarDefaultWidth / window.innerWidth * 100,
+        };
+    }, []);
 
     return (
         <ResizablePanelGroup autoSaveId="main-layout" direction="horizontal">
             <ResizablePanel
                 ref={sidebarPanelRef}
                 collapsible={true}
-                minSize={15}
+                minSize={panelSizes.minPercent}
                 maxSize={50}
-                defaultSize={20}
-                className="bg-sidebar"
+                defaultSize={panelSizes.defaultPercent}
             >
                 <Sidebar />
             </ResizablePanel>
             <ResizableHandle />
             <ResizablePanel>
-                <Header toggleSidebar={toggleSidebar}/>
+                <Header toggleSidebar={toggleSidebar} />
                 {children}
             </ResizablePanel>
         </ResizablePanelGroup>

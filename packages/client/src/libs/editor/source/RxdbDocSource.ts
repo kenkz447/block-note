@@ -19,7 +19,7 @@ export class RxdbDocSource implements DocSource {
     constructor(readonly db: RxDatabase) { }
 
     getLocalStore() {
-        const docStore = this.db.collections.docs as RxCollection<Doc>;
+        const docStore = this.db.collections.localDocs as RxCollection<Doc>;
         if (!docStore) {
             console.error('Docs collection not found in database');
             throw new Error('Docs collection not found in database');

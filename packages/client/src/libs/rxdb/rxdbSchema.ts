@@ -1,4 +1,31 @@
-const entry = {
+
+
+const versionSchema = {
+    keyCompression: false,
+    version: 0,
+    title: 'version',
+    primaryKey: 'id',
+    type: 'object',
+    properties: {
+        id: {
+            type: 'string',
+            maxLength: 100
+        },
+        name: {
+            type: 'string'
+        },
+        order: {
+            type: 'number'
+        }
+    },
+    required: [
+        'id',
+        'name',
+        'order'
+    ]
+};
+
+const entrySchema = {
     keyCompression: false,
     version: 0,
     title: 'entry',
@@ -59,7 +86,7 @@ const entry = {
     ]
 };
 
-const docSchema = {
+const localDocSchema = {
     keyCompression: false,
     version: 0,
     title: 'doc',
@@ -94,6 +121,7 @@ const docSchema = {
 };
 
 export const rxdbSchema = {
-    entry,
-    docs: docSchema
+    entry: entrySchema,
+    localDoc: localDocSchema,
+    version: versionSchema
 };

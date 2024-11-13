@@ -2,7 +2,7 @@ import { Button } from '@/libs/shadcn-ui/components/button';
 import { EntryTree } from '../../entry-tree/EntryTree';
 import { useCurrentUser, useGoogleSignIn } from '@/libs/auth';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/libs/shadcn-ui/components/dropdown-menu';
-import { ChevronsUpDown, Circle, FilePlus, FileText, FolderPlus, Plus, SquareEqual } from 'lucide-react';
+import { ChevronsUpDown, FilePlus, FolderPlus, Layers, Plus, SquareEqual } from 'lucide-react';
 import { usePopupDialog } from '@/libs/popup';
 import { Entry, generateRxId, useEntries } from '@/libs/rxdb';
 import { CreateEntryForm } from '../../forms/entry/CreateEntryForm';
@@ -45,12 +45,72 @@ export function Sidebar() {
     }, [closeDialog, openDialog]);
 
     return (
-        <div className="h-full flex flex-col min-w-[255px]">
-            {
-                currentUser
-                    ? (
-                        <Button onClick={showSettings} size="lg" variant="ghost" className="w-full block px-4 h-12 mb-4 rounded-none">
-                            <div className=" flex items-center gap-2">
+        <div className="h-full flex flex-col bg-sidebar gap-2 text-sidebar-foreground">
+            <div className="p-2 flex justify-center items-center tracking-wide">
+                {
+                    !currentUser
+                        ? (
+
+                            <span className="font-mono ">
+                                <span className=" text-orange-600 font-bold">W</span>
+                                <span className="font-mono ">ritefy</span>
+                            </span>
+                        )
+                        : (
+                            <Button variant="ghost" className="w-full block p-2 h-12">
+                                <div className="flex items-center gap-2">
+                                    <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                                        <Layers />
+                                    </div>
+                                    <div className="grid flex-1 text-left text-sm leading-tight">
+                                        <span className="truncate font-semibold">
+                                            Default project
+                                        </span>
+                                        <span className="truncate text-xs">
+                                            Untitled version
+                                        </span>
+                                    </div>
+                                </div>
+                            </Button>
+                        )
+                }
+            </div>
+            <div className="grow flex flex-col">
+                <div className="flex gap-2 px-[16px] mb-2">
+                    <Input placeholder="Search" onChange={(e) => setSearch(e.currentTarget.value)} />
+                    <div>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline" size="icon" className="text-sidebar-foreground/70 hover:bg-sidebar-accent data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
+                                    <Plus />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent side="right" align="start" className="w-[150px]">
+                                <DropdownMenuItem onClick={() => onNewEntry('version')}><SquareEqual />New Version</DropdownMenuItem>
+                                <Separator />
+                                <DropdownMenuItem onClick={() => onNewEntry('folder')}><FolderPlus />New Folder</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => onNewEntry('document')}><FilePlus />New Document</DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                </div>
+                <EntryTree
+                    search={search}
+                />
+            </div>
+            <div className="flex flex-col p-2">
+                {
+                    !currentUser && (
+                        <Button variant="outline" onClick={googleSignIn} className="w-full">
+                            Login
+                        </Button>
+                    )
+                }
+                {
+                    currentUser
+                    && (
+                        <Button onClick={showSettings} size="lg" variant="ghost" className="w-full block p-2">
+                            <div className="flex items-center gap-2">
                                 <Avatar className="h-6 w-6">
                                     <AvatarImage src={currentUser.photoURL!} />
                                 </Avatar>
@@ -61,56 +121,7 @@ export function Sidebar() {
                             </div>
                         </Button>
                     )
-                    : (
-                        <div className="h-12 px-4 flex items-center justify-center mb-4">
-                            <span className="tracking-wide">D</span>
-                            <span className="tracking-wide relative text-orange-600">
-                                <Circle size={26} strokeWidth={1} />
-                                <FileText size={16} strokeWidth={1.8} className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]" />
-                            </span>
-                            <span className="tracking-wide">C SPACE</span>
-                        </div>
-                    )
-            }
-            <div className="grow flex flex-col">
-                <div className="grow">
-                    <div className="flex gap-2 px-[16px] mb-4">
-                        <Input placeholder="Search" onChange={(e) => setSearch(e.currentTarget.value)} />
-                        <div>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="outline" size="icon" className="text-sidebar-foreground/70 hover:bg-sidebar-accent data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
-                                        <Plus />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent side="right" align="start" className="w-[150px]">
-                                    <DropdownMenuItem onClick={() => onNewEntry('version')}><SquareEqual />New Version</DropdownMenuItem>
-                                    <Separator />
-                                    <DropdownMenuItem onClick={() => onNewEntry('folder')}><FolderPlus />New Folder</DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => onNewEntry('document')}><FilePlus />New Document</DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </div>
-                    </div>
-                    <div className="px-[16px] flex">
-                        <Button variant="link" size="icon" className="block hover:bg-sidebar-accent data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
-                            1.0.0
-                        </Button>
-                        <div className="grow"></div>
-                    </div>
-                    <EntryTree
-                        search={search}
-                    />
-                </div>
-                <div className="p-4 flex flex-col gap-2">
-                    {
-                        !currentUser && (
-                            <Button onClick={googleSignIn} className="w-full">
-                                Login
-                            </Button>
-                        )
-                    }
-                </div>
+                }
             </div>
         </div>
     );

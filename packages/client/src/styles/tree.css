@@ -5,6 +5,7 @@
   --rc-node-height: 36px;
   --rc-node-hover-bg: hsl(var(--sidebar-accent));
   --rc-node-hover-color: hsl(var(--sidebar-accent-foreground));
+  --rc-selected-color: hsl(var(--sidebar-accent-foreground));
 }
 
 .rc-tree-treenode {
@@ -26,6 +27,7 @@
 .rc-tree-indent {
   display: flex;
   height: var(--rc-node-height);
+  position: relative;
 }
 
 .rc-tree-indent-unit {
@@ -42,8 +44,21 @@
   display: block;
   position: absolute;
   top: 1px;
-  left: 8px;
+  right: 2px;
   z-index: 0;
+}
+
+.rc-tree-treenode-selected .rc-tree-indent-unit:last-child::after {
+  content: "";
+  width: 3px;
+  height: 16px;
+  position: absolute;
+  right: 1px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: var(--rc-selected-color);
+  z-index: 1;
+  border-radius: 4px;
 }
 
 .rc-tree-node-content-wrapper {
@@ -62,7 +77,8 @@
 }
 
 .rc-tree .rc-tree-treenode.drop-target {
-  background-color: var(--rc-drop-bg-color);
+  background: var(--rc-drop-bg-color);
+  border: 1px dashed hsl(var(--border));
 }
 
 .rc-tree-title {
