@@ -3,6 +3,7 @@ import './styles/tree.css';
 import './styles/editor.css';
 
 import './bootstraps/firebase';
+import './bootstraps/blocksuite';
 
 import { createRoot } from 'react-dom/client';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
@@ -16,9 +17,9 @@ const router = createRouter({ routeTree });
 
 // Register the router instance for type safety
 declare module '@tanstack/react-router' {
-  interface Register {
-    router: typeof router
-  }
+    interface Register {
+        router: typeof router;
+    }
 }
 
 // Render the app

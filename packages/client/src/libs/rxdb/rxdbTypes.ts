@@ -11,7 +11,7 @@ export interface Entry {
     name: string;
     order: number;
     parent: string | null;
-    updates: {
+    updates?: {
         timestamp: number;
         update: number[];
     }[];

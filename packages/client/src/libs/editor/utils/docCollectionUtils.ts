@@ -32,9 +32,9 @@ export async function createDefaultDocCollection(db: RxDatabase, collectionId: s
     const params = new URLSearchParams(location.search);
 
     let docSources: DocCollectionOptions['docSources'] = {
-        main: new IndexedDBDocSource(),
-        shadows: [new BroadcastChannelDocSource()],
+        main: new RxdbDocSource(db)
     };
+
     let awarenessSources: AwarenessSource[] = [
         new BroadcastChannelAwarenessSource(collectionId),
     ];
@@ -47,8 +47,7 @@ export async function createDefaultDocCollection(db: RxDatabase, collectionId: s
         })
             .then(() => {
                 docSources = {
-                    main: new IndexedDBDocSource(),
-                    shadows: [new RxdbDocSource(db)]
+                    main: new RxdbDocSource(db)
                 };
                 awarenessSources = [new WebSocketAwarenessSource(ws)];
             });
@@ -61,7 +60,7 @@ export async function createDefaultDocCollection(db: RxDatabase, collectionId: s
     );
 
     const options: DocCollectionOptions = {
-        id: collectionId,
+        id: `local:${collectionId}`,
         schema,
         idGenerator,
         blobSources: {
@@ -95,7 +94,7 @@ export async function initDefaultDocCollection(collection: DocCollection) {
     const shouldInit = collection.docs.size === 0;
     if (shouldInit) {
         collection.meta.initialize();
-        const doc = collection.createDoc({ id: '__default' });
+        const doc = collection.createDoc({ id: 'local:default' });
         doc.load();
         const rootId = doc.addBlock('affine:page', {
             title: new Text(),

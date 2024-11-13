@@ -1,14 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { EditorContext } from '../editorContext';
 import { createDefaultDocCollection, initDefaultDocCollection } from '../utils/docCollectionUtils';
-import { effects as blocksEffects } from '@blocksuite/blocks/effects';
-import { effects as presetsEffects } from '@blocksuite/presets/effects';
 import { DocCollection } from '@blocksuite/store';
 import { User } from 'firebase/auth';
 import { useRxdbContext } from '@/libs/rxdb';
 
-blocksEffects();
-presetsEffects();
 
 const ANONYMOUS_COLLECTION_NAME = 'blocksuite-anonymous';
 
@@ -33,6 +29,7 @@ export function EditorProvider({ currentUser, sync, children }: React.PropsWithC
         await initDefaultDocCollection(collection);
 
         setCollection(collection);
+        setActiveCollectionId(collection.id);
     }, [db, sync]);
 
     useEffect(() => {

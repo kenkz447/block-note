@@ -32,6 +32,7 @@ export default tsEslint.config(
             'indent': ['warn', 4],
             'quotes': ['warn', 'single'],
             'jsx-quotes': ['warn', 'prefer-double'],
+            'eol-last': ['warn', 'always'],
         },
     },
 )
