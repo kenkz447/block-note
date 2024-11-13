@@ -5,13 +5,13 @@ import { EditorProvider } from '@/libs/editor';
 import { AuthProvider } from '@/libs/auth/components/AuthProvider';
 import { MasterLayout } from '@/components/layout/MasterLayout';
 import { MasterLayoutMobile } from '@/components/layout/MasterLayoutMobile';
-import { useIsMobile } from '@/hooks/layout/useMobile';
 import { useRxdb } from '@/libs/rxdb';
 import { useDocCollection } from '@/libs/editor/hooks/useDocCollection';
 import { useRxdbSubscribe } from '@/hooks/subscribe/useRxdbSubscribe';
 import { useDocCollectionSubscribe } from '@/hooks/subscribe/useDocCollectionSubscribe';
 import { ContextProvider } from '@/components/ContextProvider';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
+import { useIsMobile } from '@/libs/shadcn-ui/hooks/use-mobile';
 
 function Router() {
     const isMobile = useIsMobile();
@@ -75,7 +75,7 @@ export const Route = createRootRoute({
                                         );
                                     }}
                                 </EditorProvider>
-                            )
+                            );
                         }}
                     </RxdbProvider>
                 );

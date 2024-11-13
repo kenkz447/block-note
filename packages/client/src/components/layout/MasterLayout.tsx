@@ -1,7 +1,7 @@
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/libs/shadcn-ui/components/resizable';
 import { Header } from './top-bar/Header';
 import React, { useCallback, useMemo } from 'react';
-import { Sidebar } from './sidebar/Sidebar';
+import { AppSidebar } from './sidebar/AppSidebar';
 import { ImperativePanelHandle } from 'react-resizable-panels';
 
 export function MasterLayout({ children }: React.PropsWithChildren) {
@@ -35,7 +35,7 @@ export function MasterLayout({ children }: React.PropsWithChildren) {
                 maxSize={50}
                 defaultSize={panelSizes.defaultPercent}
             >
-                <Sidebar />
+                <AppSidebar />
             </ResizablePanel>
             <ResizableHandle />
             <ResizablePanel>

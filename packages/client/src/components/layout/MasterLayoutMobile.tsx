@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { Header } from './top-bar/Header';
 import { Sheet, SheetContent } from '@/libs/shadcn-ui/components/sheet';
-import { Sidebar } from './sidebar/Sidebar';
+import { AppSidebar } from './sidebar/AppSidebar';
 
 export function MasterLayoutMobile({ children }: React.PropsWithChildren) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -13,10 +13,10 @@ export function MasterLayoutMobile({ children }: React.PropsWithChildren) {
         <div>
             <Sheet open={sidebarOpen} onOpenChange={toggleSidebar}>
                 <SheetContent side="left" className="p-0">
-                    <Sidebar />
+                    <AppSidebar />
                 </SheetContent>
             </Sheet>
-            <Header toggleSidebar={toggleSidebar}  />
+            <Header toggleSidebar={toggleSidebar} />
             {children}
         </div>
     );

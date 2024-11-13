@@ -1,42 +1,30 @@
-import { useCurrentUser } from '@/libs/auth';
-import { Button } from '@/libs/shadcn-ui/components/button';
-import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/libs/shadcn-ui/components/dialog';
-import { Separator } from '@/libs/shadcn-ui/components/separator';
-import { useCallback } from 'react';
-import { useNavigate } from '@tanstack/react-router';
+import { DialogContent } from '@/libs/shadcn-ui/components/dialog';
+import { useState } from 'react';
+import { SettingSidebar, SettingTab } from './SettingSidebar';
+import { AppearanceSetting } from './AppearanceSetting';
+import { AccountSetting } from './AccountSetting';
 
 interface SettingsProps {
-    readonly hide: () => void
+    readonly hide: () => void;
 }
 
 export function Settings({ hide }: SettingsProps) {
-    const { signOut } = useCurrentUser();
-    const navigate = useNavigate();
-
-    const onSignOut = useCallback(async () => {
-        await signOut();
-        navigate({ from: '/' });
-        hide();
-    }, [hide, navigate, signOut]);
+    const [currentTab, setCurrentTab] = useState<SettingTab>('account');
 
     return (
-        <DialogContent className="w-9/12 max-w-[1024px]">
-            <DialogHeader>
-                <DialogTitle>
-                    Settings
-                </DialogTitle>
-                <DialogDescription>
-                    Manage your account settings
-                </DialogDescription>
-            </DialogHeader>
-            <Separator className="my-4" />
-            <div className="grow  min-h-[512px]">
-                <div className="w-[250px]">
-                    <Button variant="ghost" className="w-full text-left block">Account</Button>
-                    <Button variant="ghost" className="w-full text-left block">Appearance</Button>
-                    <Button variant="ghost" className="w-full text-left block text-red-600 hover:text-red-600" onClick={onSignOut}>Logout</Button>
-                </div>
-                <div>
+        <DialogContent className="w-9/12 min-w-[800px] max-w-[1024px] p-0">
+            <div className="flex gap-4">
+                <SettingSidebar onSignOut={hide} onTabChange={setCurrentTab} />
+                <div className="flex flex-col items-center p-8 w-full">
+                    <div className="w-[560px]">
+                        {
+                            currentTab === 'account' ? (
+                                <AccountSetting />
+                            ) : (
+                                <AppearanceSetting />
+                            )
+                        }
+                    </div>
                 </div>
             </div>
         </DialogContent>

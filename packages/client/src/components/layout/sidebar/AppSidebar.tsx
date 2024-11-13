@@ -12,7 +12,7 @@ import { Avatar, AvatarImage } from '@/libs/shadcn-ui/components/avatar';
 import { Settings } from './settings/Settings';
 import { Separator } from '@/libs/shadcn-ui/components/separator';
 
-export function Sidebar() {
+export function AppSidebar() {
     const { currentUser } = useCurrentUser();
     const googleSignIn = useGoogleSignIn();
 
