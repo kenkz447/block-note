@@ -1,12 +1,8 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import { EditorContainer } from '@/libs/editor';
 import { z } from 'zod';
-import { Entry, useEntries, useRxdbContext } from '@/libs/rxdb';
-import { useEffect, useMemo, useState } from 'react';
-import { useEditorContext } from '@/libs/editor/hooks/useEditorContext';
-import { RefNodeSlotsProvider } from '@blocksuite/blocks';
-import { setupEditor } from '@/libs/editor/utils/editorUtils';
-
+import { Entry, useEntries, useRxdb } from '@/libs/rxdb';
+import { useEffect, useState } from 'react';
 export const Route = createFileRoute('/')({
     component: RouteComponent,
     validateSearch: z.object({
@@ -16,7 +12,7 @@ export const Route = createFileRoute('/')({
 
 function RouteComponent() {
     const { entryId } = Route.useSearch();
-    const { db } = useRxdbContext();
+    const db = useRxdb();
 
     const { subscribeSingle } = useEntries();
 

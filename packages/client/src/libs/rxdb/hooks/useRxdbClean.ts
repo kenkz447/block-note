@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
-import { useRxdbContext } from './useRxdbContext';
+import { useRxdb } from './useRxdb';
 
 export const useRxdbClean = () => {
-    const { db } = useRxdbContext();
+    const db = useRxdb();
 
     const onClean = useCallback(async () => {
         await db.remove();

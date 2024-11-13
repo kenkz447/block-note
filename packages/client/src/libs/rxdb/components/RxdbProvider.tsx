@@ -1,5 +1,5 @@
-import { PropsWithChildren, useEffect, useState } from 'react';
-import { RxdbContext } from '../rxdbContexts';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { RxdbContextType } from '../rxdbContexts';
 import { initRxdb, syncRxdb } from '../rxdbHelpers';
 import { RxDatabase } from 'rxdb';
 import { User } from 'firebase/auth';
@@ -9,9 +9,10 @@ const ANONYMOUS_DB_NAME = 'anonymous';
 interface RxdbProviderProps {
     readonly currentUser: User | null;
     readonly sync: boolean;
+    readonly children: (rxdbContext: RxdbContextType) => ReactNode;
 }
 
-export const RxdbProvider = ({ currentUser, sync, children }: PropsWithChildren<RxdbProviderProps>) => {
+export const RxdbProvider = ({ currentUser, sync, children }: RxdbProviderProps) => {
     const [activeDbName, setActiveDbName] = useState<string>();
     const [db, setDb] = useState<RxDatabase>();
 
@@ -24,10 +25,10 @@ export const RxdbProvider = ({ currentUser, sync, children }: PropsWithChildren<
         }
 
         initRxdb(activeDbName).then((db) => {
-            setDb(db);
             if (sync) {
                 syncRxdb(db);
             }
+            setDb(db);
         });
 
     }, [activeDbName, db, sync]);
@@ -55,9 +56,11 @@ export const RxdbProvider = ({ currentUser, sync, children }: PropsWithChildren<
         }
     }, [currentUser]);
 
-    return (
-        <RxdbContext.Provider value={{ db }}>
-            {children}
-        </RxdbContext.Provider>
-    );
+    const contextValue: RxdbContextType = useMemo(() => {
+        return {
+            db
+        };
+    }, [db]);
+
+    return children(contextValue);
 };

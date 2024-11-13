@@ -1,10 +1,10 @@
 export * from './rxdbTypes';
 export * from './hooks/useEntries';
 
-import { useRxdbContext } from './hooks/useRxdbContext';
+import { useRxdb } from './hooks/useRxdb';
 import { generateRxId } from './rxdbHelpers';
 
 export {
-    useRxdbContext,
+    useRxdb,
     generateRxId
 };

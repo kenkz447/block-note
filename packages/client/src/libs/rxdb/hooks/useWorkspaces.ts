@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useRxdbContext } from './useRxdbContext';
+import { useRxdb } from './useRxdb';
 import { RxDocument } from 'rxdb';
 import { Workspace } from '../rxdbTypes';
 import { firstBy } from 'thenby';
@@ -22,7 +22,7 @@ const DEFAULT_WORKSPACE_NAME = 'Untitled Version';
 
 
 export const useWorkspaces = () => {
-    const { db } = useRxdbContext();
+    const db = useRxdb();
 
     const insert = useCallback(async (params: InsertWorkspaceParams): Promise<Workspace> => {
         ensureCollectionExist(db, 'Workspaces');

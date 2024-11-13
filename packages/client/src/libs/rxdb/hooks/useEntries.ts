@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useRxdbContext } from './useRxdbContext';
+import { useRxdb } from './useRxdb';
 import { RxDocument } from 'rxdb';
 import { Entry } from '../rxdbTypes';
 import { firstBy } from 'thenby';
@@ -22,7 +22,7 @@ const DEFAULT_ENTRY_NAME = 'Untitled Document';
 
 
 export const useEntries = () => {
-    const { db } = useRxdbContext();
+    const db = useRxdb();
 
     const insert = useCallback(async (params: InsertEntryParams): Promise<Entry> => {
         ensureCollectionExist(db, 'entries');

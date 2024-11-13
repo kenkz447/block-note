@@ -1,20 +1,23 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { EditorContext } from '../editorContext';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { EditorContextType } from '../editorContext';
 import { createDefaultDocCollection, initDefaultDocCollection } from '../utils/docCollectionUtils';
 import { DocCollection } from '@blocksuite/store';
 import { User } from 'firebase/auth';
-import { useRxdbContext } from '@/libs/rxdb';
+import { RxCollection, RxDatabase } from 'rxdb';
+import { Entry } from '@/libs/rxdb';
+import { createDefaultDoc } from '@blocksuite/blocks';
 
 
 const ANONYMOUS_COLLECTION_NAME = 'blocksuite-anonymous';
 
 interface EditorProviderProps {
+    readonly db: RxDatabase;
     readonly currentUser: User | null;
     readonly sync: boolean;
+    readonly children: (editorContext: EditorContextType) => React.ReactNode;
 }
 
-export function EditorProvider({ currentUser, sync, children }: React.PropsWithChildren<EditorProviderProps>) {
-    const { db } = useRxdbContext();
+export function EditorProvider({ db, currentUser, sync, children }: EditorProviderProps) {
 
     const collections = useRef<DocCollection[]>([]);
     const [activeCollectionId, setActiveCollectionId] = useState<string>();
@@ -27,6 +30,18 @@ export function EditorProvider({ currentUser, sync, children }: React.PropsWithC
 
         const collection = await createDefaultDocCollection(db, collectionId, sync);
         await initDefaultDocCollection(collection);
+
+        const entryCollection = db.collections.entries as RxCollection<Entry>;
+        const entries = await entryCollection.find().exec();
+
+        for (const entry of entries) {
+            const existingDoc = collection.getDoc(entry.id);
+            if (existingDoc) {
+                continue;
+            }
+
+            createDefaultDoc(collection, { id: entry.id });
+        }
 
         setCollection(collection);
         setActiveCollectionId(collection.id);
@@ -67,9 +82,11 @@ export function EditorProvider({ currentUser, sync, children }: React.PropsWithC
         }
     }, [currentUser]);
 
-    return (
-        <EditorContext.Provider value={{ collection }}>
-            {children}
-        </EditorContext.Provider>
-    );
+    const contextValue = useMemo((): EditorContextType => {
+        return {
+            collection
+        };
+    }, [collection]);
+
+    return children(contextValue)
 }

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react';
-import { useEditorContext } from '../hooks/useEditorContext';
+import { useDocCollection } from '../hooks/useDocCollection';
 import { Entry } from '@/libs/rxdb';
 import { setupEditor } from '../utils/editorUtils';
 import { RefNodeSlotsProvider } from '@blocksuite/blocks';
@@ -10,10 +10,10 @@ interface EditorContainerProps {
 }
 
 export function EditorContainer({ entry }: EditorContainerProps) {
-    const { collection } = useEditorContext();
+    const docCollection = useDocCollection();
 
-    if (!collection) {
-        throw new Error('Collection is not defined');
+    if (!docCollection) {
+        throw new Error('docCollection is not defined');
     }
 
     const navigate = useNavigate();
@@ -21,7 +21,7 @@ export function EditorContainer({ entry }: EditorContainerProps) {
     const editorContainerRef = useRef<HTMLDivElement>(null);
 
     const editor = useMemo(() => {
-        const doc = collection!.getDoc(entry.id);
+        const doc = docCollection!.getDoc(entry.id);
         if (!doc) {
             console.error(`Failed to get doc: ${entry.id}`);
             return;
@@ -30,11 +30,11 @@ export function EditorContainer({ entry }: EditorContainerProps) {
         doc.load();
         doc.resetHistory();
 
-        const editor = setupEditor(collection);
+        const editor = setupEditor(docCollection);
         editor.doc = doc;
         return editor;
 
-    }, [collection, entry.id]);
+    }, [docCollection, entry.id]);
 
     useEffect(() => {
         if (editorContainerRef.current && editor) {
@@ -51,7 +51,7 @@ export function EditorContainer({ entry }: EditorContainerProps) {
         const disposable = editor.std
             .get(RefNodeSlotsProvider)
             .docLinkClicked.on(({ pageId: docId }) => {
-                const target = collection!.getDoc(docId);
+                const target = docCollection!.getDoc(docId);
                 if (!target) {
                     throw new Error(`Failed to jump to doc ${docId}`);
                 }
@@ -67,7 +67,7 @@ export function EditorContainer({ entry }: EditorContainerProps) {
         return () => {
             disposable.dispose();
         };
-    }, [collection, editor, navigate]);
+    }, [docCollection, editor, navigate]);
 
     return (
         <div className="editor-container h-full" ref={editorContainerRef}></div>

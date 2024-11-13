@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { AuthContext, AuthContextType } from '../authContext';
 import { getAuth, User } from 'firebase/auth';
-import { useEventEmitter } from '@/hooks/useEvent';
+import { AuthContextType } from '../authContext';
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const emitSignedOut = useEventEmitter('LOGGED_OUT');
+interface AuthProviderProps {
+    readonly children: (authContext: AuthContextType) => React.ReactNode;
+}
 
+export function AuthProvider({ children }: AuthProviderProps) {
     const [currentUser, setCurrentUser] = useState<User | null>();
 
     useEffect(() => {
@@ -20,8 +21,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const signOut = useCallback(async () => {
         const auth = getAuth();
         await auth.signOut();
-        emitSignedOut();
-    }, [emitSignedOut]);
+    }, []);
 
     const contextValue = useMemo((): AuthContextType => {
         return {
@@ -30,9 +30,5 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         };
     }, [currentUser, signOut]);
 
-    return (
-        <AuthContext.Provider value={contextValue}>
-            {children}
-        </AuthContext.Provider>
-    );
+    return children(contextValue);
 }
