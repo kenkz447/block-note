@@ -12,6 +12,7 @@ import { useDocCollectionSubscribe } from '@/hooks/subscribe/useDocCollectionSub
 import { ContextProvider } from '@/components/ContextProvider';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
 import { useIsMobile } from '@/libs/shadcn-ui/hooks/use-mobile';
+import { ThemeProvider } from '@/components/ThemeProvider';
 
 function Router() {
     const isMobile = useIsMobile();
@@ -32,9 +33,11 @@ function Router() {
 
 function App() {
     return (
-        <PopupProvider>
-            <Router />
-        </PopupProvider>
+        <ThemeProvider>
+            <PopupProvider>
+                <Router />
+            </PopupProvider>
+        </ThemeProvider>
     );
 }
 

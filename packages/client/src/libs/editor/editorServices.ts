@@ -128,7 +128,7 @@ export function mockParseDocUrlService(collection: DocCollection) {
     return parseDocUrlService;
 }
 
-export class MockEdgelessTheme {
+export class MockEditorTheme {
     theme$ = signal(ColorScheme.Light);
 
     setTheme(theme: ColorScheme) {
@@ -144,11 +144,14 @@ export class MockEdgelessTheme {
     }
 }
 
-export const mockEdgelessTheme = new MockEdgelessTheme();
+export const editorTheme = new MockEditorTheme();
 
 export const themeExtension: ThemeExtension = {
+    getAppTheme() {
+        return editorTheme.theme$;
+    },
     getEdgelessTheme() {
-        return mockEdgelessTheme.theme$;
+        return editorTheme.theme$;
     },
 };
 

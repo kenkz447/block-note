@@ -14,9 +14,9 @@ export function Settings({ hide }: SettingsProps) {
     return (
         <DialogContent className="w-9/12 min-w-[800px] max-w-[1024px] p-0">
             <div className="flex gap-4">
-                <SettingSidebar onSignOut={hide} onTabChange={setCurrentTab} />
+                <SettingSidebar onSignOut={hide} onTabChange={setCurrentTab} currentTab={currentTab} />
                 <div className="flex flex-col items-center p-8 w-full">
-                    <div className="w-[560px]">
+                    <div className="w-full max-w-[560px]">
                         {
                             currentTab === 'account' ? (
                                 <AccountSetting />

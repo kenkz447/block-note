@@ -2,14 +2,18 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useDocCollection } from '../hooks/useDocCollection';
 import { Entry } from '@/libs/rxdb';
 import { setupEditor } from '../utils/editorUtils';
-import { RefNodeSlotsProvider } from '@blocksuite/blocks';
+import { ColorScheme, RefNodeSlotsProvider } from '@blocksuite/blocks';
 import { useNavigate } from '@tanstack/react-router';
+import { useTheme } from '@/components/ThemeProvider';
+import { editorTheme } from '../editorServices';
 
 interface EditorContainerProps {
     readonly entry: Entry;
 }
 
 export function EditorContainer({ entry }: EditorContainerProps) {
+    const { theme } = useTheme();
+
     const docCollection = useDocCollection();
 
     if (!docCollection) {
@@ -32,7 +36,9 @@ export function EditorContainer({ entry }: EditorContainerProps) {
 
         const editor = setupEditor(docCollection);
         editor.doc = doc;
+
         return editor;
+
 
     }, [docCollection, entry.id]);
 
@@ -69,7 +75,20 @@ export function EditorContainer({ entry }: EditorContainerProps) {
         };
     }, [docCollection, editor, navigate]);
 
+    // Set editor theme
+    useEffect(() => {
+        if (theme === 'system') {
+            const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
+            const editorColorScheme = systemTheme.matches ? ColorScheme.Dark : ColorScheme.Light;
+            editorTheme.setTheme(editorColorScheme);
+            return;
+        }
+
+        const editorColorScheme = theme === 'dark' ? ColorScheme.Dark : ColorScheme.Light;
+        editorTheme.setTheme(editorColorScheme);
+    }, [theme]);
+
     return (
-        <div className="editor-container h-full" ref={editorContainerRef}></div>
+        <div className="editor-container" ref={editorContainerRef} />
     );
 }

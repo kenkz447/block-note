@@ -10,7 +10,7 @@ export function SettingHeader({ title, description }: SettingHeaderProps) {
         <div className="w-full">
             <h2 className="text-lg font-semibold">{title}</h2>
             <p className="text-sm text-gray-500">{description}</p>
-            <Separator orientation="horizontal" className="my-8" />
+            <Separator orientation="horizontal" className="my-6" />
         </div>
     );
 }
