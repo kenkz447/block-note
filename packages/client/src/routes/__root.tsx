@@ -33,56 +33,56 @@ function Router() {
 
 function App() {
     return (
-        <ThemeProvider>
-            <PopupProvider>
-                <Router />
-            </PopupProvider>
-        </ThemeProvider>
+        <PopupProvider>
+            <Router />
+        </PopupProvider>
     );
 }
 
 export const Route = createRootRoute({
     component: () => (
-        <AuthProvider>
-            {(authContext) => {
-                const { currentUser } = authContext;
+        <ThemeProvider>
+            <AuthProvider>
+                {(authContext) => {
+                    const { currentUser } = authContext;
 
-                if (currentUser === undefined) {
-                    return <LoadingScreen />;
-                }
+                    if (currentUser === undefined) {
+                        return <LoadingScreen />;
+                    }
 
-                const syncEnabled = !!currentUser;
+                    const syncEnabled = !!currentUser;
 
-                return (
-                    <RxdbProvider currentUser={currentUser} sync={syncEnabled}>
-                        {(rxdbContext) => {
-                            if (!rxdbContext.db) {
-                                return <LoadingScreen />;
-                            }
+                    return (
+                        <RxdbProvider currentUser={currentUser} sync={syncEnabled}>
+                            {(rxdbContext) => {
+                                if (!rxdbContext.db) {
+                                    return <LoadingScreen />;
+                                }
 
-                            return (
-                                <EditorProvider db={rxdbContext.db} currentUser={currentUser} sync={syncEnabled}>
-                                    {(editorContext) => {
-                                        if (!editorContext.collection) {
-                                            return <LoadingScreen />;
-                                        }
+                                return (
+                                    <EditorProvider db={rxdbContext.db} currentUser={currentUser} sync={syncEnabled}>
+                                        {(editorContext) => {
+                                            if (!editorContext.collection) {
+                                                return <LoadingScreen />;
+                                            }
 
-                                        return (
-                                            <ContextProvider
-                                                authContext={authContext}
-                                                rxdbContext={rxdbContext}
-                                                editorContext={editorContext}
-                                            >
-                                                <App />
-                                            </ContextProvider>
-                                        );
-                                    }}
-                                </EditorProvider>
-                            );
-                        }}
-                    </RxdbProvider>
-                );
-            }}
-        </AuthProvider>
+                                            return (
+                                                <ContextProvider
+                                                    authContext={authContext}
+                                                    rxdbContext={rxdbContext}
+                                                    editorContext={editorContext}
+                                                >
+                                                    <App />
+                                                </ContextProvider>
+                                            );
+                                        }}
+                                    </EditorProvider>
+                                );
+                            }}
+                        </RxdbProvider>
+                    );
+                }}
+            </AuthProvider>
+        </ThemeProvider>
     ),
 });
