@@ -1,8 +1,8 @@
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { RxdbContextType } from '../rxdbContexts';
 import { initRxdb, syncRxdb } from '../rxdbHelpers';
-import { RxDatabase } from 'rxdb';
 import { User } from 'firebase/auth';
+import { AppRxDatabase } from '../rxdbTypes';
 
 const ANONYMOUS_DB_NAME = 'anonymous';
 
@@ -14,7 +14,7 @@ interface RxdbProviderProps {
 
 export const RxdbProvider = ({ currentUser, sync, children }: RxdbProviderProps) => {
     const [activeDbName, setActiveDbName] = useState<string>();
-    const [db, setDb] = useState<RxDatabase>();
+    const [db, setDb] = useState<AppRxDatabase>();
 
     /**
      * Initialize and sync the database

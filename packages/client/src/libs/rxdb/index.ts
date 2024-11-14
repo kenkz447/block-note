@@ -1,5 +1,5 @@
 export * from './rxdbTypes';
-export * from './hooks/useEntries';
+export * from './hooks/orm/useEntries';
 
 import { useRxdb } from './hooks/useRxdb';
 import { generateRxId } from './rxdbHelpers';

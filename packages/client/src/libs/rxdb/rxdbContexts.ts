@@ -1,8 +1,8 @@
 import { createContext } from 'react';
-import { RxDatabase } from 'rxdb';
+import { AppRxDatabase } from './rxdbTypes';
 
 export interface RxdbContextType {
-    readonly db?: RxDatabase;
+    readonly db?: AppRxDatabase;
 }
 
-export const RxdbContext = createContext<RxdbContextType | null>( null);
+export const RxdbContext = createContext<RxdbContextType | null>(null);

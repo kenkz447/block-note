@@ -1,4 +1,4 @@
-import { Doc, Entry } from '@/libs/rxdb';
+import { LocalDoc, Entry } from '@/libs/rxdb';
 import { DocSource } from '@blocksuite/sync';
 import { RxCollection, RxDatabase, RxDocument } from 'rxdb';
 import { diffUpdate, encodeStateVectorFromUpdate, mergeUpdates } from 'yjs';
@@ -16,7 +16,7 @@ export class RxdbDocSource implements DocSource {
     constructor(readonly db: RxDatabase) { }
 
     getLocalStore() {
-        const docStore = this.db.collections.localDocs as RxCollection<Doc>;
+        const docStore = this.db.collections.localDocs as RxCollection<LocalDoc>;
         if (!docStore) {
             throw new Error('Docs collection not found in database');
         }
@@ -39,7 +39,7 @@ export class RxdbDocSource implements DocSource {
     ): Promise<{ data: Uint8Array; state?: Uint8Array | undefined; } | null> {
         try {
             let store: RxCollection | null = null;
-            let doc: RxDocument<Entry> | RxDocument<Doc> | null = null;
+            let doc: RxDocument<Entry> | RxDocument<LocalDoc> | null = null;
 
             if (docId.startsWith('local:')) {
                 store = this.getLocalStore();
@@ -70,7 +70,7 @@ export class RxdbDocSource implements DocSource {
     async push(docId: string, data: Uint8Array): Promise<void> {
         try {
             let store: RxCollection | null = null;
-            let doc: RxDocument<Entry> | RxDocument<Doc> | null = null;
+            let doc: RxDocument<Entry> | RxDocument<LocalDoc> | null = null;
 
             if (docId.startsWith('local:')) {
                 store = this.getLocalStore();

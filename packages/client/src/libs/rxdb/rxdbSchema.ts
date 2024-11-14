@@ -1,6 +1,25 @@
+const workspaceSchema = {
+    keyCompression: false,
+    version: 0,
+    title: 'workspace',
+    primaryKey: 'id',
+    type: 'object',
+    properties: {
+        id: {
+            type: 'string',
+            maxLength: 100
+        },
+        name: {
+            type: 'string'
+        }
+    },
+    required: [
+        'id',
+        'name'
+    ]
+};
 
-
-const versionSchema = {
+const projectSchema = {
     keyCompression: false,
     version: 0,
     title: 'version',
@@ -123,5 +142,6 @@ const localDocSchema = {
 export const rxdbSchema = {
     entry: entrySchema,
     localDoc: localDocSchema,
-    version: versionSchema
+    project: projectSchema,
+    workspace: workspaceSchema
 };

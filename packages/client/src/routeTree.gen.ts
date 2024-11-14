@@ -12,12 +12,26 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
+import { Route as WorkspaceIdIndexImport } from './routes/$workspaceId/index'
+import { Route as WorkspaceIdProjectIdIndexImport } from './routes/$workspaceId/$projectId/index'
 
 // Create/Update Routes
 
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const WorkspaceIdIndexRoute = WorkspaceIdIndexImport.update({
+  id: '/$workspaceId/',
+  path: '/$workspaceId/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const WorkspaceIdProjectIdIndexRoute = WorkspaceIdProjectIdIndexImport.update({
+  id: '/$workspaceId/$projectId/',
+  path: '/$workspaceId/$projectId/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -32,6 +46,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/$workspaceId/': {
+      id: '/$workspaceId/'
+      path: '/$workspaceId'
+      fullPath: '/$workspaceId'
+      preLoaderRoute: typeof WorkspaceIdIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/$workspaceId/$projectId/': {
+      id: '/$workspaceId/$projectId/'
+      path: '/$workspaceId/$projectId'
+      fullPath: '/$workspaceId/$projectId'
+      preLoaderRoute: typeof WorkspaceIdProjectIdIndexImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -39,32 +67,42 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/$workspaceId': typeof WorkspaceIdIndexRoute
+  '/$workspaceId/$projectId': typeof WorkspaceIdProjectIdIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/$workspaceId': typeof WorkspaceIdIndexRoute
+  '/$workspaceId/$projectId': typeof WorkspaceIdProjectIdIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/$workspaceId/': typeof WorkspaceIdIndexRoute
+  '/$workspaceId/$projectId/': typeof WorkspaceIdProjectIdIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/$workspaceId' | '/$workspaceId/$projectId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/$workspaceId' | '/$workspaceId/$projectId'
+  id: '__root__' | '/' | '/$workspaceId/' | '/$workspaceId/$projectId/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  WorkspaceIdIndexRoute: typeof WorkspaceIdIndexRoute
+  WorkspaceIdProjectIdIndexRoute: typeof WorkspaceIdProjectIdIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  WorkspaceIdIndexRoute: WorkspaceIdIndexRoute,
+  WorkspaceIdProjectIdIndexRoute: WorkspaceIdProjectIdIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -77,11 +115,19 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/"
+        "/",
+        "/$workspaceId/",
+        "/$workspaceId/$projectId/"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/$workspaceId/": {
+      "filePath": "$workspaceId/index.tsx"
+    },
+    "/$workspaceId/$projectId/": {
+      "filePath": "$workspaceId/$projectId/index.tsx"
     }
   }
 }
