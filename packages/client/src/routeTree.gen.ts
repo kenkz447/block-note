@@ -11,10 +11,10 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as WorkspacesRouteImport } from './routes/workspaces/route'
+import { Route as WorkspacesRouteImport } from './routes/workspaces.route'
 import { Route as EditorRouteImport } from './routes/editor/route'
 import { Route as IndexImport } from './routes/index'
-import { Route as WorkspacesIndexImport } from './routes/workspaces/index'
+import { Route as WorkspacesIndexImport } from './routes/workspaces.index'
 import { Route as EditorIndexImport } from './routes/editor/index'
 
 // Create/Update Routes
@@ -186,7 +186,7 @@ export const routeTree = rootRoute
       ]
     },
     "/workspaces": {
-      "filePath": "workspaces/route.tsx",
+      "filePath": "workspaces.route.tsx",
       "children": [
         "/workspaces/"
       ]
@@ -196,7 +196,7 @@ export const routeTree = rootRoute
       "parent": "/editor"
     },
     "/workspaces/": {
-      "filePath": "workspaces/index.tsx",
+      "filePath": "workspaces.index.tsx",
       "parent": "/workspaces"
     }
   }

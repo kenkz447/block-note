@@ -18,11 +18,11 @@ import {
 import { WebSocketAwarenessSource } from '../source/WebSocketAwarenessSource';
 import { env } from '@/config/env';
 import { RxdbDocSource } from '../source/RxdbDocSource';
-import { RxDatabase } from 'rxdb';
+import { AppRxDatabase } from '@/libs/rxdb';
 
 const BASE_WEBSOCKET_URL = new URL(env.sync.websocket);
 
-export async function createDefaultDocCollection(db: RxDatabase, collectionId: string, syncEnable: boolean) {
+export async function createDefaultDocCollection(db: AppRxDatabase, collectionId: string, syncEnable: boolean) {
     const idGenerator: IdGeneratorType = IdGeneratorType.NanoID;
     const schema = new Schema();
     schema.register(AffineSchemas);

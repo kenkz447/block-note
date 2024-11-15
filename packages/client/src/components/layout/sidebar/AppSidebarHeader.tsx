@@ -17,45 +17,41 @@ export function AppSidebarHeader() {
     }, [subscribeProjects]);
 
     if (!currentWorkspace) {
-        return (
-            <div className="h-12 flex items-center justify-center">
-                <span className="font-mono">
-                    <span className="font-bold">Writefy</span>
-                </span>
-            </div>
-        );
+        return null;
     }
 
     return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="w-full block p-2 h-12">
-                    <div className="flex items-center gap-2">
-                        <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                            <Layers />
+        <div className="p-2 flex justify-center items-center tracking-wide">
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="w-full block p-2 h-12">
+                        <div className="flex items-center gap-2">
+                            <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                                <Layers />
+                            </div >
+                            <div className="grid flex-1 text-left text-sm leading-tight">
+                                <span className="truncate font-semibold">
+                                    {currentWorkspace.name ?? 'Your Workspace'}
+                                </span>
+                                <span className="truncate text-xs text-primary/50">
+                                    {currentProject?.name ?? 'No project selected'}
+                                </span>
+                            </div>
                         </div >
-                        <div className="grid flex-1 text-left text-sm leading-tight">
-                            <span className="truncate font-semibold">
-                                {currentWorkspace.name ?? 'Your Workspace'}
-                            </span>
-                            <span className="truncate text-xs">
-                                {currentProject?.name ?? 'No project selected'}
-                            </span>
-                        </div>
-                    </div >
-                </Button >
-            </DropdownMenuTrigger >
-            <DropdownMenuContent side="right" align="start" className="w-[150px]">
-                <DropdownMenuLabel>My projects</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuCheckboxItem checked>
-                    Untitled project
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-foreground/70">
-                    <Plus /> New
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu >
+                    </Button >
+                </DropdownMenuTrigger >
+                <DropdownMenuContent side="right" align="start" className="w-[150px]">
+                    <DropdownMenuLabel>My projects</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuCheckboxItem checked>
+                        Untitled project
+                    </DropdownMenuCheckboxItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem className="text-foreground/70">
+                        <Plus /> New
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu >
+        </div>
     );
 }

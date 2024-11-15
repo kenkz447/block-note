@@ -11,7 +11,7 @@
 .rc-tree-treenode {
   display: flex;
   align-items: center;
-  padding-left: var(--rc-indent-size);
+  /* padding-left: var(--rc-indent-size); */
   height: var(--rc-node-height);
 }
 
@@ -90,7 +90,6 @@
   width: 100%;
   border-radius: 8px;
   margin-bottom: 1px;
-  margin-right: 16px;
 }
 
 .rc-tree .rc-tree-treenode .rc-tree-node-content-wrapper {

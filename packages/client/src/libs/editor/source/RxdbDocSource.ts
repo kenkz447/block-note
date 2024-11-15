@@ -1,6 +1,6 @@
-import { LocalDoc, Entry } from '@/libs/rxdb';
+import { LocalDoc, Entry, AppRxDatabase } from '@/libs/rxdb';
 import { DocSource } from '@blocksuite/sync';
-import { RxCollection, RxDatabase, RxDocument } from 'rxdb';
+import { RxCollection, RxDocument } from 'rxdb';
 import { diffUpdate, encodeStateVectorFromUpdate, mergeUpdates } from 'yjs';
 
 type UpdateMessage = {
@@ -13,7 +13,7 @@ export class RxdbDocSource implements DocSource {
 
     name = 'rxdb';
 
-    constructor(readonly db: RxDatabase) { }
+    constructor(readonly db: AppRxDatabase) { }
 
     getLocalStore() {
         const docStore = this.db.collections.localDocs as RxCollection<LocalDoc>;

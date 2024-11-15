@@ -11,6 +11,10 @@ const workspaceSchema = {
         },
         name: {
             type: 'string'
+        },
+        createdAt: {
+            type: 'string',
+            format: 'date-time'
         }
     },
     required: [

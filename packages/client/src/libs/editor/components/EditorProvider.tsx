@@ -3,15 +3,15 @@ import { EditorContextType } from '../editorContext';
 import { createDefaultDocCollection, initDefaultDocCollection } from '../utils/docCollectionUtils';
 import { DocCollection } from '@blocksuite/store';
 import { User } from 'firebase/auth';
-import { RxCollection, RxDatabase } from 'rxdb';
-import { Entry } from '@/libs/rxdb';
+import { RxCollection } from 'rxdb';
+import { AppRxDatabase, Entry } from '@/libs/rxdb';
 import { createDefaultDoc } from '@blocksuite/blocks';
 
 
 const ANONYMOUS_COLLECTION_NAME = 'blocksuite-anonymous';
 
 interface EditorProviderProps {
-    readonly db: RxDatabase;
+    readonly db: AppRxDatabase;
     readonly currentUser: User | null;
     readonly sync: boolean;
     readonly children: (editorContext: EditorContextType) => React.ReactNode;
@@ -88,5 +88,5 @@ export function EditorProvider({ db, currentUser, sync, children }: EditorProvid
         };
     }, [collection]);
 
-    return children(contextValue)
+    return children(contextValue);
 }

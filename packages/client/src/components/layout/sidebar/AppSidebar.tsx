@@ -46,11 +46,9 @@ export function AppSidebar() {
 
     return (
         <div className="h-full flex flex-col bg-sidebar gap-2 text-sidebar-foreground">
-            <div className="p-2 flex justify-center items-center tracking-wide">
-                <AppSidebarHeader />
-            </div>
+            <AppSidebarHeader />
             <div className="grow flex flex-col">
-                <div className="flex gap-2 px-[16px] mb-2">
+                <div className="flex gap-2 px-2 my-2">
                     <Input placeholder="Search" onChange={(e) => setSearch(e.currentTarget.value)} />
                     <div>
                         <DropdownMenu>
@@ -66,9 +64,11 @@ export function AppSidebar() {
                         </DropdownMenu>
                     </div>
                 </div>
-                <EntryTree
-                    search={search}
-                />
+                <div className="px-2">
+                    <EntryTree
+                        search={search}
+                    />
+                </div>
             </div>
             <div className="flex flex-col p-2">
                 {

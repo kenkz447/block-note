@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { RxDatabase } from 'rxdb';
 import type { DocCollection } from '@blocksuite/store';
+import { AppRxDatabase } from '@/libs/rxdb';
 
 export function createDefaultDoc(
     collection: DocCollection,
@@ -35,7 +36,7 @@ export function createDefaultDoc(
 
 
 interface RxdbSubscribeOptions {
-    readonly db: RxDatabase;
+    readonly db: AppRxDatabase;
     readonly docCollection: DocCollection;
 }
 

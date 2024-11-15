@@ -1,3 +1,4 @@
+import { useCurrentUser } from '@/libs/auth';
 import { createFileRoute } from '@tanstack/react-router';
 import { Navigate } from '@tanstack/react-router';
 import { z } from 'zod';
@@ -9,9 +10,11 @@ export const Route = createFileRoute('/')({
 });
 
 function RouteComponent() {
-    if (location.pathname === '/') {
-        return <Navigate to="/editor" replace />;
+    const { currentUser } = useCurrentUser();
+
+    if (currentUser) {
+        return <Navigate to="/workspaces" replace />;
     }
 
-    return null;
+    return <Navigate to="/editor" replace />;
 }
