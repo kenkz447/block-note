@@ -1,40 +1,17 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { EditorContainer } from '@/libs/editor';
+import { Navigate } from '@tanstack/react-router';
 import { z } from 'zod';
-import { Entry, useEntries, useRxdb } from '@/libs/rxdb';
-import { useEffect, useState } from 'react';
+
 export const Route = createFileRoute('/')({
     component: RouteComponent,
-    validateSearch: z.object({
-        entryId: z.string().optional(),
-    })
+    validateSearch: z.object({})
+
 });
 
 function RouteComponent() {
-    const { entryId } = Route.useSearch();
-    const db = useRxdb();
-
-    const { subscribeSingle } = useEntries();
-
-    const [entry, setEntry] = useState<Entry | null>();
-
-    useEffect(() => {
-        if (!entryId || !db) {
-            return;
-        }
-
-        const sub = subscribeSingle(entryId, setEntry);
-
-        return () => {
-            sub.unsubscribe();
-        };
-    }, [subscribeSingle, entryId, db]);
-
-    if (!entry) {
-        return null;
+    if (location.pathname === '/') {
+        return <Navigate to="/editor" replace />;
     }
 
-    return (
-        <EditorContainer entry={entry} />
-    );
+    return null;
 }

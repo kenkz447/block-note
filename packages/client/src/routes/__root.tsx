@@ -15,8 +15,6 @@ import { useIsMobile } from '@/libs/shadcn-ui/hooks/use-mobile';
 import { ThemeProvider } from '@/components/ThemeProvider';
 
 function Router() {
-    const isMobile = useIsMobile();
-    const Layout = isMobile ? MasterLayoutMobile : MasterLayout;
 
     const db = useRxdb();
     const docCollection = useDocCollection();
@@ -25,9 +23,7 @@ function Router() {
     useDocCollectionSubscribe({ docCollection });
 
     return (
-        <Layout>
-            <Outlet />
-        </Layout>
+        <Outlet />
     );
 }
 

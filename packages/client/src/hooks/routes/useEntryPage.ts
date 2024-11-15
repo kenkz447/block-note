@@ -7,13 +7,13 @@ export const useEntryPage = () => {
     return useCallback((entryId: string | null) => {
         if (!entryId) {
             return navigate({
-                to: '/',
+                to: '/editor',
                 replace: true
             });
         }
 
         navigate({
-            to: '/',
+            to: '/editor',
             search: {
                 entryId
             }

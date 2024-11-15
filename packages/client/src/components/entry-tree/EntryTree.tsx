@@ -13,7 +13,7 @@ interface EntryTreeProps {
 }
 
 export function EntryTree({ search }: EntryTreeProps) {
-    const { entryId } = useSearch({ from: '/' });
+    const { entryId } = useSearch({ from: '/editor', structuralSharing: true });
     const navigateToEntry = useEntryPage();
     const { update, subscribe } = useEntries();
 

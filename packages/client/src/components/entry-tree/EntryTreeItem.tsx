@@ -17,7 +17,7 @@ interface EntryTreeItemProps {
 }
 
 export function EntryTreeItem({ entry, expanded }: EntryTreeItemProps) {
-    const { entryId: currentEntryId } = useSearch({ from: '/' });
+    const { entryId: currentEntryId } = useSearch({ from: '/editor' });
 
     const navigateToEntry = useEntryPage();
 

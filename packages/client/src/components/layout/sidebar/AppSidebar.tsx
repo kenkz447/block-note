@@ -2,7 +2,7 @@ import { Button } from '@/libs/shadcn-ui/components/button';
 import { EntryTree } from '../../entry-tree/EntryTree';
 import { useCurrentUser, useGoogleSignIn } from '@/libs/auth';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/libs/shadcn-ui/components/dropdown-menu';
-import { ChevronsUpDown, FilePlus, FolderPlus, Layers, Plus, SquareEqual } from 'lucide-react';
+import { ChevronsUpDown, FilePlus, FolderPlus, Plus } from 'lucide-react';
 import { usePopupDialog } from '@/libs/popup';
 import { Entry, generateRxId, useEntries } from '@/libs/rxdb';
 import { CreateEntryForm } from '../../forms/entry/CreateEntryForm';
@@ -10,7 +10,7 @@ import { Input } from '@/libs/shadcn-ui/components/input';
 import { useCallback, useState } from 'react';
 import { Avatar, AvatarImage } from '@/libs/shadcn-ui/components/avatar';
 import { Settings } from './settings/Settings';
-import { Separator } from '@/libs/shadcn-ui/components/separator';
+import { AppSidebarHeader } from './AppSidebarHeader';
 
 export function AppSidebar() {
     const { currentUser } = useCurrentUser();
@@ -47,33 +47,7 @@ export function AppSidebar() {
     return (
         <div className="h-full flex flex-col bg-sidebar gap-2 text-sidebar-foreground">
             <div className="p-2 flex justify-center items-center tracking-wide">
-                {
-                    !currentUser
-                        ? (
-
-                            <span className="font-mono ">
-                                <span className=" text-orange-600 font-bold">W</span>
-                                <span className="font-mono ">ritefy</span>
-                            </span>
-                        )
-                        : (
-                            <Button variant="ghost" className="w-full block p-2 h-12">
-                                <div className="flex items-center gap-2">
-                                    <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                                        <Layers />
-                                    </div>
-                                    <div className="grid flex-1 text-left text-sm leading-tight">
-                                        <span className="truncate font-semibold">
-                                            Your Workspace
-                                        </span>
-                                        <span className="truncate text-xs">
-                                            Untitled project
-                                        </span>
-                                    </div>
-                                </div>
-                            </Button>
-                        )
-                }
+                <AppSidebarHeader />
             </div>
             <div className="grow flex flex-col">
                 <div className="flex gap-2 px-[16px] mb-2">
@@ -86,8 +60,6 @@ export function AppSidebar() {
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent side="right" align="start" className="w-[150px]">
-                                <DropdownMenuItem onClick={() => onNewEntry('version')}><SquareEqual />New Version</DropdownMenuItem>
-                                <Separator />
                                 <DropdownMenuItem onClick={() => onNewEntry('folder')}><FolderPlus />New Folder</DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => onNewEntry('document')}><FilePlus />New Document</DropdownMenuItem>
                             </DropdownMenuContent>

@@ -4,7 +4,7 @@ import { rxdbSchema } from './rxdbSchema';
 import { wrappedValidateAjvStorage } from 'rxdb/plugins/validate-ajv';
 
 import { RxDBUpdatePlugin } from 'rxdb/plugins/update';
-import { collection, doc, where } from 'firebase/firestore';
+import { collection, where } from 'firebase/firestore';
 import { replicateFirestore } from 'rxdb/plugins/replication-firestore';
 import { firestore } from '@/bootstraps/firebase';
 import { env } from '@/config/env';
@@ -55,7 +55,6 @@ export const syncRxdb = (db: AppRxDatabase) => {
                 collection: remoteWorkspaceCollection
             },
             pull: {
-                filter: where('id', '==', db.name)
             },
             push: {
             },
