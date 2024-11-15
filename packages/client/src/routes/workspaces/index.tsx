@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { Card, CardContent, CardHeader } from '@/libs/shadcn-ui/components/card';
-import { ArrowRight, FileTerminal, Info, Layers, Plus, PlusCircle } from 'lucide-react';
+import { ArrowRight, FileTerminal, Info, Layers, Plus, PlusCircle, User } from 'lucide-react';
 import {
     Carousel,
     CarouselContent,
@@ -31,12 +31,17 @@ function RouteComponent() {
     return (
         <div className="h-full flex flex-col justify-center items-center gap-8">
             <div className="flex items-center gap-8">
-                <h1 className="text-muted-foreground text-3xl font-mono font-medium">
-                    Your Workspace
+                <h1 className="text-muted-foreground text-2xl font-mono font-medium">
+                    Your Workspaces
                 </h1>
-                <Button variant="secondary" size="icon" className="rounded-full text-muted-foreground" >
-                    <Plus strokeWidth={3} />
-                </Button>
+                <div className="flex gap-2">
+                    <Button variant="secondary" size="icon" className="rounded-full text-muted-foreground" >
+                        <Plus strokeWidth={3} />
+                    </Button>
+                    <Button variant="secondary" size="icon" className="rounded-full text-muted-foreground" >
+                        <User strokeWidth={3} />
+                    </Button>
+                </div>
             </div>
             <Carousel
                 opts={{
@@ -75,26 +80,29 @@ function RouteComponent() {
                             </CarouselItem>
                         ))
                     }
-                    <CarouselItem className="basis-4/5 sm:basis-1/3 md:basis-1/4 lg:basis-1/5">
-                        <Card className="w-full">
-                            <CardHeader>
-                                <div className="flex flex-col items-center justify-center gap-2">
-                                    <div className="w-14 h-14 bg-secondary rounded-lg flex items-center justify-center">
-                                        <Info size={30} className="text-secondary-foreground" />
-                                    </div>
-                                    <h2 className="text-xl font-semibold">
-                                        No workspace
-                                    </h2>
-                                </div>
-                            </CardHeader>
-                            <CardContent className="text-center">
-                                <p className="text-primary/70">
-                                    Create to start freshly
-                                </p>
-                            </CardContent>
-                        </Card>
-                    </CarouselItem>
                 </CarouselContent>
+                {
+                    workspaces.length === 0 && (
+                        <div className="flex w-full items-center justify-center">
+                            <Card className="mx-4 w-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+                                <CardHeader>
+                                    <div className="flex flex-col items-center justify-center gap-2">
+                                        <div className="w-14 h-14 bg-secondary rounded-lg flex items-center justify-center">
+                                            <Info size={30} className="text-secondary-foreground/70" />
+                                        </div>
+                                        <h2 className="text-xl font-semibold">
+                                            No workspace
+                                        </h2>
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="text-center">
+                                    <p className="text-primary/70">
+                                        Create to start freshly
+                                    </p>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    )}
             </Carousel>
         </div>
     );
