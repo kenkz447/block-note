@@ -1,69 +1,45 @@
 import { createRootRoute, Outlet } from '@tanstack/react-router';
 import { RxdbProvider } from '@/libs/rxdb/components/RxdbProvider';
 import { PopupProvider } from '@/libs/popup';
-import { EditorProvider } from '@/libs/editor';
-import { useRxdb } from '@/libs/rxdb';
-import { useDocCollection } from '@/libs/editor/hooks/useDocCollection';
-import { useRxdbSubscribe } from '@/hooks/subscribe/useRxdbSubscribe';
-import { useDocCollectionSubscribe } from '@/hooks/subscribe/useDocCollectionSubscribe';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
 import { RxdbContext } from '@/libs/rxdb/rxdbContexts';
-import { EditorContext } from '@/libs/editor/editorContext';
-import { ThemeProvider } from '@writefy/client-shared';
-
-function Router() {
-
-    const db = useRxdb();
-    const docCollection = useDocCollection();
-
-    useRxdbSubscribe({ db, docCollection });
-    useDocCollectionSubscribe({ docCollection });
-
-    return (
-        <Outlet />
-    );
-}
+import { AuthProvider, ThemeProvider } from '@writefy/client-shared';
 
 function App() {
     return (
-        <PopupProvider>
-            <Router />
-        </PopupProvider>
+        <AuthProvider>
+            {(authContext) => {
+                if (authContext.currentUser === undefined) {
+                    return <LoadingScreen />;
+                }
+
+                const useSync = !!authContext.currentUser;
+                return (
+                    <RxdbProvider currentUser={authContext.currentUser} sync={useSync}>
+                        {(rxdbContext) => {
+                            if (!rxdbContext.db) {
+                                return <LoadingScreen />;
+                            }
+
+                            return (
+                                <RxdbContext.Provider value={rxdbContext}>
+                                    <Outlet />
+                                </RxdbContext.Provider>
+                            );
+                        }}
+                    </RxdbProvider>
+                );
+            }}
+        </AuthProvider>
     );
 }
 
 export const Route = createRootRoute({
     component: () => (
         <ThemeProvider>
-            <RxdbProvider
-                currentUser={null}
-                sync={false}
-            >
-                {(rxdbContext) => {
-                    if (!rxdbContext.db) {
-                        return <LoadingScreen />;
-                    }
-
-                    return (
-                        <EditorProvider db={rxdbContext.db}>
-                            {(editorContext) => {
-                                if (!editorContext.collection) {
-                                    return <LoadingScreen />;
-                                }
-
-                                return (
-                                    <RxdbContext.Provider value={rxdbContext}>
-                                        <EditorContext.Provider value={editorContext}>
-                                            <App />
-                                        </EditorContext.Provider>
-                                    </RxdbContext.Provider>
-
-                                );
-                            }}
-                        </EditorProvider>
-                    );
-                }}
-            </RxdbProvider>
+            <PopupProvider>
+                <App />
+            </PopupProvider>
         </ThemeProvider>
     ),
 });

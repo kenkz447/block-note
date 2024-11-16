@@ -1,8 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { EditorContainer } from '@/libs/editor';
+import { EditorContainer, EditorProvider } from '@/libs/editor';
 import { Entry, useEntries } from '@/libs/rxdb';
 import { useEffect, useState } from 'react';
 import { z } from 'zod';
+import { LoadingScreen } from '@/components/layout/LoadingScreen';
+import { EditorContext } from '@/libs/editor/editorContext';
 
 export const Route = createFileRoute('/editor/')({
     component: RouteComponent,
@@ -12,7 +14,6 @@ export const Route = createFileRoute('/editor/')({
 });
 
 function RouteComponent() {
-
     const { entryId } = Route.useSearch();
 
     const { subscribeSingle } = useEntries();
@@ -35,5 +36,19 @@ function RouteComponent() {
         return null;
     }
 
-    return <EditorContainer entry={entry} />;
+    return (
+        <EditorProvider>
+            {(editorContext) => {
+                if (!editorContext.collection) {
+                    return <LoadingScreen />;
+                }
+
+                return (
+                    <EditorContext.Provider value={editorContext}>
+                        <EditorContainer entry={entry} />
+                    </EditorContext.Provider>
+                )
+            }}
+        </EditorProvider>
+    );
 }

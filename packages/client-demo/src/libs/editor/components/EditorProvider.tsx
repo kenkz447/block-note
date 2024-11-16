@@ -3,22 +3,23 @@ import { EditorContextType } from '../editorContext';
 import { createDefaultDocCollection, initDefaultDocCollection } from '../utils/docCollectionUtils';
 import { DocCollection } from '@blocksuite/store';
 import { RxCollection } from 'rxdb';
-import { AppRxDatabase, Entry } from '@/libs/rxdb';
+import { Entry, useEntries, useRxdb } from '@/libs/rxdb';
 import { createDefaultDoc } from '@blocksuite/blocks';
 
 
 const ANONYMOUS_COLLECTION_NAME = 'blocksuite-anonymous';
 
 interface EditorProviderProps {
-    readonly db: AppRxDatabase;
     readonly children: (editorContext: EditorContextType) => React.ReactNode;
 }
 
-export function EditorProvider({ db, children }: EditorProviderProps) {
+export function EditorProvider({ children }: EditorProviderProps) {
+    const db = useRxdb();
+    const { insert: insertEntry, checkEntryExists } = useEntries();
 
-    const collections = useRef<DocCollection[]>([]);
+    const docCollections = useRef<DocCollection[]>([]);
     const [activeCollectionId, setActiveCollectionId] = useState<string>(ANONYMOUS_COLLECTION_NAME);
-    const [collection, setCollection] = useState<DocCollection>();
+    const [docCollection, setDocCollection] = useState<DocCollection>();
 
     const setupCollection = useCallback(async (collectionId: string) => {
         if (!db) {
@@ -40,41 +41,92 @@ export function EditorProvider({ db, children }: EditorProviderProps) {
             createDefaultDoc(collection, { id: entry.id });
         }
 
-        setCollection(collection);
+        setDocCollection(collection);
         setActiveCollectionId(collection.id);
     }, [db]);
 
     useEffect(() => {
-        if (activeCollectionId !== collection?.id) {
-            collection?.waitForGracefulStop().then(() => {
-                collection?.forceStop();
-                setCollection(undefined);
+        if (activeCollectionId !== docCollection?.id) {
+            docCollection?.waitForGracefulStop().then(() => {
+                docCollection?.forceStop();
+                setDocCollection(undefined);
             });
         }
-    }, [activeCollectionId, collection]);
+    }, [activeCollectionId, docCollection]);
 
     useEffect(() => {
-        const skipCreateCollection = !activeCollectionId || collection;
+        const skipCreateCollection = !activeCollectionId || docCollection;
         if (skipCreateCollection) {
             return;
         }
 
-        const existingCollection = collections.current.find((collection) => collection.id === activeCollectionId);
+        const existingCollection = docCollections.current.find((collection) => collection.id === activeCollectionId);
 
         if (existingCollection) {
-            setCollection(existingCollection);
+            setDocCollection(existingCollection);
         }
         else {
             setupCollection(activeCollectionId);
         }
 
-    }, [activeCollectionId, collection, setupCollection]);
+    }, [activeCollectionId, docCollection, setupCollection]);
+
+    /**
+     * Subscribe events
+     */
+    useEffect(() => {
+        if (!docCollection) {
+            return;
+        }
+
+        const entriesSubscribes = [
+            // Create a new document in the editor collection when a new entry is created in the database
+            db.collections.entries.insert$.subscribe((e) => {
+                if (e.documentData.type === 'folder') {
+                    return;
+                }
+                const isDocExists = docCollection.getDoc(e.documentId);
+                if (isDocExists) {
+                    return;
+                }
+                createDefaultDoc(docCollection, { id: e.documentId });
+            }),
+            db.collections.entries.remove$.subscribe((e) => {
+                if (e.documentData.type === 'folder') {
+                    return;
+                }
+                const isDocExists = docCollection.getDoc(e.documentId);
+                if (!isDocExists) {
+                    return;
+                }
+                docCollection.removeDoc(e.documentId);
+            })
+        ];
+
+        const docAdded = docCollection.slots.docAdded.on(async (docId) => {
+            const isEntryExists = await checkEntryExists(docId);
+            if (isEntryExists) {
+                return;
+            }
+
+            await insertEntry({
+                id: docId,
+                type: 'document',
+                parent: null,
+            });
+        });
+
+        return () => {
+            entriesSubscribes.forEach((s) => s.unsubscribe());
+            docAdded.dispose();
+        };
+    }, [db, docCollection]);
 
     const contextValue = useMemo((): EditorContextType => {
         return {
-            collection
+            collection: docCollection
         };
-    }, [collection]);
+    }, [docCollection]);
 
     return children(contextValue);
 }

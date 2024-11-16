@@ -16,6 +16,7 @@ import { Route as EditorRouteImport } from './routes/editor/route'
 import { Route as IndexImport } from './routes/index'
 import { Route as WorkspacesIndexImport } from './routes/workspaces.index'
 import { Route as EditorIndexImport } from './routes/editor/index'
+import { Route as AuthLoginImport } from './routes/auth/login'
 
 // Create/Update Routes
 
@@ -49,6 +50,12 @@ const EditorIndexRoute = EditorIndexImport.update({
   getParentRoute: () => EditorRouteRoute,
 } as any)
 
+const AuthLoginRoute = AuthLoginImport.update({
+  id: '/auth/login',
+  path: '/auth/login',
+  getParentRoute: () => rootRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -72,6 +79,13 @@ declare module '@tanstack/react-router' {
       path: '/workspaces'
       fullPath: '/workspaces'
       preLoaderRoute: typeof WorkspacesRouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/auth/login': {
+      id: '/auth/login'
+      path: '/auth/login'
+      fullPath: '/auth/login'
+      preLoaderRoute: typeof AuthLoginImport
       parentRoute: typeof rootRoute
     }
     '/editor/': {
@@ -121,12 +135,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/editor': typeof EditorRouteRouteWithChildren
   '/workspaces': typeof WorkspacesRouteRouteWithChildren
+  '/auth/login': typeof AuthLoginRoute
   '/editor/': typeof EditorIndexRoute
   '/workspaces/': typeof WorkspacesIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth/login': typeof AuthLoginRoute
   '/editor': typeof EditorIndexRoute
   '/workspaces': typeof WorkspacesIndexRoute
 }
@@ -136,16 +152,30 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/editor': typeof EditorRouteRouteWithChildren
   '/workspaces': typeof WorkspacesRouteRouteWithChildren
+  '/auth/login': typeof AuthLoginRoute
   '/editor/': typeof EditorIndexRoute
   '/workspaces/': typeof WorkspacesIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/editor' | '/workspaces' | '/editor/' | '/workspaces/'
+  fullPaths:
+    | '/'
+    | '/editor'
+    | '/workspaces'
+    | '/auth/login'
+    | '/editor/'
+    | '/workspaces/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/editor' | '/workspaces'
-  id: '__root__' | '/' | '/editor' | '/workspaces' | '/editor/' | '/workspaces/'
+  to: '/' | '/auth/login' | '/editor' | '/workspaces'
+  id:
+    | '__root__'
+    | '/'
+    | '/editor'
+    | '/workspaces'
+    | '/auth/login'
+    | '/editor/'
+    | '/workspaces/'
   fileRoutesById: FileRoutesById
 }
 
@@ -153,12 +183,14 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EditorRouteRoute: typeof EditorRouteRouteWithChildren
   WorkspacesRouteRoute: typeof WorkspacesRouteRouteWithChildren
+  AuthLoginRoute: typeof AuthLoginRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EditorRouteRoute: EditorRouteRouteWithChildren,
   WorkspacesRouteRoute: WorkspacesRouteRouteWithChildren,
+  AuthLoginRoute: AuthLoginRoute,
 }
 
 export const routeTree = rootRoute
@@ -173,7 +205,8 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/editor",
-        "/workspaces"
+        "/workspaces",
+        "/auth/login"
       ]
     },
     "/": {
@@ -190,6 +223,9 @@ export const routeTree = rootRoute
       "children": [
         "/workspaces/"
       ]
+    },
+    "/auth/login": {
+      "filePath": "auth/login.tsx"
     },
     "/editor/": {
       "filePath": "editor/index.tsx",

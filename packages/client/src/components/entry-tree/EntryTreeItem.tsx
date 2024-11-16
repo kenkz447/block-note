@@ -84,7 +84,7 @@ export function EntryTreeItem({ entry, expanded }: EntryTreeItemProps) {
 
     return (
         <div className="flex items-center pr-2 gap-2 ">
-            <div>{icon}</div>
+            <div className='flex'>{icon}</div>
             <div className="grow grid">
                 <div className={cn('block whitespace-nowrap	overflow-hidden text-ellipsis')}>
                     {entry.name}

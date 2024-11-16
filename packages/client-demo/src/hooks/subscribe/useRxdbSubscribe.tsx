@@ -1,38 +1,7 @@
 import { useEffect } from 'react';
 import type { DocCollection } from '@blocksuite/store';
 import { AppRxDatabase } from '@/libs/rxdb';
-
-export function createDefaultDoc(
-    collection: DocCollection,
-    options: { id?: string; title?: string; } = {}
-) {
-    const doc = collection.createDoc({ id: options.id });
-
-    doc.load();
-    const title = options.title ?? '';
-    const rootId = doc.addBlock('affine:page', {
-        title: new doc.Text(title)
-    });
-    collection.setDocMeta(doc.id, {
-        title,
-    });
-
-    doc.addBlock('affine:surface', {}, rootId);
-
-    //@ts-expect-error should be fixed in the future
-    const noteId = doc.addBlock('affine:note', {
-        displayDocInfo: true
-    }, rootId);
-
-    doc.addBlock('affine:paragraph', {}, noteId);
-
-    // To make sure the content of new doc would not be clear
-    // By undo operation for the first time
-    doc.resetHistory();
-
-    return doc;
-}
-
+import { createDefaultDoc } from '@blocksuite/blocks';
 
 interface RxdbSubscribeOptions {
     readonly db: AppRxDatabase;
