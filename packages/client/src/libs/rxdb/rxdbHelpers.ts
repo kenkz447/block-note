@@ -9,7 +9,10 @@ import { replicateFirestore } from 'rxdb/plugins/replication-firestore';
 import { firestore } from '@/bootstraps/firebase';
 import { env } from '@/config/env';
 import { AppRxCollections, AppRxDatabase } from './rxdbTypes';
+import { RxDBDevModePlugin } from 'rxdb/plugins/dev-mode';
 
+
+addRxPlugin(RxDBDevModePlugin);
 addRxPlugin(RxDBUpdatePlugin);
 
 export const initRxdb = async (dbName: string) => {
@@ -31,7 +34,7 @@ export const initRxdb = async (dbName: string) => {
         entries: {
             schema: rxdbSchema.entry
         },
-        localDocs: {
+        local_docs: {
             schema: rxdbSchema.localDoc
         }
     });
@@ -45,7 +48,7 @@ export const syncRxdb = (db: AppRxDatabase) => {
     const remoteProjectsCollection = collection(firestore, 'workspaces', db.name, 'projects');
     const remoteEntriesCollection = collection(firestore, 'workspaces', db.name, 'projects', db.name, 'entries');
 
-    replicateFirestore(
+    const replicaState = replicateFirestore(
         {
             replicationIdentifier: projectId,
             collection: db.collections.workspaces,
@@ -62,6 +65,8 @@ export const syncRxdb = (db: AppRxDatabase) => {
             serverTimestampField: 'serverTimestamp'
         }
     );
+
+    replicaState.awaitInitialReplication();
 
     replicateFirestore(
         {

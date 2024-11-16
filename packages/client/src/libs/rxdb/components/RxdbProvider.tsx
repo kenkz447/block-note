@@ -25,9 +25,6 @@ export const RxdbProvider = ({ currentUser, sync, children }: RxdbProviderProps)
         }
 
         initRxdb(activeDbName).then((db) => {
-            if (sync) {
-                syncRxdb(db);
-            }
             setDb(db);
         });
 

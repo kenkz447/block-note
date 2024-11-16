@@ -1,0 +1,97 @@
+.rc-tree-list {
+  --rc-indent-size: 16px;
+  --rc-drop-bg-color: hsl(var(--sidebar-accent));
+  --rc-line-color: hsl(var(--border));
+  --rc-node-height: 36px;
+  --rc-node-hover-bg: hsl(var(--sidebar-accent));
+  --rc-node-hover-color: hsl(var(--sidebar-accent-foreground));
+  --rc-selected-color: hsl(var(--sidebar-accent-foreground));
+}
+
+.rc-tree-treenode {
+  display: flex;
+  align-items: center;
+  /* padding-left: var(--rc-indent-size); */
+  height: var(--rc-node-height);
+}
+
+.rc-tree-title:hover {
+  background-color: var(--rc-node-hover-bg);
+  color: var(--rc-node-hover-color);
+}
+
+.rc-tree-treenode-selected .rc-tree-title {
+  font-weight: bold;
+}
+
+.rc-tree-indent {
+  display: flex;
+  height: var(--rc-node-height);
+  position: relative;
+}
+
+.rc-tree-indent-unit {
+  width: var(--rc-indent-size);
+  display: inline-block;
+  position: relative;
+}
+
+.rc-tree-list .rc-tree-indent-unit::before {
+  content: " ";
+  background-color: var(--rc-line-color);
+  height: var(--rc-node-height);
+  width: 1px;
+  display: block;
+  position: absolute;
+  top: 1px;
+  right: 2px;
+  z-index: 0;
+}
+
+.rc-tree-treenode-selected .rc-tree-indent-unit:last-child::after {
+  content: "";
+  width: 3px;
+  height: 16px;
+  position: absolute;
+  right: 1px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: var(--rc-selected-color);
+  z-index: 1;
+  border-radius: 4px;
+}
+
+.rc-tree-node-content-wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  position: relative;
+}
+
+.rc-tree .rc-tree-treenode.drop-container ~ .rc-tree-treenode {
+  background-color: var(--rc-drop-bg-color);
+}
+
+.rc-tree .rc-tree-treenode.drop-target ~ .rc-tree-treenode {
+  background-color: transparent;
+}
+
+.rc-tree .rc-tree-treenode.drop-target {
+  background: var(--rc-drop-bg-color);
+  border: 1px dashed hsl(var(--border));
+}
+
+.rc-tree-title {
+  width: 100%;
+  height: var(--rc-node-height);
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 1px;
+}
+
+.rc-tree .rc-tree-treenode .rc-tree-node-content-wrapper {
+  position: relative;
+}

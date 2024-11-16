@@ -109,7 +109,7 @@ const entrySchema = {
     ]
 };
 
-const localDocSchema = {
+const local_docschema = {
     keyCompression: false,
     version: 0,
     title: 'doc',
@@ -145,7 +145,7 @@ const localDocSchema = {
 
 export const rxdbSchema = {
     entry: entrySchema,
-    localDoc: localDocSchema,
+    localDoc: local_docschema,
     project: projectSchema,
     workspace: workspaceSchema
 };

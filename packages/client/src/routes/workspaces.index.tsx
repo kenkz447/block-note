@@ -87,7 +87,7 @@ function RouteComponent() {
                                 <Card className="group w-full relative">
                                     <CardHeader>
                                         <div className="flex flex-col justify-center items-center gap-1">
-                                            <div className="w-14 h-14 bg-primary text-primary-foreground rounded-xl flex items-center justify-center">
+                                            <div className="w-14 h-14 bg-blue-600 text-blue-100 rounded-xl flex items-center justify-center">
                                                 <Layers size={30} />
                                             </div>
                                             <div className="text-center">

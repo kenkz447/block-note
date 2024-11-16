@@ -1,84 +1,69 @@
 import { createRootRoute, Outlet } from '@tanstack/react-router';
 import { RxdbProvider } from '@/libs/rxdb/components/RxdbProvider';
 import { PopupProvider } from '@/libs/popup';
-import { EditorProvider } from '@/libs/editor';
 import { AuthProvider } from '@/libs/auth/components/AuthProvider';
-import { useRxdb } from '@/libs/rxdb';
-import { useDocCollection } from '@/libs/editor/hooks/useDocCollection';
-import { useRxdbSubscribe } from '@/hooks/subscribe/useRxdbSubscribe';
-import { useDocCollectionSubscribe } from '@/hooks/subscribe/useDocCollectionSubscribe';
-import { ContextProvider } from '@/components/ContextProvider';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
 import { ThemeProvider } from '@/components/ThemeProvider';
-
-function Router() {
-
-    const db = useRxdb();
-    const docCollection = useDocCollection();
-
-    useRxdbSubscribe({ db, docCollection });
-    useDocCollectionSubscribe({ docCollection });
-
-    return (
-        <Outlet />
-    );
-}
+import { RxdbWorkspaceProvider } from '@/libs/rxdb/components/RxdbWorkspaceProvider';
+import { AuthContext } from '@/libs/auth';
+import { RxdbContext } from '@/libs/rxdb/rxdbContexts';
 
 function App() {
     return (
-        <PopupProvider>
-            <Router />
-        </PopupProvider>
+        <AuthProvider>
+            {(authContext) => {
+                const { currentUser } = authContext;
+
+                if (currentUser === undefined) {
+                    return <LoadingScreen />;
+                }
+
+                const syncEnabled = !!currentUser;
+
+                return (
+                    <RxdbProvider
+                        currentUser={currentUser}
+                        sync={syncEnabled}
+                    >
+                        {(rxdbContext) => {
+                            if (!rxdbContext.db) {
+                                return <LoadingScreen />;
+                            }
+
+                            return (
+                                <RxdbWorkspaceProvider
+                                    db={rxdbContext.db}
+                                    user={currentUser}
+                                >
+                                    {(workspaceReplica) => {
+                                        if (!workspaceReplica) {
+                                            return <LoadingScreen />;
+                                        }
+
+                                        return (
+                                            <AuthContext.Provider value={authContext}>
+                                                <RxdbContext.Provider value={rxdbContext}>
+                                                    <Outlet />
+                                                </RxdbContext.Provider>
+                                            </AuthContext.Provider>
+                                        );
+                                    }}
+                                </RxdbWorkspaceProvider>
+                            );
+                        }}
+                    </RxdbProvider>
+                );
+            }}
+        </AuthProvider>
     );
 }
 
 export const Route = createRootRoute({
     component: () => (
         <ThemeProvider>
-            <AuthProvider>
-                {(authContext) => {
-                    const { currentUser } = authContext;
-
-                    if (currentUser === undefined) {
-                        return <LoadingScreen />;
-                    }
-
-                    const syncEnabled = !!currentUser;
-
-                    return (
-                        <RxdbProvider
-                            currentUser={currentUser}
-                            sync={syncEnabled}
-                        >
-                            {(rxdbContext) => {
-                                if (!rxdbContext.db) {
-                                    return <LoadingScreen />;
-                                }
-
-                                return (
-                                    <EditorProvider db={rxdbContext.db} currentUser={currentUser} sync={syncEnabled}>
-                                        {(editorContext) => {
-                                            if (!editorContext.collection) {
-                                                return <LoadingScreen />;
-                                            }
-
-                                            return (
-                                                <ContextProvider
-                                                    authContext={authContext}
-                                                    rxdbContext={rxdbContext}
-                                                    editorContext={editorContext}
-                                                >
-                                                    <App />
-                                                </ContextProvider>
-                                            );
-                                        }}
-                                    </EditorProvider>
-                                );
-                            }}
-                        </RxdbProvider>
-                    );
-                }}
-            </AuthProvider>
+            <PopupProvider>
+                <App />
+            </PopupProvider>
         </ThemeProvider>
     ),
 });
