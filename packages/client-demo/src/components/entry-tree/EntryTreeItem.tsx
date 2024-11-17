@@ -9,16 +9,14 @@ import { useCallback } from 'react';
 import { CreateEntryForm } from '../forms/entry/CreateEntryForm';
 import { useEntryPage } from '@/hooks/routes/useEntryPage';
 import { cn } from '@/libs/shadcn-ui/utils';
-import { useSearch } from '@tanstack/react-router';
 
 interface EntryTreeItemProps {
     entry: EntryTreeNode;
     expanded: boolean;
+    activeEntryId?: string;
 }
 
-export function EntryTreeItem({ entry, expanded }: EntryTreeItemProps) {
-    const { entryId: currentEntryId } = useSearch({ from: '/editor' });
-
+export function EntryTreeItem({ entry, expanded, activeEntryId }: EntryTreeItemProps) {
     const navigateToEntry = useEntryPage();
 
     const { openDialog, closeDialog } = usePopupDialog();
@@ -68,7 +66,7 @@ export function EntryTreeItem({ entry, expanded }: EntryTreeItemProps) {
         const handleDelete = async () => {
             await remove(entry.id);
             closeDialog();
-            if (entry.id === currentEntryId) {
+            if (entry.id === activeEntryId) {
                 navigateToEntry(null);
             }
         };
@@ -76,7 +74,7 @@ export function EntryTreeItem({ entry, expanded }: EntryTreeItemProps) {
         openDialog({
             content: <DeleteEntryForm entry={entry} onSubmit={handleDelete} />
         });
-    }, [closeDialog, currentEntryId, entry, navigateToEntry, openDialog, remove]);
+    }, [closeDialog, activeEntryId, entry, navigateToEntry, openDialog, remove]);
 
     const icon = entry.type === 'folder'
         ? expanded ? <FolderOpen size={16} /> : <Folder size={16} />
@@ -84,7 +82,7 @@ export function EntryTreeItem({ entry, expanded }: EntryTreeItemProps) {
 
     return (
         <div className="flex items-center pr-2 gap-2 ">
-            <div className='flex'>{icon}</div>
+            <div className="flex">{icon}</div>
             <div className="grow grid">
                 <div className={cn('block whitespace-nowrap	overflow-hidden text-ellipsis')}>
                     {entry.name}

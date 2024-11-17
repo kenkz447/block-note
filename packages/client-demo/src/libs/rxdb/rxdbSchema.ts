@@ -39,12 +39,17 @@ const projectSchema = {
         },
         order: {
             type: 'number'
+        },
+        createdAt: {
+            type: 'string',
+            format: 'date-time'
         }
     },
     required: [
         'id',
         'name',
-        'order'
+        'order',
+        'createdAt'
     ]
 };
 

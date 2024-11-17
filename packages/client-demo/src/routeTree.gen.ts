@@ -11,7 +11,7 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as EditorRouteImport } from './routes/editor/route'
+import { Route as WorkspacesImport } from './routes/workspaces'
 import { Route as IndexImport } from './routes/index'
 import { Route as EditorIndexImport } from './routes/editor/index'
 import { Route as EditorWorkspaceIdImport } from './routes/editor/$workspaceId'
@@ -20,9 +20,9 @@ import { Route as EditorWorkspaceIdProjectIdEntryIdImport } from './routes/edito
 
 // Create/Update Routes
 
-const EditorRouteRoute = EditorRouteImport.update({
-  id: '/editor',
-  path: '/editor',
+const WorkspacesRoute = WorkspacesImport.update({
+  id: '/workspaces',
+  path: '/workspaces',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -33,15 +33,15 @@ const IndexRoute = IndexImport.update({
 } as any)
 
 const EditorIndexRoute = EditorIndexImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => EditorRouteRoute,
+  id: '/editor/',
+  path: '/editor/',
+  getParentRoute: () => rootRoute,
 } as any)
 
 const EditorWorkspaceIdRoute = EditorWorkspaceIdImport.update({
-  id: '/$workspaceId',
-  path: '/$workspaceId',
-  getParentRoute: () => EditorRouteRoute,
+  id: '/editor/$workspaceId',
+  path: '/editor/$workspaceId',
+  getParentRoute: () => rootRoute,
 } as any)
 
 const EditorWorkspaceIdProjectIdRoute = EditorWorkspaceIdProjectIdImport.update(
@@ -70,26 +70,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/editor': {
-      id: '/editor'
-      path: '/editor'
-      fullPath: '/editor'
-      preLoaderRoute: typeof EditorRouteImport
+    '/workspaces': {
+      id: '/workspaces'
+      path: '/workspaces'
+      fullPath: '/workspaces'
+      preLoaderRoute: typeof WorkspacesImport
       parentRoute: typeof rootRoute
     }
     '/editor/$workspaceId': {
       id: '/editor/$workspaceId'
-      path: '/$workspaceId'
+      path: '/editor/$workspaceId'
       fullPath: '/editor/$workspaceId'
       preLoaderRoute: typeof EditorWorkspaceIdImport
-      parentRoute: typeof EditorRouteImport
+      parentRoute: typeof rootRoute
     }
     '/editor/': {
       id: '/editor/'
-      path: '/'
-      fullPath: '/editor/'
+      path: '/editor'
+      fullPath: '/editor'
       preLoaderRoute: typeof EditorIndexImport
-      parentRoute: typeof EditorRouteImport
+      parentRoute: typeof rootRoute
     }
     '/editor/$workspaceId/$projectId': {
       id: '/editor/$workspaceId/$projectId'
@@ -136,31 +136,18 @@ const EditorWorkspaceIdRouteChildren: EditorWorkspaceIdRouteChildren = {
 const EditorWorkspaceIdRouteWithChildren =
   EditorWorkspaceIdRoute._addFileChildren(EditorWorkspaceIdRouteChildren)
 
-interface EditorRouteRouteChildren {
-  EditorWorkspaceIdRoute: typeof EditorWorkspaceIdRouteWithChildren
-  EditorIndexRoute: typeof EditorIndexRoute
-}
-
-const EditorRouteRouteChildren: EditorRouteRouteChildren = {
-  EditorWorkspaceIdRoute: EditorWorkspaceIdRouteWithChildren,
-  EditorIndexRoute: EditorIndexRoute,
-}
-
-const EditorRouteRouteWithChildren = EditorRouteRoute._addFileChildren(
-  EditorRouteRouteChildren,
-)
-
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/editor': typeof EditorRouteRouteWithChildren
+  '/workspaces': typeof WorkspacesRoute
   '/editor/$workspaceId': typeof EditorWorkspaceIdRouteWithChildren
-  '/editor/': typeof EditorIndexRoute
+  '/editor': typeof EditorIndexRoute
   '/editor/$workspaceId/$projectId': typeof EditorWorkspaceIdProjectIdRouteWithChildren
   '/editor/$workspaceId/$projectId/$entryId': typeof EditorWorkspaceIdProjectIdEntryIdRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/workspaces': typeof WorkspacesRoute
   '/editor/$workspaceId': typeof EditorWorkspaceIdRouteWithChildren
   '/editor': typeof EditorIndexRoute
   '/editor/$workspaceId/$projectId': typeof EditorWorkspaceIdProjectIdRouteWithChildren
@@ -170,7 +157,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/editor': typeof EditorRouteRouteWithChildren
+  '/workspaces': typeof WorkspacesRoute
   '/editor/$workspaceId': typeof EditorWorkspaceIdRouteWithChildren
   '/editor/': typeof EditorIndexRoute
   '/editor/$workspaceId/$projectId': typeof EditorWorkspaceIdProjectIdRouteWithChildren
@@ -181,14 +168,15 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/editor'
+    | '/workspaces'
     | '/editor/$workspaceId'
-    | '/editor/'
+    | '/editor'
     | '/editor/$workspaceId/$projectId'
     | '/editor/$workspaceId/$projectId/$entryId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/workspaces'
     | '/editor/$workspaceId'
     | '/editor'
     | '/editor/$workspaceId/$projectId'
@@ -196,7 +184,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/editor'
+    | '/workspaces'
     | '/editor/$workspaceId'
     | '/editor/'
     | '/editor/$workspaceId/$projectId'
@@ -206,12 +194,16 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  EditorRouteRoute: typeof EditorRouteRouteWithChildren
+  WorkspacesRoute: typeof WorkspacesRoute
+  EditorWorkspaceIdRoute: typeof EditorWorkspaceIdRouteWithChildren
+  EditorIndexRoute: typeof EditorIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  EditorRouteRoute: EditorRouteRouteWithChildren,
+  WorkspacesRoute: WorkspacesRoute,
+  EditorWorkspaceIdRoute: EditorWorkspaceIdRouteWithChildren,
+  EditorIndexRoute: EditorIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -225,29 +217,25 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/editor"
+        "/workspaces",
+        "/editor/$workspaceId",
+        "/editor/"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
-    "/editor": {
-      "filePath": "editor/route.tsx",
-      "children": [
-        "/editor/$workspaceId",
-        "/editor/"
-      ]
+    "/workspaces": {
+      "filePath": "workspaces.tsx"
     },
     "/editor/$workspaceId": {
       "filePath": "editor/$workspaceId.tsx",
-      "parent": "/editor",
       "children": [
         "/editor/$workspaceId/$projectId"
       ]
     },
     "/editor/": {
-      "filePath": "editor/index.tsx",
-      "parent": "/editor"
+      "filePath": "editor/index.tsx"
     },
     "/editor/$workspaceId/$projectId": {
       "filePath": "editor/$workspaceId.$projectId.tsx",

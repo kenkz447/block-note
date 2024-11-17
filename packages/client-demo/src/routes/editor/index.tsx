@@ -1,10 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { EditorContainer, EditorProvider } from '@/libs/editor';
-import { Entry, useEntries } from '@/libs/rxdb';
+import { LoadingScreen } from '@/components/layout/LoadingScreen';
+import { Workspace } from '@/libs/rxdb';
+import { useWorkspaces } from '@/libs/rxdb/hooks/orm/useWorkspaces';
+import { createFileRoute, Navigate } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { z } from 'zod';
-import { LoadingScreen } from '@/components/layout/LoadingScreen';
-import { EditorContext } from '@/libs/editor/editorContext';
 
 export const Route = createFileRoute('/editor/')({
     component: RouteComponent,
@@ -14,41 +13,33 @@ export const Route = createFileRoute('/editor/')({
 });
 
 function RouteComponent() {
-    const { entryId } = Route.useSearch();
+    const { subscribe } = useWorkspaces();
 
-    const { subscribeSingle } = useEntries();
-
-    const [entry, setEntry] = useState<Entry | null>();
+    const [defaultWorkspace, setDefaultWorkspace] = useState<Workspace | null>();
+    const [workspaces, setWorkspaces] = useState<Workspace[]>();
 
     useEffect(() => {
-        if (!entryId) {
-            return;
-        }
-
-        const sub = subscribeSingle(entryId, setEntry);
-
+        const subscription = subscribe(setWorkspaces);
         return () => {
-            sub.unsubscribe();
+            subscription.unsubscribe();
         };
-    }, [subscribeSingle, entryId]);
+    }, [subscribe]);
 
-    if (!entry) {
-        return null;
+    useEffect(() => {
+        if (!workspaces) return;
+        setDefaultWorkspace(workspaces?.[0] ?? null);
+        return () => {
+            setDefaultWorkspace(undefined);
+        };
+    }, [workspaces]);
+
+    if (defaultWorkspace === null) {
+        return <Navigate to="/workspaces" />;
     }
 
-    return (
-        <EditorProvider>
-            {(editorContext) => {
-                if (!editorContext.collection) {
-                    return <LoadingScreen />;
-                }
+    if (defaultWorkspace === undefined) {
+        return <LoadingScreen />;
+    }
 
-                return (
-                    <EditorContext.Provider value={editorContext}>
-                        <EditorContainer entry={entry} />
-                    </EditorContext.Provider>
-                )
-            }}
-        </EditorProvider>
-    );
+    return <Navigate to={`/editor/${defaultWorkspace?.id}`} />;
 }

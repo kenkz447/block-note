@@ -2,18 +2,24 @@ import { Entry, EntryTreeNode, useEntries } from '@/libs/rxdb';
 import { InboxIcon } from 'lucide-react';
 import { arrayToTree } from 'performant-array-to-tree';
 import Tree from 'rc-tree';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { EntryTreeItem } from './EntryTreeItem';
-import { useSearch } from '@tanstack/react-router';
 import { cn } from '@/libs/shadcn-ui/utils';
 import { useEntryPage } from '@/hooks/routes/useEntryPage';
+import { EntryTreeContext } from './EntryTreeContext';
 
 interface EntryTreeProps {
     readonly search?: string
 }
 
 export function EntryTree({ search }: EntryTreeProps) {
-    const { entryId } = useSearch({ from: '/editor', structuralSharing: true });
+    const context = useContext(EntryTreeContext);
+    if (!context) {
+        throw new Error('EntryTreeContext is not provided');
+    }
+
+    const { activeEntryId } = context;
+
     const navigateToEntry = useEntryPage();
     const { update, subscribe } = useEntries();
 
@@ -73,7 +79,7 @@ export function EntryTree({ search }: EntryTreeProps) {
     }
 
     const renderTreeNode = (entry: EntryTreeNode) => {
-        const isActive = entryId === entry.id;
+        const isActive = activeEntryId === entry.id;
 
         return (
             <Tree.TreeNode
@@ -108,7 +114,7 @@ export function EntryTree({ search }: EntryTreeProps) {
                 expandAction="click"
                 expandedKeys={openKeys}
                 dropIndicatorRender={() => null}
-                selectedKeys={entryId ? [entryId] : []}
+                selectedKeys={activeEntryId ? [activeEntryId] : []}
                 onExpand={(keys) => {
                     setOpenKeys(keys);
                 }}
