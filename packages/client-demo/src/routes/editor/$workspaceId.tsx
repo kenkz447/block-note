@@ -34,7 +34,8 @@ function RouteComponent() {
         if (!currentWorkspace) {
             return;
         }
-        const subscription = subscribe(setProjects);
+        const subscription = subscribe({ selector: {} }, setProjects);
+
         return () => {
             subscription.unsubscribe();
         };

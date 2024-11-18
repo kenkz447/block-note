@@ -12,17 +12,26 @@ import { Workspace } from '@/libs/rxdb';
 import { Button } from '@/libs/shadcn-ui/components/button';
 import { usePopupDialogContext } from '@/libs/popup/hooks/usePopupContexts';
 import { CreateWorkspaceForm } from '@/components/forms/workspace/CreateWorkspaceForm';
+import { Settings } from '@/components/layout/sidebar/settings/Settings';
+import { useCurrentUser } from '@/libs/auth';
 
 export const Route = createFileRoute('/workspaces/')({
     component: RouteComponent,
 });
 
 function RouteComponent() {
+    const { currentUser } = useCurrentUser();
     const { subscribe, insert } = useWorkspaces();
 
     const { openDialog, closeDialog } = usePopupDialogContext();
 
     const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+
+    const openUserSettingsDialog = () => {
+        openDialog({
+            content: <Settings hide={closeDialog} />
+        });
+    };
 
     const openCreateWorkspaceDialog = () => {
         openDialog({
@@ -60,13 +69,18 @@ function RouteComponent() {
                     >
                         <Plus strokeWidth={3} />
                     </Button>
-                    <Button
-                        variant="outline"
-                        size="icon"
-                        className="rounded-full text-muted-foreground"
-                    >
-                        <User strokeWidth={3} />
-                    </Button>
+                    {
+                        currentUser && (
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                className="rounded-full text-muted-foreground"
+                                onClick={openUserSettingsDialog}
+                            >
+                                <User strokeWidth={3} />
+                            </Button>
+                        )
+                    }
                 </div>
             </div>
             {workspaces.length > 0 ? (

@@ -64,7 +64,9 @@ export function AppSidebarHeader({ workspace, projects, activeProject }: AppSide
                     </Button >
                 </DropdownMenuTrigger >
                 <DropdownMenuContent side="right" align="start" className="w-[150px]">
-                    <DropdownMenuLabel>My projects</DropdownMenuLabel>
+                    <DropdownMenuItem className="font-medium">
+                        <Layers /> {workspace.name}
+                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     {
                         projects?.map((project) => (
@@ -83,9 +85,13 @@ export function AppSidebarHeader({ workspace, projects, activeProject }: AppSide
                             </DropdownMenuCheckboxItem>
                         ))
                     }
-                    <DropdownMenuSeparator />
+                    {
+                        !!projects?.length && (
+                            <DropdownMenuSeparator />
+                        )
+                    }
                     <DropdownMenuItem className="text-foreground/70" onClick={onNewProject}>
-                        <Plus /> New
+                        <Plus /> Create Project
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu >

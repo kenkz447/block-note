@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { AppRxCollections, AppRxDocumentBase } from '../rxdbTypes';
 import { useRxCollection } from './useRxCollection';
 import { generateRxId } from '../rxdbHelpers';
+import { MangoQuery } from 'rxdb';
 
 export const useRxOrm = <T extends AppRxDocumentBase>(collectionName: keyof AppRxCollections) => {
     const entryCollection = useRxCollection<T>(collectionName);
@@ -41,9 +42,9 @@ export const useRxOrm = <T extends AppRxDocumentBase>(collectionName: keyof AppR
         return doc.remove();
     }, [entryCollection]);
 
-    const subscribe = useCallback((callback: (entry: T[]) => void) => {
+    const subscribe = useCallback((query: MangoQuery<T>, callback: (entry: T[]) => void) => {
         const getWorkspaces = async () => {
-            const rxDocuments = await entryCollection.find().exec();
+            const rxDocuments = await entryCollection.find(query).exec();
             const listOfData = rxDocuments.map((doc) => doc._data);
             callback(listOfData);
         };

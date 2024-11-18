@@ -1,7 +1,7 @@
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useCallback } from 'react';
 
-export const useGoogleSignIn = () => {
+export const useAuth = () => {
     const showGoogleSignIn = useCallback(async () => {
         const auth = getAuth();
         const provider = new GoogleAuthProvider();

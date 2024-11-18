@@ -8,11 +8,10 @@ const ANONYMOUS_DB_NAME = 'anonymous';
 
 interface RxdbProviderProps {
     readonly currentUser: User | null;
-    readonly sync: boolean;
     readonly children: (rxdbContext: RxdbContextType) => ReactNode;
 }
 
-export const RxdbProvider = ({ currentUser, sync, children }: RxdbProviderProps) => {
+export const RxdbProvider = ({ currentUser, children }: RxdbProviderProps) => {
     const [activeDbName, setActiveDbName] = useState<string>();
     const [db, setDb] = useState<AppRxDatabase>();
 
@@ -26,7 +25,7 @@ export const RxdbProvider = ({ currentUser, sync, children }: RxdbProviderProps)
 
         initRxdb(activeDbName).then(setDb);
 
-    }, [activeDbName, db, sync]);
+    }, [activeDbName, db]);
 
     /**
      * Destroy the database when the user changes

@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { Card, CardContent, CardHeader } from '@/libs/shadcn-ui/components/card';
-import { ChevronRight, Info, Layers, Pen, Plus, User } from 'lucide-react';
+import { ChevronRight, Info, Layers, Pen, Plus, UserRound, UserRoundCog } from 'lucide-react';
 import {
     Carousel,
     CarouselContent,
@@ -12,17 +12,25 @@ import { Workspace } from '@/libs/rxdb';
 import { Button } from '@/libs/shadcn-ui/components/button';
 import { usePopupDialogContext } from '@/libs/popup/hooks/usePopupContexts';
 import { CreateWorkspaceForm } from '@/components/forms/workspace/CreateWorkspaceForm';
+import { useCurrentUser } from '@writefy/client-shared';
+import { UserSettings } from '@/components/settings/UserSettings';
 
 export const Route = createFileRoute('/workspaces')({
     component: RouteComponent,
 });
 
 function RouteComponent() {
+    const currentUser = useCurrentUser();
     const { subscribe, insert } = useWorkspaces();
 
     const { openDialog, closeDialog } = usePopupDialogContext();
 
     const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+    const openUserSettingsDialog = () => {
+        openDialog({
+            content: <UserSettings hide={closeDialog} />
+        });
+    };
 
     const openCreateWorkspaceDialog = () => {
         openDialog({
@@ -60,13 +68,28 @@ function RouteComponent() {
                     >
                         <Plus strokeWidth={3} />
                     </Button>
-                    <Button
-                        variant="outline"
-                        size="icon"
-                        className="rounded-full text-muted-foreground"
-                    >
-                        <User strokeWidth={3} />
-                    </Button>
+                    {
+                        currentUser
+                            ? (
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="rounded-full text-muted-foreground"
+                                    onClick={openUserSettingsDialog}
+                                >
+                                    <UserRoundCog strokeWidth={3} />
+                                </Button>
+                            )
+                            : (
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="rounded-full text-muted-foreground"
+                                >
+                                    <UserRound strokeWidth={3} />
+                                </Button>
+                            )
+                    }
                 </div>
             </div>
             {workspaces.length > 0 ? (
