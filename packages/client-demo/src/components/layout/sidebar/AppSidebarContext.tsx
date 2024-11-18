@@ -2,7 +2,8 @@ import { Entry, Project, Workspace } from '@/libs/rxdb';
 import { createContext } from 'react';
 
 interface AppSidebarContextType {
-    readonly changeActiveProject: (project: Project | undefined) => void;
+    readonly setActiveProject: (project: Project | undefined) => void;
+    readonly setEntries: (entries: Entry[] | undefined) => void;
     readonly workspace: Workspace;
     readonly projects?: Project[];
     readonly activeProject?: Project;

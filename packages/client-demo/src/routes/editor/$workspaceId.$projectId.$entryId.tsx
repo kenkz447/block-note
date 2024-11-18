@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useParams } from '@tanstack/react-router';
 import { EditorContainer, EditorProvider } from '@/libs/editor';
 import { Entry, useEntries } from '@/libs/rxdb';
 import { useEffect, useState } from 'react';
@@ -18,7 +18,9 @@ export const Route = createFileRoute(
 });
 
 function RouteComponent() {
-    const { entryId } = Route.useSearch();
+    const { entryId } = useParams({
+        from: '/editor/$workspaceId/$projectId/$entryId',
+    });
 
     const { subscribeSingle } = useEntries();
 
@@ -36,25 +38,27 @@ function RouteComponent() {
         };
     }, [subscribeSingle, entryId]);
 
-    if (!entry) {
-        return null;
+    if (entry === null) {
+        throw new Error('Entry not found');
+    }
+
+    if (entry === undefined) {
+        return <LoadingScreen />;
     }
 
     return (
-        <Layout>
-            <EditorProvider>
-                {(editorContext) => {
-                    if (!editorContext.collection) {
-                        return <LoadingScreen />;
-                    }
+        <EditorProvider>
+            {(editorContext) => {
+                if (!editorContext.collection) {
+                    return <LoadingScreen />;
+                }
 
-                    return (
-                        <EditorContext.Provider value={editorContext}>
-                            <EditorContainer entry={entry} />
-                        </EditorContext.Provider>
-                    );
-                }}
-            </EditorProvider>
-        </Layout>
+                return (
+                    <EditorContext.Provider value={editorContext}>
+                        <EditorContainer entry={entry} />
+                    </EditorContext.Provider>
+                );
+            }}
+        </EditorProvider>
     );
 }

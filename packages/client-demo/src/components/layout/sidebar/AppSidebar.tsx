@@ -16,7 +16,7 @@ export function AppSidebar() {
         throw new Error('AppSidebarContext must be provided');
     }
 
-    const { workspace, projects, activeProject } = context;
+    const { workspace, projects, activeProject, entries } = context;
 
     const { openDialog, closeDialog } = usePopupDialog();
     const { insert } = useEntries();
@@ -65,11 +65,16 @@ export function AppSidebar() {
                         </div>
                     )
                 }
-                <div className="px-2">
-                    <EntryTree
-                        search={search}
-                    />
-                </div>
+                {
+                    (activeProject && !!entries?.length) && (
+                        <div className="px-2">
+                            <EntryTree
+                                entries={entries}
+                                search={search}
+                            />
+                        </div>
+                    )
+                }
             </div>
             <div className="flex flex-col p-2">
                 <Button variant="outline" onClick={() => alert('sign in')} className="w-full">

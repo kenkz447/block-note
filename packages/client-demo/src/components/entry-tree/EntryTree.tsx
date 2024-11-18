@@ -2,75 +2,71 @@ import { Entry, EntryTreeNode, useEntries } from '@/libs/rxdb';
 import { InboxIcon } from 'lucide-react';
 import { arrayToTree } from 'performant-array-to-tree';
 import Tree from 'rc-tree';
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { EntryTreeItem } from './EntryTreeItem';
 import { cn } from '@/libs/shadcn-ui/utils';
-import { useEntryPage } from '@/hooks/routes/useEntryPage';
-import { EntryTreeContext } from './EntryTreeContext';
+import { useParams } from '@tanstack/react-router';
 
 interface EntryTreeProps {
-    readonly search?: string
+    readonly entries?: Entry[];
+    readonly search?: string;
 }
 
-export function EntryTree({ search }: EntryTreeProps) {
-    const context = useContext(EntryTreeContext);
-    if (!context) {
-        throw new Error('EntryTreeContext is not provided');
-    }
+export function EntryTree({ entries, search }: EntryTreeProps) {
+    const { projectId, workspaceId } = useParams({
+        from: '/editor/$workspaceId/$projectId',
+    });
 
-    const { activeEntryId } = context;
+    const { entryId: activeEntryId } = useParams({
+        strict: false
+    });
 
-    const navigateToEntry = useEntryPage();
-    const { update, subscribe } = useEntries();
+    const { update } = useEntries();
 
-    const [entries, setEntries] = useState<Entry[] | undefined>(undefined);
+    const [filteredEntries, setFilteredEntries] = useState<Entry[] | undefined>(entries);
+
     const [openKeys, setOpenKeys] = useState<React.Key[]>(() => {
         return localStorage.getItem('openKeys')?.split(',') ?? [];
     });
 
     const tree = useMemo(() => {
-        const _tree = arrayToTree(entries ?? [], { dataField: null, parentId: 'parent' }) as EntryTreeNode[];
+        const _tree = arrayToTree(filteredEntries ?? [], { dataField: null, parentId: 'parent' }) as EntryTreeNode[];
         return _tree;
-    }, [entries]);
+    }, [filteredEntries]);
 
     useEffect(() => {
-        const sub = subscribe((entries) => {
-            let filteredEntries = entries ?? [];
-            if (!search) {
-                setEntries(filteredEntries);
-                return;
+        let _filteredEntries = entries ?? [];
+        if (!search) {
+            setFilteredEntries(_filteredEntries);
+            return;
+        }
+
+        _filteredEntries = _filteredEntries.filter((entry) => {
+            if (entry.type === 'folder') {
+                return true;
             }
 
-            filteredEntries = entries.filter((entry) => {
-                if (entry.type === 'folder') {
-                    return true;
-                }
-
-                return entry.name.toLowerCase().includes(search.toLowerCase());
-            });
-
-            filteredEntries = filteredEntries?.filter((entry) => {
-                if (entry.type !== 'folder') {
-                    return true;
-                }
-
-                const children = filteredEntries.filter((child) => child.parent === entry.id);
-                return children.length > 0;
-            });
-
-            setEntries(filteredEntries);
-            setOpenKeys(filteredEntries.filter((entry) => entry.type === 'folder').map((entry) => entry.id));
+            return entry.name.toLowerCase().includes(search.toLowerCase());
         });
-        return () => {
-            sub.unsubscribe();
-        };
-    }, [search, subscribe]);
+
+        _filteredEntries = _filteredEntries?.filter((entry) => {
+            if (entry.type !== 'folder') {
+                return true;
+            }
+
+            const children = _filteredEntries.filter((child) => child.parent === entry.id);
+            return children.length > 0;
+        });
+
+        setFilteredEntries(_filteredEntries);
+        setOpenKeys(_filteredEntries.filter((entry) => entry.type === 'folder').map((entry) => entry.id));
+    }, [entries, search]);
 
     useEffect(() => {
         localStorage.setItem('openKeys', openKeys.join(','));
     }, [openKeys]);
 
-    if (!entries) {
+    if (!filteredEntries) {
         return (
             <div className="h-[32px] px-[16px] flex items-center">
                 Loading data...
@@ -84,18 +80,16 @@ export function EntryTree({ search }: EntryTreeProps) {
         return (
             <Tree.TreeNode
                 selected={isActive}
-                domRef={(e) => {
-                    if (!e) return;
-                    e.setAttribute('tabindex', '0');
-                    e.onclick = () => {
-                        if (entry.type !== 'document') {
-                            return;
-                        }
-                        navigateToEntry(entry.id);
-                    };
-                }}
                 key={entry.id}
-                title={<EntryTreeItem entry={entry} expanded={openKeys.includes(entry.id)} />}
+                title={(
+                    <EntryTreeItem
+                        entry={entry}
+                        entryUrl={`/editor/${workspaceId}/${projectId}/${entry.id}`}
+                        expanded={openKeys.includes(entry.id)}
+                        onEntryCreate={() => { }}
+                        onEntryDelete={() => { }}
+                    />
+                )}
                 isLeaf={entry.type !== 'folder'}
                 className={cn('group')}
             >
@@ -115,22 +109,20 @@ export function EntryTree({ search }: EntryTreeProps) {
                 expandedKeys={openKeys}
                 dropIndicatorRender={() => null}
                 selectedKeys={activeEntryId ? [activeEntryId] : []}
-                onExpand={(keys) => {
-                    setOpenKeys(keys);
-                }}
+                onExpand={(keys) => setOpenKeys(keys)}
                 allowDrop={({ dropNode }) => {
-                    const dropEntry = entries.find((entry) => entry.id === dropNode.key);
+                    const dropEntry = filteredEntries.find((entry) => entry.id === dropNode.key);
                     return dropEntry?.type === 'folder';
                 }}
                 onDrop={async (info) => {
-                    const draggingEntry = entries.find((entry) => entry.id === info.dragNode.key);
+                    const draggingEntry = filteredEntries.find((entry) => entry.id === info.dragNode.key);
                     if (!draggingEntry) {
                         return;
                     }
 
                     const isFirstInRoot = info.dropPosition === -1;
                     if (isFirstInRoot) {
-                        const rootEntries = entries.filter((entry) => entry.parent === null);
+                        const rootEntries = filteredEntries.filter((entry) => entry.parent === null);
                         const firstEntry = rootEntries[0];
 
                         return await update(draggingEntry.id, {
@@ -141,8 +133,8 @@ export function EntryTree({ search }: EntryTreeProps) {
 
                     const isFirstInParent = info.dropToGap === false;
                     if (isFirstInParent) {
-                        const parentEntry = entries.find((entry) => entry.id === info.node.key);
-                        const children = entries.filter((entry) => entry.parent === parentEntry?.id);
+                        const parentEntry = filteredEntries.find((entry) => entry.id === info.node.key);
+                        const children = filteredEntries.filter((entry) => entry.parent === parentEntry?.id);
                         const firstChild = children[0];
                         return await update(draggingEntry.id, {
                             order: firstChild ? firstChild.order - 1 : 0,
@@ -150,11 +142,11 @@ export function EntryTree({ search }: EntryTreeProps) {
                         });
                     }
 
-                    const fromEntry = entries.find((entry) => entry.id === info.node.key);
+                    const fromEntry = filteredEntries.find((entry) => entry.id === info.node.key);
                     if (!fromEntry) {
                         return;
                     }
-                    const sibling = entries.filter((entry) => entry.parent === fromEntry.parent);
+                    const sibling = filteredEntries.filter((entry) => entry.parent === fromEntry.parent);
                     const dropTo = sibling[info.dropPosition];
 
                     return await update(draggingEntry.id, {
@@ -166,7 +158,7 @@ export function EntryTree({ search }: EntryTreeProps) {
                 {tree.map(renderTreeNode)}
             </Tree>
             {
-                entries.length === 0 && (
+                entries?.length === 0 && (
                     <div className="flex flex-col items-center justify-center h-[50vh] gap-6 px-4">
                         <div className="flex items-center justify-center w-24 h-24 bg-gray-100 rounded-full dark:bg-gray-800">
                             <InboxIcon className="w-12 h-12 text-gray-500 dark:text-gray-400" />

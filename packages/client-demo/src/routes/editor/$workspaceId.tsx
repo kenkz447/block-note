@@ -2,12 +2,11 @@ import { createFileRoute, Outlet } from '@tanstack/react-router';
 import { useCurrentWorkspace } from '@/hooks/state/useCurrentWorkspace';
 import { useProjects } from '@/libs/rxdb/hooks/orm/useProjects';
 import { useEffect, useState } from 'react';
-import { Project } from '@/libs/rxdb';
+import { Entry, Project } from '@/libs/rxdb';
 
 import { useIsMobile } from '@/libs/shadcn-ui/hooks/use-mobile';
 import { MasterLayoutMobile } from '@/components/layout/MasterLayoutMobile';
 import { MasterLayout } from '@/components/layout/MasterLayout';
-import { EntryTreeContext } from '@/components/entry-tree/EntryTreeContext';
 import { AppSidebarContext } from '@/components/layout/sidebar/AppSidebarContext';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
 
@@ -16,7 +15,6 @@ export const Route = createFileRoute('/editor/$workspaceId')({
 });
 
 function RouteComponent() {
-
     const isMobile = useIsMobile();
     const Layout = isMobile ? MasterLayoutMobile : MasterLayout;
 
@@ -30,6 +28,7 @@ function RouteComponent() {
 
     const [activeProject, setActiveProject] = useState<Project>();
     const [projects, setProjects] = useState<Project[]>();
+    const [entries, setEntries] = useState<Entry[]>();
 
     useEffect(() => {
         if (!currentWorkspace) {
@@ -48,17 +47,17 @@ function RouteComponent() {
     return (
         <AppSidebarContext.Provider
             value={{
-                changeActiveProject: setActiveProject,
+                setActiveProject,
+                setEntries,
                 workspace: currentWorkspace,
                 projects,
-                activeProject
+                activeProject,
+                entries
             }}
         >
-            <EntryTreeContext.Provider value={{}}>
-                <Layout>
-                    <Outlet />
-                </Layout>
-            </EntryTreeContext.Provider>
+            <Layout>
+                <Outlet />
+            </Layout>
         </AppSidebarContext.Provider>
     );
 }

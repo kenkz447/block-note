@@ -7,18 +7,24 @@ import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuConten
 import { FileText, Folder, FolderOpen, MoreHorizontal, SquarePen, Trash } from 'lucide-react';
 import { useCallback } from 'react';
 import { CreateEntryForm } from '../forms/entry/CreateEntryForm';
-import { useEntryPage } from '@/hooks/routes/useEntryPage';
 import { cn } from '@/libs/shadcn-ui/utils';
+import { Link } from '@tanstack/react-router';
 
 interface EntryTreeItemProps {
-    entry: EntryTreeNode;
-    expanded: boolean;
-    activeEntryId?: string;
+    readonly entry: EntryTreeNode;
+    readonly entryUrl: string;
+    readonly expanded: boolean;
+    readonly onEntryCreate: (entry: Entry) => void;
+    readonly onEntryDelete: (entry: Entry) => void;
 }
 
-export function EntryTreeItem({ entry, expanded, activeEntryId }: EntryTreeItemProps) {
-    const navigateToEntry = useEntryPage();
-
+export function EntryTreeItem({
+    entry,
+    entryUrl,
+    expanded,
+    onEntryCreate,
+    onEntryDelete
+}: EntryTreeItemProps) {
     const { openDialog, closeDialog } = usePopupDialog();
 
     const { insert, update, remove } = useEntries();
@@ -33,15 +39,13 @@ export function EntryTreeItem({ entry, expanded, activeEntryId }: EntryTreeItemP
             });
 
             closeDialog();
-            if (type !== 'folder') {
-                navigateToEntry(newEntry.id);
-            }
+            onEntryCreate(newEntry);
         };
 
         openDialog({
             content: <CreateEntryForm type={type} onSubmit={createEntry} />
         });
-    }, [openDialog, insert, entry.id, closeDialog, navigateToEntry]);
+    }, [openDialog, insert, entry.id, closeDialog, onEntryCreate]);
 
     const showUpdateForm = useCallback((entry: Entry) => {
         const updateEntry = async (formValues: Partial<Entry>) => {
@@ -66,22 +70,20 @@ export function EntryTreeItem({ entry, expanded, activeEntryId }: EntryTreeItemP
         const handleDelete = async () => {
             await remove(entry.id);
             closeDialog();
-            if (entry.id === activeEntryId) {
-                navigateToEntry(null);
-            }
+            onEntryDelete(entry);
         };
 
         openDialog({
             content: <DeleteEntryForm entry={entry} onSubmit={handleDelete} />
         });
-    }, [closeDialog, activeEntryId, entry, navigateToEntry, openDialog, remove]);
+    }, [closeDialog, entry, onEntryDelete, openDialog, remove]);
 
     const icon = entry.type === 'folder'
         ? expanded ? <FolderOpen size={16} /> : <Folder size={16} />
         : <FileText size={16} />;
 
-    return (
-        <div className="flex items-center pr-2 gap-2 ">
+    const children = (
+        <div className="flex items-center pr-2 gap-2">
             <div className="flex">{icon}</div>
             <div className="grow grid">
                 <div className={cn('block whitespace-nowrap	overflow-hidden text-ellipsis')}>
@@ -109,5 +111,15 @@ export function EntryTreeItem({ entry, expanded, activeEntryId }: EntryTreeItemP
                 </DropdownMenuContent>
             </DropdownMenu>
         </div>
+    );
+
+    if (entry.type === 'folder') {
+        return children;
+    }
+
+    return (
+        <Link to={entryUrl} className="flex items-center pr-2 gap-2">
+            {children}
+        </Link>
     );
 }

@@ -4,15 +4,17 @@ import { useCurrentProject } from '@/hooks/state/useCurrentProject';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
 import { useContext } from 'react';
 import { AppSidebarContext } from '@/components/layout/sidebar/AppSidebarContext';
+import { useEntries } from '@/libs/rxdb';
 
 export const Route = createFileRoute('/editor/$workspaceId/$projectId')({
     component: RouteComponent,
 });
 
 function RouteComponent() {
-    const { changeActiveProject } = useContext(AppSidebarContext)!;
+    const { setActiveProject, setEntries } = useContext(AppSidebarContext)!;
 
     const currentProject = useCurrentProject();
+    const { subscribe: subscribeEntries } = useEntries();
 
     if (currentProject === null) {
         throw new Error('Project not found');
@@ -23,12 +25,14 @@ function RouteComponent() {
             return;
         }
 
-        changeActiveProject(currentProject);
-
+        setActiveProject(currentProject);
+        const entriesSubscription = subscribeEntries(setEntries);
         return () => {
-            changeActiveProject(undefined);
+            setActiveProject(undefined);
+            entriesSubscription.unsubscribe();
+            setEntries(undefined);
         };
-    }, [changeActiveProject, currentProject]);
+    }, [setActiveProject, setEntries, currentProject, subscribeEntries]);
 
     if (currentProject === undefined) {
         return <LoadingScreen />;
