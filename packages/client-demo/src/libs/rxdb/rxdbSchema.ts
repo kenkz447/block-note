@@ -1,3 +1,24 @@
+const sharedSchema = {
+    properties: {
+        id: {
+            type: 'string',
+            maxLength: 64
+        },
+        createdAt: {
+            type: 'string',
+            format: 'date-time'
+        },
+        createdBy: {
+            type: 'string'
+        },
+    },
+    required: [
+        'id',
+        'createdAt',
+        'createdBy'
+    ]
+};
+
 const workspaceSchema = {
     keyCompression: false,
     version: 0,
@@ -5,21 +26,28 @@ const workspaceSchema = {
     primaryKey: 'id',
     type: 'object',
     properties: {
-        id: {
-            type: 'string',
-            maxLength: 100
-        },
+        ...sharedSchema.properties,
         name: {
             type: 'string'
         },
-        createdAt: {
-            type: 'string',
-            format: 'date-time'
+        createdBy: {
+            type: 'string'
+        },
+        owner: {
+            type: 'string'
+        },
+        activeMembers: {
+            type: 'array',
+            items: {
+                type: 'string'
+            }
         }
     },
     required: [
-        'id',
-        'name'
+        ...sharedSchema.required,
+        'name',
+        'owner',
+        'activeMembers'
     ]
 };
 
@@ -30,26 +58,22 @@ const projectSchema = {
     primaryKey: 'id',
     type: 'object',
     properties: {
-        id: {
-            type: 'string',
-            maxLength: 100
-        },
+        ...sharedSchema.properties,
         name: {
             type: 'string'
         },
         order: {
             type: 'number'
         },
-        createdAt: {
-            type: 'string',
-            format: 'date-time'
+        workspaceId: {
+            type: 'string'
         }
     },
     required: [
-        'id',
+        ...sharedSchema.required,
         'name',
         'order',
-        'createdAt'
+        'workspaceId'
     ]
 };
 
@@ -60,10 +84,7 @@ const entrySchema = {
     primaryKey: 'id',
     type: 'object',
     properties: {
-        id: {
-            type: 'string',
-            maxLength: 100
-        },
+        ...sharedSchema.properties,
         name: {
             type: 'string'
         },
@@ -100,17 +121,20 @@ const entrySchema = {
                 }
             }
         },
-        createdAt: {
-            type: 'string',
-            format: 'date-time'
-        }
+        workspaceId: {
+            type: 'string'
+        },
+        projectId: {
+            type: 'string'
+        },
     },
     required: [
-        'id',
+        ...sharedSchema.required,
         'name',
         'type',
         'order',
-        'createdAt',
+        'workspaceId',
+        'projectId',
     ]
 };
 

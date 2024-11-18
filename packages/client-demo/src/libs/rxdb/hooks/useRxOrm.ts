@@ -5,59 +5,58 @@ import { generateRxId } from '../rxdbHelpers';
 import { MangoQuery } from 'rxdb';
 
 export const useRxOrm = <T extends AppRxDocumentBase>(collectionName: keyof AppRxCollections) => {
-    const entryCollection = useRxCollection<T>(collectionName);
+    const collection = useRxCollection<T>(collectionName);
 
-    const insert = useCallback(async (params: any) => {
-
+    const insert = useCallback(async (params: Partial<T>) => {
         const now = new Date();
 
-        const entry = await entryCollection.insert({
-            ...params,
+        const entry = await collection.insert({
             id: generateRxId(),
             createdAt: now.toISOString(),
-        });
+            ...params
+        } as T);
 
         return entry._data;
-    }, [entryCollection]);
+    }, [collection]);
 
-    const update = useCallback(async (entryId: string, params: any) => {
-        const doc = await entryCollection.findOne(entryId).exec();
+    const update = useCallback(async (entryId: string, params: Partial<Omit<T, 'id' | 'createdBy' | 'createdAt'>>) => {
+        const doc = await collection.findOne(entryId).exec();
         if (!doc) {
             throw new Error(`Workspace not found: ${entryId}`);
         }
 
         await doc.update({
-            $set: params
+            $set: params as Partial<T>
         });
 
         return doc._data;
-    }, [entryCollection]);
+    }, [collection]);
 
     const remove = useCallback(async (entryId: string) => {
-        const doc = await entryCollection.findOne(entryId).exec();
+        const doc = await collection.findOne(entryId).exec();
         if (!doc) {
-            throw new Error(`Workspace not found: ${entryId}`);
+            throw new Error(`RxDocument not found: ${entryId}`);
         }
 
-        return doc.remove();
-    }, [entryCollection]);
+        await doc.remove();
+    }, [collection]);
 
     const subscribe = useCallback((query: MangoQuery<T>, callback: (entry: T[]) => void) => {
         const getWorkspaces = async () => {
-            const rxDocuments = await entryCollection.find(query).exec();
+            const rxDocuments = await collection.find(query).exec();
             const listOfData = rxDocuments.map((doc) => doc._data);
             callback(listOfData);
         };
 
         getWorkspaces();
 
-        const subscription = entryCollection.$.subscribe(getWorkspaces);
+        const subscription = collection.$.subscribe(getWorkspaces);
 
         return subscription;
-    }, [entryCollection]);
+    }, [collection]);
 
     const subscribeSingle = useCallback((entryId: string, callback: (entry: T | null) => void) => {
-        const subscription = entryCollection.findOne(entryId).$.subscribe((doc) => {
+        const subscription = collection.findOne(entryId).$.subscribe((doc) => {
             if (!doc) {
                 callback(null);
                 return;
@@ -67,12 +66,12 @@ export const useRxOrm = <T extends AppRxDocumentBase>(collectionName: keyof AppR
         });
 
         return subscription;
-    }, [entryCollection]);
+    }, [collection]);
 
     const checkExists = useCallback(async (entryId: string) => {
-        const doc = await entryCollection.findOne(entryId).exec();
+        const doc = await collection.findOne(entryId).exec();
         return !!doc;
-    }, [entryCollection]);
+    }, [collection]);
 
     return {
         subscribe,
@@ -81,5 +80,6 @@ export const useRxOrm = <T extends AppRxDocumentBase>(collectionName: keyof AppR
         insert,
         update,
         remove,
+        collection
     };
 };

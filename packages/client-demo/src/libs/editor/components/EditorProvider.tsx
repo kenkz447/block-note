@@ -2,20 +2,26 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { EditorContextType } from '../editorContext';
 import { createDefaultDocCollection, initDefaultDocCollection } from '../utils/docCollectionUtils';
 import { DocCollection } from '@blocksuite/store';
-import { RxCollection } from 'rxdb';
-import { Entry, useEntries, useRxdb } from '@/libs/rxdb';
+import { useEntries, useRxdb } from '@/libs/rxdb';
 import { createDefaultDoc } from '@blocksuite/blocks';
 
 
 const ANONYMOUS_COLLECTION_NAME = 'blocksuite-anonymous';
 
 interface EditorProviderProps {
+    readonly workspaceId: string;
+    readonly projectId: string;
     readonly children: (editorContext: EditorContextType) => React.ReactNode;
 }
 
-export function EditorProvider({ children }: EditorProviderProps) {
+export function EditorProvider({ workspaceId, projectId, children }: EditorProviderProps) {
     const db = useRxdb();
-    const { insert: insertEntry, checkEntryExists } = useEntries();
+
+    const {
+        insert: insertEntry,
+        checkEntryExists,
+        collection: entryCollection
+    } = useEntries({ workspaceId, projectId });
 
     const docCollections = useRef<DocCollection[]>([]);
     const [activeCollectionId, setActiveCollectionId] = useState<string>(ANONYMOUS_COLLECTION_NAME);
@@ -29,7 +35,6 @@ export function EditorProvider({ children }: EditorProviderProps) {
         const collection = await createDefaultDocCollection(db, collectionId);
         await initDefaultDocCollection(collection);
 
-        const entryCollection = db.collections.entries as RxCollection<Entry>;
         const entries = await entryCollection.find().exec();
 
         for (const entry of entries) {
@@ -81,7 +86,7 @@ export function EditorProvider({ children }: EditorProviderProps) {
 
         const entriesSubscribes = [
             // Create a new document in the editor collection when a new entry is created in the database
-            db.collections.entries.insert$.subscribe((e) => {
+            entryCollection.insert$.subscribe((e) => {
                 if (e.documentData.type === 'folder') {
                     return;
                 }
@@ -91,7 +96,7 @@ export function EditorProvider({ children }: EditorProviderProps) {
                 }
                 createDefaultDoc(docCollection, { id: e.documentId });
             }),
-            db.collections.entries.remove$.subscribe((e) => {
+            entryCollection.remove$.subscribe((e) => {
                 if (e.documentData.type === 'folder') {
                     return;
                 }
@@ -111,8 +116,9 @@ export function EditorProvider({ children }: EditorProviderProps) {
 
             await insertEntry({
                 id: docId,
-                type: 'document',
                 parent: null,
+                type: 'document',
+                name: 'Untitled Document'
             });
         });
 
@@ -120,7 +126,7 @@ export function EditorProvider({ children }: EditorProviderProps) {
             entriesSubscribes.forEach((s) => s.unsubscribe());
             docAdded.dispose();
         };
-    }, [db, docCollection]);
+    }, [checkEntryExists, docCollection, entryCollection.insert$, entryCollection.remove$, insertEntry]);
 
     const contextValue = useMemo((): EditorContextType => {
         return {

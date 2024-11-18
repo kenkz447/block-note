@@ -1,5 +1,5 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router';
-import { useCurrentWorkspace } from '@/hooks/state/useCurrentWorkspace';
+import { createFileRoute, Outlet, useParams } from '@tanstack/react-router';
+import { useWorkspace } from '@/hooks/helpers/useWorkspace';
 import { useProjects } from '@/libs/rxdb/hooks/orm/useProjects';
 import { useEffect, useState } from 'react';
 import { Entry, Project } from '@/libs/rxdb';
@@ -7,7 +7,7 @@ import { Entry, Project } from '@/libs/rxdb';
 import { useIsMobile } from '@/libs/shadcn-ui/hooks/use-mobile';
 import { MasterLayoutMobile } from '@/components/layout/MasterLayoutMobile';
 import { MasterLayout } from '@/components/layout/MasterLayout';
-import { AppSidebarContext } from '@/components/layout/sidebar/AppSidebarContext';
+import { AppSidebarContext } from '@/components/layout/sidebar/children/AppSidebarContext';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
 
 export const Route = createFileRoute('/editor/$workspaceId')({
@@ -18,28 +18,35 @@ function RouteComponent() {
     const isMobile = useIsMobile();
     const Layout = isMobile ? MasterLayoutMobile : MasterLayout;
 
-    const currentWorkspace = useCurrentWorkspace();
+    const { workspaceId } = useParams({
+        from: '/editor/$workspaceId'
+    });
+
+    const currentWorkspace = useWorkspace({ workspaceId });
 
     if (currentWorkspace === null) {
         throw new Error('Workspace not found');
     }
 
-    const { subscribe } = useProjects();
+    const { subscribe } = useProjects({
+        workspaceId
+    });
 
     const [activeProject, setActiveProject] = useState<Project>();
     const [projects, setProjects] = useState<Project[]>();
     const [entries, setEntries] = useState<Entry[]>();
 
     useEffect(() => {
-        if (!currentWorkspace) {
+        if (!currentWorkspace?.id) {
             return;
         }
-        const subscription = subscribe({ selector: {} }, setProjects);
+        const projectQuery = { selector: { workspaceId: currentWorkspace.id } };
+        const subscription = subscribe(projectQuery, setProjects);
 
         return () => {
             subscription.unsubscribe();
         };
-    }, [currentWorkspace, subscribe]);
+    }, [currentWorkspace?.id, subscribe]);
 
     if (currentWorkspace === undefined) {
         return <LoadingScreen />;

@@ -18,11 +18,14 @@ export const Route = createFileRoute(
 });
 
 function RouteComponent() {
-    const { entryId } = useParams({
+    const { entryId, projectId, workspaceId } = useParams({
         from: '/editor/$workspaceId/$projectId/$entryId',
     });
 
-    const { subscribeSingle } = useEntries();
+    const { subscribeSingle } = useEntries({
+        workspaceId,
+        projectId,
+    });
 
     const [entry, setEntry] = useState<Entry | null>();
 

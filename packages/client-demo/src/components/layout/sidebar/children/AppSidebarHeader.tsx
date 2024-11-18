@@ -1,6 +1,6 @@
 import { Button } from '@/libs/shadcn-ui/components/button';
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/libs/shadcn-ui/components/dropdown-menu';
-import { ChevronsUpDown, Layers, Plus } from 'lucide-react';
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/libs/shadcn-ui/components/dropdown-menu';
+import { ArrowLeftRight, ChevronsUpDown, Layers, Plus } from 'lucide-react';
 import { Project, Workspace } from '@/libs/rxdb';
 import { CreateProjectForm } from '@/components/forms/project/CreateProjectForm';
 import { useProjects } from '@/libs/rxdb/hooks/orm/useProjects';
@@ -17,7 +17,10 @@ interface AppSidebarHeaderProps {
 export function AppSidebarHeader({ workspace, projects, activeProject }: AppSidebarHeaderProps) {
     const navigate = useNavigate();
     const { openDialog, closeDialog } = usePopupDialog();
-    const { insert: insertProject } = useProjects();
+
+    const { insert: insertProject } = useProjects({
+        workspaceId: workspace.id
+    });
 
     const onNewProject = useCallback(() => {
         openDialog({
@@ -46,7 +49,7 @@ export function AppSidebarHeader({ workspace, projects, activeProject }: AppSide
         <div className="p-2 flex justify-center items-center tracking-wide">
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="w-full block p-2 h-12">
+                    <Button variant="ghost" className="w-full block p-2 h-12 data-[state=open]:bg-sidebar-accent">
                         <div className="flex items-center gap-2">
                             <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                                 <Layers />
@@ -92,6 +95,9 @@ export function AppSidebarHeader({ workspace, projects, activeProject }: AppSide
                     }
                     <DropdownMenuItem className="text-foreground/70" onClick={onNewProject}>
                         <Plus /> Create Project
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="text-foreground/70" onClick={() => navigate({ to: '/workspaces' })}>
+                        <ArrowLeftRight /> Switch Workspace
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu >

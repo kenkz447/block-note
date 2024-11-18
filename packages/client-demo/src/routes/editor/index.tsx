@@ -19,7 +19,7 @@ function RouteComponent() {
     const [workspaces, setWorkspaces] = useState<Workspace[]>();
 
     useEffect(() => {
-        const subscription = subscribe(setWorkspaces);
+        const subscription = subscribe({}, setWorkspaces);
         return () => {
             subscription.unsubscribe();
         };

@@ -9,8 +9,10 @@ import { replicateFirestore } from 'rxdb/plugins/replication-firestore';
 import { firestore } from '@/bootstraps/firebase';
 import { env } from '@/config/env';
 import { AppRxCollections, AppRxDatabase } from './rxdbTypes';
+import { RxDBDevModePlugin } from 'rxdb/plugins/dev-mode';
 
 addRxPlugin(RxDBUpdatePlugin);
+addRxPlugin(RxDBDevModePlugin);
 
 export const initRxdb = async (dbName: string) => {
     const db = await createRxDatabase<AppRxCollections>({

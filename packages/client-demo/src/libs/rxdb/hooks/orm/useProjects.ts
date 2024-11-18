@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { Project } from '../../rxdbTypes';
 import { useRxOrm } from '../useRxOrm';
+import { useCurrentUser } from '@writefy/client-shared';
 
 interface ProjectInsertParams {
     readonly name: string;
@@ -10,8 +11,15 @@ interface ProjectUpdateParams {
     readonly name?: string;
 }
 
-export const useProjects = () => {
+export interface UserProjectOptions {
+    readonly workspaceId: string;
+}
+
+export const useProjects = ({ workspaceId }: UserProjectOptions) => {
+    const currentUser = useCurrentUser();
     const { insert, update, ...rest } = useRxOrm<Project>('projects');
+
+    const userId = currentUser?.uid ?? 'anonymous';
 
     return {
         ...rest,
@@ -20,8 +28,10 @@ export const useProjects = () => {
             return insert({
                 ...project,
                 order: now.getTime(),
+                createdBy: userId,
+                workspaceId
             });
-        }, [insert]),
+        }, [insert, userId, workspaceId]),
         update: useCallback((projectId: string, project: ProjectUpdateParams) => update(projectId, project), [update])
     };
 };

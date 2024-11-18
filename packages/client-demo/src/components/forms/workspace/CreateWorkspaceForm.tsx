@@ -27,7 +27,6 @@ export function CreateWorkspaceForm({ onSubmit }: CreateWorkspaceFormProps) {
         resolver: zodResolver(createSchema),
     });
 
-
     return (
         <DialogContent className="sm:max-w-[425px]">
             <Form reset={reset} formState={formState} {...form}>

@@ -1,42 +1,13 @@
-import { LoadingScreen } from '@/components/layout/LoadingScreen';
-import { useWorkspaceReplica } from '@/libs/rxdb/hooks/sync/useWorkspaceReplica';
-import { createFileRoute, Outlet } from '@tanstack/react-router';
-import { useCurrentUser } from '@writefy/client-shared';
-import { useEffect, useState } from 'react';
+import { createFileRoute } from '@tanstack/react-router';
+import { Navigate } from '@tanstack/react-router';
+import { z } from 'zod';
 
 export const Route = createFileRoute('/')({
     component: RouteComponent,
+    validateSearch: z.object({})
+
 });
 
 function RouteComponent() {
-    const currentUser = useCurrentUser();
-
-    const [workspaceSynced, setWorkspaceSynced] = useState<boolean>();
-    const workspaceReplica = useWorkspaceReplica();
-
-    // Start syncing the workspace when the user is logged in
-    useEffect(() => {
-        if (!currentUser) {
-            return;
-        }
-
-        workspaceReplica.start(currentUser.uid).then(() => setWorkspaceSynced(true));
-
-        return () => {
-            workspaceReplica.stop();
-        };
-    }, [currentUser, workspaceReplica]);
-
-    // Skip syncing if the user is not logged in
-    // useEffect(() => {
-    //     if (currentUser === null) {
-    //         setWorkspaceSynced(false);
-    //     }
-    // }, [currentUser]);
-
-    if (workspaceSynced === undefined) {
-        return <LoadingScreen />;
-    }
-
-    return <Outlet />;
+    return <Navigate to="/editor" replace />;
 }

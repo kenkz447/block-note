@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-interface CreateEntryValues {
+export interface CreateEntryValues {
     readonly name: string;
 }
 

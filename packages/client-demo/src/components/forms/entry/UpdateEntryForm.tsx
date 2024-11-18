@@ -8,7 +8,7 @@ import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-interface UpdateEntryValues {
+export interface UpdateEntryValues {
     readonly name: string
 }
 

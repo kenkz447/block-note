@@ -1,12 +1,12 @@
 import { DeleteEntryForm } from '@/components/forms/entry/DeleteEntryForm';
-import { UpdateEntryForm } from '@/components/forms/entry/UpdateEntryForm';
+import { UpdateEntryForm, UpdateEntryValues } from '@/components/forms/entry/UpdateEntryForm';
 import { usePopupDialog } from '@/libs/popup';
-import { Entry, EntryTreeNode, generateRxId, useEntries } from '@/libs/rxdb';
+import { Entry, EntryTreeNode, InsertEntryParams, UpdateEntryParams } from '@/libs/rxdb';
 import { Button } from '@/libs/shadcn-ui/components/button';
 import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuSeparator } from '@/libs/shadcn-ui/components/dropdown-menu';
 import { FileText, Folder, FolderOpen, MoreHorizontal, SquarePen, Trash } from 'lucide-react';
 import { useCallback } from 'react';
-import { CreateEntryForm } from '../forms/entry/CreateEntryForm';
+import { CreateEntryForm } from '../../forms/entry/CreateEntryForm';
 import { cn } from '@/libs/shadcn-ui/utils';
 import { Link } from '@tanstack/react-router';
 
@@ -14,69 +14,64 @@ interface EntryTreeItemProps {
     readonly entry: EntryTreeNode;
     readonly entryUrl: string;
     readonly expanded: boolean;
-    readonly onEntryCreate: (entry: Entry) => void;
-    readonly onEntryDelete: (entry: Entry) => void;
+    readonly handleEntryCreate: (entry: InsertEntryParams) => Promise<Entry>;
+    readonly handleEntryUpdate: (entryId: string, entry: UpdateEntryParams) => Promise<Entry>;
+    readonly handleEntryDelete: (entryId: string) => Promise<void>;
 }
 
 export function EntryTreeItem({
     entry,
     entryUrl,
     expanded,
-    onEntryCreate,
-    onEntryDelete
+    handleEntryCreate,
+    handleEntryUpdate,
+    handleEntryDelete
 }: EntryTreeItemProps) {
     const { openDialog, closeDialog } = usePopupDialog();
 
-    const { insert, update, remove } = useEntries();
-
     const onCreateEntry = useCallback((type: string) => {
         const createEntry = async (formValues: Partial<Entry>) => {
-            const newEntry = await insert({
-                id: generateRxId(),
+
+            handleEntryCreate({
                 type: type,
                 parent: entry.id,
-                name: formValues.name
+                name: formValues.name!
             });
 
             closeDialog();
-            onEntryCreate(newEntry);
         };
 
         openDialog({
             content: <CreateEntryForm type={type} onSubmit={createEntry} />
         });
-    }, [openDialog, insert, entry.id, closeDialog, onEntryCreate]);
+    }, [openDialog, entry.id, closeDialog, handleEntryCreate]);
 
     const showUpdateForm = useCallback((entry: Entry) => {
-        const updateEntry = async (formValues: Partial<Entry>) => {
-            await update(entry.id, {
-                name: formValues.name
-            });
-
+        const updateEntry = async (formValues: UpdateEntryValues) => {
+            await handleEntryUpdate(entry.id, formValues);
             closeDialog();
         };
 
         openDialog({
             content: <UpdateEntryForm entry={entry} onSubmit={updateEntry} />
         });
-    }, [openDialog, update, closeDialog]);
+    }, [openDialog, closeDialog, handleEntryUpdate]);
 
-    const onDeleteEntry = useCallback(() => {
+    const onDeleteEntry = useCallback(async () => {
         if (entry.type === 'folder' && entry.children.length === 0) {
-            remove(entry.id);
+            await handleEntryDelete(entry.id);
             return;
         }
 
         const handleDelete = async () => {
-            await remove(entry.id);
+            await handleEntryDelete(entry.id);
             closeDialog();
-            onEntryDelete(entry);
         };
 
         openDialog({
             content: <DeleteEntryForm entry={entry} onSubmit={handleDelete} />
         });
-    }, [closeDialog, entry, onEntryDelete, openDialog, remove]);
+    }, [closeDialog, entry, handleEntryDelete, openDialog]);
 
     const icon = entry.type === 'folder'
         ? expanded ? <FolderOpen size={16} /> : <Folder size={16} />

@@ -46,7 +46,7 @@ function RouteComponent() {
     };
 
     useEffect(() => {
-        const sub = subscribe(setWorkspaces);
+        const sub = subscribe({}, setWorkspaces);
 
         return () => {
             sub.unsubscribe();

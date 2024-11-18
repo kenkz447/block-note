@@ -1,18 +1,22 @@
-import { Entry, EntryTreeNode, useEntries } from '@/libs/rxdb';
-import { InboxIcon } from 'lucide-react';
+import { Entry, EntryTreeNode, InsertEntryParams, useEntries } from '@/libs/rxdb';
+import { FilePlus, FolderPlus, InboxIcon, Plus } from 'lucide-react';
 import { arrayToTree } from 'performant-array-to-tree';
 import Tree from 'rc-tree';
-import React, { useEffect, useMemo, useState } from 'react';
-import { EntryTreeItem } from './EntryTreeItem';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { EntryTreeItem } from './children/EntryTreeItem';
 import { cn } from '@/libs/shadcn-ui/utils';
 import { useParams } from '@tanstack/react-router';
+import { Input } from '@/libs/shadcn-ui/components/input';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/libs/shadcn-ui/components/dropdown-menu';
+import { Button } from '@/libs/shadcn-ui/components/button';
+import { usePopupDialog } from '@/libs/popup';
+import { CreateEntryForm, CreateEntryValues } from '../forms/entry/CreateEntryForm';
 
 interface EntryTreeProps {
     readonly entries?: Entry[];
-    readonly search?: string;
 }
 
-export function EntryTree({ entries, search }: EntryTreeProps) {
+export function EntryTree({ entries }: EntryTreeProps) {
     const { projectId, workspaceId } = useParams({
         from: '/editor/$workspaceId/$projectId',
     });
@@ -21,7 +25,29 @@ export function EntryTree({ entries, search }: EntryTreeProps) {
         strict: false
     });
 
-    const { update } = useEntries();
+    const { openDialog, closeDialog } = usePopupDialog();
+    const { insert, update, remove } = useEntries({
+        workspaceId,
+        projectId
+    });
+
+    const [search, setSearch] = useState<string>();
+
+    const onNewEntry = useCallback((type: string) => {
+        const createEntry = async (formValues: CreateEntryValues) => {
+            await insert({
+                type: type,
+                parent: null,
+                name: formValues.name
+            } as InsertEntryParams);
+
+            closeDialog();
+        };
+
+        openDialog({
+            content: <CreateEntryForm type={type} onSubmit={createEntry} />
+        });
+    }, [insert, openDialog, closeDialog]);
 
     const [filteredEntries, setFilteredEntries] = useState<Entry[] | undefined>(entries);
 
@@ -86,8 +112,9 @@ export function EntryTree({ entries, search }: EntryTreeProps) {
                         entry={entry}
                         entryUrl={`/editor/${workspaceId}/${projectId}/${entry.id}`}
                         expanded={openKeys.includes(entry.id)}
-                        onEntryCreate={() => { }}
-                        onEntryDelete={() => { }}
+                        handleEntryCreate={insert}
+                        handleEntryUpdate={update}
+                        handleEntryDelete={remove}
                     />
                 )}
                 isLeaf={entry.type !== 'folder'}
@@ -100,65 +127,86 @@ export function EntryTree({ entries, search }: EntryTreeProps) {
 
     return (
         <div>
-            <Tree
-                defaultExpandAll={true}
-                autoExpandParent={false}
-                draggable={true}
-                showLine={true}
-                expandAction="click"
-                expandedKeys={openKeys}
-                dropIndicatorRender={() => null}
-                selectedKeys={activeEntryId ? [activeEntryId] : []}
-                onExpand={(keys) => setOpenKeys(keys)}
-                allowDrop={({ dropNode }) => {
-                    const dropEntry = filteredEntries.find((entry) => entry.id === dropNode.key);
-                    return dropEntry?.type === 'folder';
-                }}
-                onDrop={async (info) => {
-                    const draggingEntry = filteredEntries.find((entry) => entry.id === info.dragNode.key);
-                    if (!draggingEntry) {
-                        return;
-                    }
 
-                    const isFirstInRoot = info.dropPosition === -1;
-                    if (isFirstInRoot) {
-                        const rootEntries = filteredEntries.filter((entry) => entry.parent === null);
-                        const firstEntry = rootEntries[0];
-
-                        return await update(draggingEntry.id, {
-                            order: firstEntry ? firstEntry.order - 1 : 0,
-                            parent: null
-                        });
-                    }
-
-                    const isFirstInParent = info.dropToGap === false;
-                    if (isFirstInParent) {
-                        const parentEntry = filteredEntries.find((entry) => entry.id === info.node.key);
-                        const children = filteredEntries.filter((entry) => entry.parent === parentEntry?.id);
-                        const firstChild = children[0];
-                        return await update(draggingEntry.id, {
-                            order: firstChild ? firstChild.order - 1 : 0,
-                            parent: parentEntry?.id
-                        });
-                    }
-
-                    const fromEntry = filteredEntries.find((entry) => entry.id === info.node.key);
-                    if (!fromEntry) {
-                        return;
-                    }
-                    const sibling = filteredEntries.filter((entry) => entry.parent === fromEntry.parent);
-                    const dropTo = sibling[info.dropPosition];
-
-                    return await update(draggingEntry.id, {
-                        order: dropTo ? (fromEntry.order + dropTo.order) / 2 : fromEntry.order + 1,
-                        parent: fromEntry?.parent
-                    });
-                }}
-            >
-                {tree.map(renderTreeNode)}
-            </Tree>
+            <div className="flex gap-2 px-2 my-2">
+                <Input placeholder="Search" onChange={(e) => setSearch(e.currentTarget.value)} />
+                <div>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" size="icon" className="text-sidebar-foreground/70 hover:bg-sidebar-accent data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
+                                <Plus />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent side="right" align="start" className="w-[150px]">
+                            <DropdownMenuItem onClick={() => onNewEntry('folder')}><FolderPlus />New Folder</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => onNewEntry('document')}><FilePlus />New Document</DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+            </div>
             {
-                entries?.length === 0 && (
+                tree.length > 0 && (
+                    <Tree
+                        defaultExpandAll={true}
+                        autoExpandParent={false}
+                        draggable={true}
+                        showLine={true}
+                        expandAction="click"
+                        expandedKeys={openKeys}
+                        dropIndicatorRender={() => null}
+                        selectedKeys={activeEntryId ? [activeEntryId] : []}
+                        onExpand={(keys) => setOpenKeys(keys)}
+                        allowDrop={({ dropNode }) => {
+                            const dropEntry = filteredEntries.find((entry) => entry.id === dropNode.key);
+                            return dropEntry?.type === 'folder';
+                        }}
+                        onDrop={async (info) => {
+                            const draggingEntry = filteredEntries.find((entry) => entry.id === info.dragNode.key);
+                            if (!draggingEntry) {
+                                return;
+                            }
+
+                            const isFirstInRoot = info.dropPosition === -1;
+                            if (isFirstInRoot) {
+                                const rootEntries = filteredEntries.filter((entry) => entry.parent === null);
+                                const firstEntry = rootEntries[0];
+
+                                return await update(draggingEntry.id, {
+                                    order: firstEntry ? firstEntry.order - 1 : 0,
+                                    parent: null
+                                });
+                            }
+
+                            const isFirstInParent = info.dropToGap === false;
+                            if (isFirstInParent) {
+                                const parentEntry = filteredEntries.find((entry) => entry.id === info.node.key);
+                                const children = filteredEntries.filter((entry) => entry.parent === parentEntry?.id);
+                                const firstChild = children[0];
+                                return await update(draggingEntry.id, {
+                                    order: firstChild ? firstChild.order - 1 : 0,
+                                    parent: parentEntry?.id
+                                });
+                            }
+
+                            const fromEntry = filteredEntries.find((entry) => entry.id === info.node.key);
+                            if (!fromEntry) {
+                                return;
+                            }
+                            const sibling = filteredEntries.filter((entry) => entry.parent === fromEntry.parent);
+                            const dropTo = sibling[info.dropPosition];
+
+                            return await update(draggingEntry.id, {
+                                order: dropTo ? (fromEntry.order + dropTo.order) / 2 : fromEntry.order + 1,
+                                parent: fromEntry?.parent
+                            });
+                        }}
+                    >
+                        {tree.map(renderTreeNode)}
+                    </Tree>
+                )
+            }
+            {
+                (tree.length === 0 && entries?.length === 0) && (
                     <div className="flex flex-col items-center justify-center h-[50vh] gap-6 px-4">
                         <div className="flex items-center justify-center w-24 h-24 bg-gray-100 rounded-full dark:bg-gray-800">
                             <InboxIcon className="w-12 h-12 text-gray-500 dark:text-gray-400" />

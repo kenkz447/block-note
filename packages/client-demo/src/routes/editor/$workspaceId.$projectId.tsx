@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { createFileRoute, Outlet } from '@tanstack/react-router';
-import { useCurrentProject } from '@/hooks/state/useCurrentProject';
+import { createFileRoute, Outlet, useParams } from '@tanstack/react-router';
+import { useProject } from '@/hooks/helpers/useProject';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
 import { useContext } from 'react';
-import { AppSidebarContext } from '@/components/layout/sidebar/AppSidebarContext';
+import { AppSidebarContext } from '@/components/layout/sidebar/children/AppSidebarContext';
 import { useEntries } from '@/libs/rxdb';
 
 export const Route = createFileRoute('/editor/$workspaceId/$projectId')({
@@ -13,8 +13,19 @@ export const Route = createFileRoute('/editor/$workspaceId/$projectId')({
 function RouteComponent() {
     const { setActiveProject, setEntries } = useContext(AppSidebarContext)!;
 
-    const currentProject = useCurrentProject();
-    const { subscribe: subscribeEntries } = useEntries();
+    const { workspaceId, projectId } = useParams({
+        from: '/editor/$workspaceId/$projectId'
+    });
+
+    const currentProject = useProject({
+        workspaceId,
+        projectId,
+    });
+
+    const { subscribe: subscribeEntries } = useEntries({
+        workspaceId,
+        projectId,
+    });
 
     if (currentProject === null) {
         throw new Error('Project not found');

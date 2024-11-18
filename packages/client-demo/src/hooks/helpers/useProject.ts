@@ -1,14 +1,19 @@
 import { Project } from '@/libs/rxdb';
 import { useProjects } from '@/libs/rxdb/hooks/orm/useProjects';
-import { useParams } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 
-export const useCurrentProject = () => {
-    const { projectId } = useParams({
-        from: '/editor/$workspaceId/$projectId'
-    });
+interface UserProjectOptions {
+    readonly workspaceId: string;
+    readonly projectId: string;
+}
 
-    const { subscribeSingle } = useProjects();
+export const useProject = ({
+    workspaceId,
+    projectId
+}: UserProjectOptions) => {
+    const { subscribeSingle } = useProjects({
+        workspaceId
+    });
 
     const [project, setProject] = useState<Project | null | undefined>();
 
