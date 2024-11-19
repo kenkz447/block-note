@@ -6,7 +6,7 @@ import { useContext } from 'react';
 import { AppSidebarContext } from '@/components/layout/sidebar/children/AppSidebarContext';
 import { useEntries } from '@/libs/rxdb';
 
-export const Route = createFileRoute('/editor/$workspaceId/$projectId')({
+export const Route = createFileRoute('/app/editor/$workspaceId/$projectId')({
     component: RouteComponent,
 });
 
@@ -14,7 +14,7 @@ function RouteComponent() {
     const { setActiveProject, setEntries } = useContext(AppSidebarContext)!;
 
     const { workspaceId, projectId } = useParams({
-        from: '/editor/$workspaceId/$projectId'
+        from: '/app/editor/$workspaceId/$projectId',
     });
 
     const currentProject = useProject({

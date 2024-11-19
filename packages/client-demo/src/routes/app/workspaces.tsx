@@ -1,6 +1,14 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { Card, CardContent, CardHeader } from '@/libs/shadcn-ui/components/card';
-import { ChevronRight, Info, Layers, Pen, Plus, UserRound, UserRoundCog } from 'lucide-react';
+import {
+    ChevronRight,
+    Info,
+    Layers,
+    Pen,
+    Plus,
+    UserRound,
+    UserRoundCog,
+} from 'lucide-react';
 import {
     Carousel,
     CarouselContent,
@@ -12,14 +20,15 @@ import { Workspace } from '@/libs/rxdb';
 import { Button } from '@/libs/shadcn-ui/components/button';
 import { usePopupDialogContext } from '@/libs/popup/hooks/usePopupContexts';
 import { CreateWorkspaceForm } from '@/components/forms/workspace/CreateWorkspaceForm';
-import { useCurrentUser } from '@writefy/client-shared';
+import { useAuth, useCurrentUser } from '@writefy/client-shared';
 import { UserSettings } from '@/components/settings/UserSettings';
 
-export const Route = createFileRoute('/workspaces')({
+export const Route = createFileRoute('/app/workspaces')({
     component: RouteComponent,
 });
 
 function RouteComponent() {
+    const { showGoogleSignIn } = useAuth();
     const currentUser = useCurrentUser();
     const { subscribe, insert } = useWorkspaces();
 
@@ -28,7 +37,7 @@ function RouteComponent() {
     const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
     const openUserSettingsDialog = () => {
         openDialog({
-            content: <UserSettings hide={closeDialog} />
+            content: <UserSettings hide={closeDialog} />,
         });
     };
 
@@ -68,28 +77,25 @@ function RouteComponent() {
                     >
                         <Plus strokeWidth={3} />
                     </Button>
-                    {
-                        currentUser
-                            ? (
-                                <Button
-                                    variant="outline"
-                                    size="icon"
-                                    className="rounded-full text-muted-foreground"
-                                    onClick={openUserSettingsDialog}
-                                >
-                                    <UserRoundCog strokeWidth={3} />
-                                </Button>
-                            )
-                            : (
-                                <Button
-                                    variant="outline"
-                                    size="icon"
-                                    className="rounded-full text-muted-foreground"
-                                >
-                                    <UserRound strokeWidth={3} />
-                                </Button>
-                            )
-                    }
+                    {currentUser ? (
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            className="rounded-full text-muted-foreground"
+                            onClick={openUserSettingsDialog}
+                        >
+                            <UserRoundCog strokeWidth={3} />
+                        </Button>
+                    ) : (
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            className="rounded-full text-muted-foreground"
+                            onClick={showGoogleSignIn}
+                        >
+                            <UserRound strokeWidth={3} />
+                        </Button>
+                    )}
                 </div>
             </div>
             {workspaces.length > 0 ? (
@@ -122,14 +128,25 @@ function RouteComponent() {
                                                 </span>
                                             </div>
                                         </div>
-                                        <Button size="icon" variant="ghost" className="text-primary/70 hidden absolute right-1 top-0 group-hover:flex">
+                                        <Button
+                                            size="icon"
+                                            variant="ghost"
+                                            className="text-primary/70 hidden absolute right-1 top-0 group-hover:flex"
+                                        >
                                             <Pen />
                                         </Button>
                                     </CardHeader>
                                     <CardContent className="text-center">
                                         <div className="flex h-5 items-center justify-center text-sm">
-                                            <Button className="text-primary/70" variant="ghost" asChild>
-                                                <Link to="/editor/$workspaceId" params={{ workspaceId: workspace.id }}>
+                                            <Button
+                                                className="text-primary/70"
+                                                variant="ghost"
+                                                asChild
+                                            >
+                                                <Link
+                                                    to="/app/editor/$workspaceId"
+                                                    params={{ workspaceId: workspace.id }}
+                                                >
                                                     <ChevronRight /> Use workspace
                                                 </Link>
                                             </Button>

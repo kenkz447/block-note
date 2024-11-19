@@ -11,18 +11,20 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as WorkspacesImport } from './routes/workspaces'
+import { Route as AppRouteImport } from './routes/app/route'
 import { Route as IndexImport } from './routes/index'
-import { Route as EditorIndexImport } from './routes/editor/index'
-import { Route as EditorWorkspaceIdImport } from './routes/editor/$workspaceId'
-import { Route as EditorWorkspaceIdProjectIdImport } from './routes/editor/$workspaceId.$projectId'
-import { Route as EditorWorkspaceIdProjectIdEntryIdImport } from './routes/editor/$workspaceId.$projectId.$entryId'
+import { Route as AppIndexImport } from './routes/app/index'
+import { Route as AppWorkspacesImport } from './routes/app/workspaces'
+import { Route as AppEditorIndexImport } from './routes/app/editor/index'
+import { Route as AppEditorWorkspaceIdImport } from './routes/app/editor/$workspaceId'
+import { Route as AppEditorWorkspaceIdProjectIdImport } from './routes/app/editor/$workspaceId.$projectId'
+import { Route as AppEditorWorkspaceIdProjectIdEntryIdImport } from './routes/app/editor/$workspaceId.$projectId.$entryId'
 
 // Create/Update Routes
 
-const WorkspacesRoute = WorkspacesImport.update({
-  id: '/workspaces',
-  path: '/workspaces',
+const AppRouteRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -32,31 +34,42 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const EditorIndexRoute = EditorIndexImport.update({
+const AppIndexRoute = AppIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+
+const AppWorkspacesRoute = AppWorkspacesImport.update({
+  id: '/workspaces',
+  path: '/workspaces',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+
+const AppEditorIndexRoute = AppEditorIndexImport.update({
   id: '/editor/',
   path: '/editor/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => AppRouteRoute,
 } as any)
 
-const EditorWorkspaceIdRoute = EditorWorkspaceIdImport.update({
+const AppEditorWorkspaceIdRoute = AppEditorWorkspaceIdImport.update({
   id: '/editor/$workspaceId',
   path: '/editor/$workspaceId',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => AppRouteRoute,
 } as any)
 
-const EditorWorkspaceIdProjectIdRoute = EditorWorkspaceIdProjectIdImport.update(
-  {
+const AppEditorWorkspaceIdProjectIdRoute =
+  AppEditorWorkspaceIdProjectIdImport.update({
     id: '/$projectId',
     path: '/$projectId',
-    getParentRoute: () => EditorWorkspaceIdRoute,
-  } as any,
-)
+    getParentRoute: () => AppEditorWorkspaceIdRoute,
+  } as any)
 
-const EditorWorkspaceIdProjectIdEntryIdRoute =
-  EditorWorkspaceIdProjectIdEntryIdImport.update({
+const AppEditorWorkspaceIdProjectIdEntryIdRoute =
+  AppEditorWorkspaceIdProjectIdEntryIdImport.update({
     id: '/$entryId',
     path: '/$entryId',
-    getParentRoute: () => EditorWorkspaceIdProjectIdRoute,
+    getParentRoute: () => AppEditorWorkspaceIdProjectIdRoute,
   } as any)
 
 // Populate the FileRoutesByPath interface
@@ -70,140 +83,179 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/workspaces': {
-      id: '/workspaces'
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/app/workspaces': {
+      id: '/app/workspaces'
       path: '/workspaces'
-      fullPath: '/workspaces'
-      preLoaderRoute: typeof WorkspacesImport
-      parentRoute: typeof rootRoute
+      fullPath: '/app/workspaces'
+      preLoaderRoute: typeof AppWorkspacesImport
+      parentRoute: typeof AppRouteImport
     }
-    '/editor/$workspaceId': {
-      id: '/editor/$workspaceId'
+    '/app/': {
+      id: '/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppIndexImport
+      parentRoute: typeof AppRouteImport
+    }
+    '/app/editor/$workspaceId': {
+      id: '/app/editor/$workspaceId'
       path: '/editor/$workspaceId'
-      fullPath: '/editor/$workspaceId'
-      preLoaderRoute: typeof EditorWorkspaceIdImport
-      parentRoute: typeof rootRoute
+      fullPath: '/app/editor/$workspaceId'
+      preLoaderRoute: typeof AppEditorWorkspaceIdImport
+      parentRoute: typeof AppRouteImport
     }
-    '/editor/': {
-      id: '/editor/'
+    '/app/editor/': {
+      id: '/app/editor/'
       path: '/editor'
-      fullPath: '/editor'
-      preLoaderRoute: typeof EditorIndexImport
-      parentRoute: typeof rootRoute
+      fullPath: '/app/editor'
+      preLoaderRoute: typeof AppEditorIndexImport
+      parentRoute: typeof AppRouteImport
     }
-    '/editor/$workspaceId/$projectId': {
-      id: '/editor/$workspaceId/$projectId'
+    '/app/editor/$workspaceId/$projectId': {
+      id: '/app/editor/$workspaceId/$projectId'
       path: '/$projectId'
-      fullPath: '/editor/$workspaceId/$projectId'
-      preLoaderRoute: typeof EditorWorkspaceIdProjectIdImport
-      parentRoute: typeof EditorWorkspaceIdImport
+      fullPath: '/app/editor/$workspaceId/$projectId'
+      preLoaderRoute: typeof AppEditorWorkspaceIdProjectIdImport
+      parentRoute: typeof AppEditorWorkspaceIdImport
     }
-    '/editor/$workspaceId/$projectId/$entryId': {
-      id: '/editor/$workspaceId/$projectId/$entryId'
+    '/app/editor/$workspaceId/$projectId/$entryId': {
+      id: '/app/editor/$workspaceId/$projectId/$entryId'
       path: '/$entryId'
-      fullPath: '/editor/$workspaceId/$projectId/$entryId'
-      preLoaderRoute: typeof EditorWorkspaceIdProjectIdEntryIdImport
-      parentRoute: typeof EditorWorkspaceIdProjectIdImport
+      fullPath: '/app/editor/$workspaceId/$projectId/$entryId'
+      preLoaderRoute: typeof AppEditorWorkspaceIdProjectIdEntryIdImport
+      parentRoute: typeof AppEditorWorkspaceIdProjectIdImport
     }
   }
 }
 
 // Create and export the route tree
 
-interface EditorWorkspaceIdProjectIdRouteChildren {
-  EditorWorkspaceIdProjectIdEntryIdRoute: typeof EditorWorkspaceIdProjectIdEntryIdRoute
+interface AppEditorWorkspaceIdProjectIdRouteChildren {
+  AppEditorWorkspaceIdProjectIdEntryIdRoute: typeof AppEditorWorkspaceIdProjectIdEntryIdRoute
 }
 
-const EditorWorkspaceIdProjectIdRouteChildren: EditorWorkspaceIdProjectIdRouteChildren =
+const AppEditorWorkspaceIdProjectIdRouteChildren: AppEditorWorkspaceIdProjectIdRouteChildren =
   {
-    EditorWorkspaceIdProjectIdEntryIdRoute:
-      EditorWorkspaceIdProjectIdEntryIdRoute,
+    AppEditorWorkspaceIdProjectIdEntryIdRoute:
+      AppEditorWorkspaceIdProjectIdEntryIdRoute,
   }
 
-const EditorWorkspaceIdProjectIdRouteWithChildren =
-  EditorWorkspaceIdProjectIdRoute._addFileChildren(
-    EditorWorkspaceIdProjectIdRouteChildren,
+const AppEditorWorkspaceIdProjectIdRouteWithChildren =
+  AppEditorWorkspaceIdProjectIdRoute._addFileChildren(
+    AppEditorWorkspaceIdProjectIdRouteChildren,
   )
 
-interface EditorWorkspaceIdRouteChildren {
-  EditorWorkspaceIdProjectIdRoute: typeof EditorWorkspaceIdProjectIdRouteWithChildren
+interface AppEditorWorkspaceIdRouteChildren {
+  AppEditorWorkspaceIdProjectIdRoute: typeof AppEditorWorkspaceIdProjectIdRouteWithChildren
 }
 
-const EditorWorkspaceIdRouteChildren: EditorWorkspaceIdRouteChildren = {
-  EditorWorkspaceIdProjectIdRoute: EditorWorkspaceIdProjectIdRouteWithChildren,
+const AppEditorWorkspaceIdRouteChildren: AppEditorWorkspaceIdRouteChildren = {
+  AppEditorWorkspaceIdProjectIdRoute:
+    AppEditorWorkspaceIdProjectIdRouteWithChildren,
 }
 
-const EditorWorkspaceIdRouteWithChildren =
-  EditorWorkspaceIdRoute._addFileChildren(EditorWorkspaceIdRouteChildren)
+const AppEditorWorkspaceIdRouteWithChildren =
+  AppEditorWorkspaceIdRoute._addFileChildren(AppEditorWorkspaceIdRouteChildren)
+
+interface AppRouteRouteChildren {
+  AppWorkspacesRoute: typeof AppWorkspacesRoute
+  AppIndexRoute: typeof AppIndexRoute
+  AppEditorWorkspaceIdRoute: typeof AppEditorWorkspaceIdRouteWithChildren
+  AppEditorIndexRoute: typeof AppEditorIndexRoute
+}
+
+const AppRouteRouteChildren: AppRouteRouteChildren = {
+  AppWorkspacesRoute: AppWorkspacesRoute,
+  AppIndexRoute: AppIndexRoute,
+  AppEditorWorkspaceIdRoute: AppEditorWorkspaceIdRouteWithChildren,
+  AppEditorIndexRoute: AppEditorIndexRoute,
+}
+
+const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(
+  AppRouteRouteChildren,
+)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/workspaces': typeof WorkspacesRoute
-  '/editor/$workspaceId': typeof EditorWorkspaceIdRouteWithChildren
-  '/editor': typeof EditorIndexRoute
-  '/editor/$workspaceId/$projectId': typeof EditorWorkspaceIdProjectIdRouteWithChildren
-  '/editor/$workspaceId/$projectId/$entryId': typeof EditorWorkspaceIdProjectIdEntryIdRoute
+  '/app': typeof AppRouteRouteWithChildren
+  '/app/workspaces': typeof AppWorkspacesRoute
+  '/app/': typeof AppIndexRoute
+  '/app/editor/$workspaceId': typeof AppEditorWorkspaceIdRouteWithChildren
+  '/app/editor': typeof AppEditorIndexRoute
+  '/app/editor/$workspaceId/$projectId': typeof AppEditorWorkspaceIdProjectIdRouteWithChildren
+  '/app/editor/$workspaceId/$projectId/$entryId': typeof AppEditorWorkspaceIdProjectIdEntryIdRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/workspaces': typeof WorkspacesRoute
-  '/editor/$workspaceId': typeof EditorWorkspaceIdRouteWithChildren
-  '/editor': typeof EditorIndexRoute
-  '/editor/$workspaceId/$projectId': typeof EditorWorkspaceIdProjectIdRouteWithChildren
-  '/editor/$workspaceId/$projectId/$entryId': typeof EditorWorkspaceIdProjectIdEntryIdRoute
+  '/app/workspaces': typeof AppWorkspacesRoute
+  '/app': typeof AppIndexRoute
+  '/app/editor/$workspaceId': typeof AppEditorWorkspaceIdRouteWithChildren
+  '/app/editor': typeof AppEditorIndexRoute
+  '/app/editor/$workspaceId/$projectId': typeof AppEditorWorkspaceIdProjectIdRouteWithChildren
+  '/app/editor/$workspaceId/$projectId/$entryId': typeof AppEditorWorkspaceIdProjectIdEntryIdRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/workspaces': typeof WorkspacesRoute
-  '/editor/$workspaceId': typeof EditorWorkspaceIdRouteWithChildren
-  '/editor/': typeof EditorIndexRoute
-  '/editor/$workspaceId/$projectId': typeof EditorWorkspaceIdProjectIdRouteWithChildren
-  '/editor/$workspaceId/$projectId/$entryId': typeof EditorWorkspaceIdProjectIdEntryIdRoute
+  '/app': typeof AppRouteRouteWithChildren
+  '/app/workspaces': typeof AppWorkspacesRoute
+  '/app/': typeof AppIndexRoute
+  '/app/editor/$workspaceId': typeof AppEditorWorkspaceIdRouteWithChildren
+  '/app/editor/': typeof AppEditorIndexRoute
+  '/app/editor/$workspaceId/$projectId': typeof AppEditorWorkspaceIdProjectIdRouteWithChildren
+  '/app/editor/$workspaceId/$projectId/$entryId': typeof AppEditorWorkspaceIdProjectIdEntryIdRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/workspaces'
-    | '/editor/$workspaceId'
-    | '/editor'
-    | '/editor/$workspaceId/$projectId'
-    | '/editor/$workspaceId/$projectId/$entryId'
+    | '/app'
+    | '/app/workspaces'
+    | '/app/'
+    | '/app/editor/$workspaceId'
+    | '/app/editor'
+    | '/app/editor/$workspaceId/$projectId'
+    | '/app/editor/$workspaceId/$projectId/$entryId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/workspaces'
-    | '/editor/$workspaceId'
-    | '/editor'
-    | '/editor/$workspaceId/$projectId'
-    | '/editor/$workspaceId/$projectId/$entryId'
+    | '/app/workspaces'
+    | '/app'
+    | '/app/editor/$workspaceId'
+    | '/app/editor'
+    | '/app/editor/$workspaceId/$projectId'
+    | '/app/editor/$workspaceId/$projectId/$entryId'
   id:
     | '__root__'
     | '/'
-    | '/workspaces'
-    | '/editor/$workspaceId'
-    | '/editor/'
-    | '/editor/$workspaceId/$projectId'
-    | '/editor/$workspaceId/$projectId/$entryId'
+    | '/app'
+    | '/app/workspaces'
+    | '/app/'
+    | '/app/editor/$workspaceId'
+    | '/app/editor/'
+    | '/app/editor/$workspaceId/$projectId'
+    | '/app/editor/$workspaceId/$projectId/$entryId'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  WorkspacesRoute: typeof WorkspacesRoute
-  EditorWorkspaceIdRoute: typeof EditorWorkspaceIdRouteWithChildren
-  EditorIndexRoute: typeof EditorIndexRoute
+  AppRouteRoute: typeof AppRouteRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  WorkspacesRoute: WorkspacesRoute,
-  EditorWorkspaceIdRoute: EditorWorkspaceIdRouteWithChildren,
-  EditorIndexRoute: EditorIndexRoute,
+  AppRouteRoute: AppRouteRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -217,36 +269,50 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/workspaces",
-        "/editor/$workspaceId",
-        "/editor/"
+        "/app"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
-    "/workspaces": {
-      "filePath": "workspaces.tsx"
-    },
-    "/editor/$workspaceId": {
-      "filePath": "editor/$workspaceId.tsx",
+    "/app": {
+      "filePath": "app/route.tsx",
       "children": [
-        "/editor/$workspaceId/$projectId"
+        "/app/workspaces",
+        "/app/",
+        "/app/editor/$workspaceId",
+        "/app/editor/"
       ]
     },
-    "/editor/": {
-      "filePath": "editor/index.tsx"
+    "/app/workspaces": {
+      "filePath": "app/workspaces.tsx",
+      "parent": "/app"
     },
-    "/editor/$workspaceId/$projectId": {
-      "filePath": "editor/$workspaceId.$projectId.tsx",
-      "parent": "/editor/$workspaceId",
+    "/app/": {
+      "filePath": "app/index.tsx",
+      "parent": "/app"
+    },
+    "/app/editor/$workspaceId": {
+      "filePath": "app/editor/$workspaceId.tsx",
+      "parent": "/app",
       "children": [
-        "/editor/$workspaceId/$projectId/$entryId"
+        "/app/editor/$workspaceId/$projectId"
       ]
     },
-    "/editor/$workspaceId/$projectId/$entryId": {
-      "filePath": "editor/$workspaceId.$projectId.$entryId.tsx",
-      "parent": "/editor/$workspaceId/$projectId"
+    "/app/editor/": {
+      "filePath": "app/editor/index.tsx",
+      "parent": "/app"
+    },
+    "/app/editor/$workspaceId/$projectId": {
+      "filePath": "app/editor/$workspaceId.$projectId.tsx",
+      "parent": "/app/editor/$workspaceId",
+      "children": [
+        "/app/editor/$workspaceId/$projectId/$entryId"
+      ]
+    },
+    "/app/editor/$workspaceId/$projectId/$entryId": {
+      "filePath": "app/editor/$workspaceId.$projectId.$entryId.tsx",
+      "parent": "/app/editor/$workspaceId/$projectId"
     }
   }
 }

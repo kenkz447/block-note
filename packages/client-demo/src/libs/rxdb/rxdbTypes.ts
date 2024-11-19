@@ -10,6 +10,13 @@ export interface Workspace extends AppRxDocumentBase {
     readonly name: string;
     readonly owner: string;
     readonly activeMembers: string[];
+    readonly members: [{
+        id: string;
+        name: string;
+        role: string;
+        addedAt: string;
+        addedBy: string;
+    }];
 }
 
 export interface Project extends AppRxDocumentBase {

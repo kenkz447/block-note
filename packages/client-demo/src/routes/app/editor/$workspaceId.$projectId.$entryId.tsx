@@ -7,7 +7,7 @@ import { EditorContext } from '@/libs/editor/editorContext';
 import { z } from 'zod';
 
 export const Route = createFileRoute(
-    '/editor/$workspaceId/$projectId/$entryId',
+    '/app/editor/$workspaceId/$projectId/$entryId',
 )({
     component: RouteComponent,
     validateSearch: z.object({
@@ -19,7 +19,7 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
     const { entryId, projectId, workspaceId } = useParams({
-        from: '/editor/$workspaceId/$projectId/$entryId',
+        from: '/app/editor/$workspaceId/$projectId/$entryId',
     });
 
     const { subscribeSingle } = useEntries({
@@ -50,7 +50,7 @@ function RouteComponent() {
     }
 
     return (
-        <EditorProvider>
+        <EditorProvider workspaceId={workspaceId} projectId={projectId}>
             {(editorContext) => {
                 if (!editorContext.collection) {
                     return <LoadingScreen />;

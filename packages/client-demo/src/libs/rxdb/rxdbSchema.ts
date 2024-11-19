@@ -41,13 +41,45 @@ const workspaceSchema = {
             items: {
                 type: 'string'
             }
+        },
+        members: {
+            type: 'array',
+            items: {
+                type: 'object',
+                properties: {
+                    id: {
+                        type: 'string'
+                    },
+                    name: {
+                        type: 'string'
+                    },
+                    role: {
+                        type: 'string'
+                    },
+                    addedAt: {
+                        type: 'string',
+                        format: 'date-time'
+                    },
+                    addedBy: {
+                        type: 'string'
+                    },
+                },
+                required: [
+                    'id',
+                    'name',
+                    'role',
+                    'addedAt',
+                    'addedBy'
+                ]
+            }
         }
     },
     required: [
         ...sharedSchema.required,
         'name',
         'owner',
-        'activeMembers'
+        'activeMembers',
+        'members'
     ]
 };
 

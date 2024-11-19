@@ -13,14 +13,22 @@ export const useWorkspaces = () => {
     const { insert, ...rest } = useRxOrm<Workspace>('workspaces');
 
     const userId = currentUser?.uid ?? 'anonymous';
+    const userDisplayName = currentUser?.displayName ?? 'Anonymous';
 
     return {
         ...rest,
         insert: useCallback((values: WorkspaceInsertValues) => insert({
             ...values,
             createdBy: userId,
+            owner: userId,
             activeMembers: [userId],
-            owner: userId
-        }), [insert, userId])
+            members: [{
+                id: userId,
+                name: userDisplayName,
+                role: 'owner',
+                addedAt: new Date().toISOString(),
+                addedBy: userId,
+            }]
+        }), [userDisplayName, insert, userId])
     };
 };

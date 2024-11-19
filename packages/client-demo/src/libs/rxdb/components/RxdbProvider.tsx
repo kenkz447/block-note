@@ -43,10 +43,10 @@ export const RxdbProvider = ({ currentUser, children }: RxdbProviderProps) => {
      */
     useEffect(() => {
         if (!currentUser) {
-            setActiveDbName(ANONYMOUS_DB_NAME);
+            setActiveDbName(ANONYMOUS_DB_NAME.toLowerCase());
         }
         else {
-            setActiveDbName(currentUser.uid);
+            setActiveDbName(currentUser.uid.toLowerCase());
         }
     }, [currentUser]);
 

@@ -9,5 +9,5 @@ export const Route = createFileRoute('/')({
 });
 
 function RouteComponent() {
-    return <Navigate to="/editor" replace />;
+    return <Navigate to="/app" replace />;
 }

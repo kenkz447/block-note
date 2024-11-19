@@ -1,0 +1,27 @@
+import { createFileRoute, Outlet } from '@tanstack/react-router';
+import { WorkspaceSync } from '@/components/sync/WorkspaceSync';
+import { useCurrentUser } from '@writefy/client-shared';
+import { LoadingScreen } from '@/components/layout/LoadingScreen';
+
+export const Route = createFileRoute('/app')({
+    component: RouteComponent,
+});
+
+function RouteComponent() {
+    const currentUser = useCurrentUser();
+    if (currentUser === null) {
+        return <Outlet />;
+    }
+
+    return (
+        <WorkspaceSync user={currentUser}>
+            {(synced) => {
+                if (!synced) {
+                    return <LoadingScreen />;
+                }
+
+                return <Outlet />;
+            }}
+        </WorkspaceSync>
+    );
+}

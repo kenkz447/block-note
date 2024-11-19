@@ -10,7 +10,7 @@ import { MasterLayout } from '@/components/layout/MasterLayout';
 import { AppSidebarContext } from '@/components/layout/sidebar/children/AppSidebarContext';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
 
-export const Route = createFileRoute('/editor/$workspaceId')({
+export const Route = createFileRoute('/app/editor/$workspaceId')({
     component: RouteComponent,
 });
 
@@ -19,7 +19,7 @@ function RouteComponent() {
     const Layout = isMobile ? MasterLayoutMobile : MasterLayout;
 
     const { workspaceId } = useParams({
-        from: '/editor/$workspaceId'
+        from: '/app/editor/$workspaceId',
     });
 
     const currentWorkspace = useWorkspace({ workspaceId });
@@ -29,7 +29,7 @@ function RouteComponent() {
     }
 
     const { subscribe } = useProjects({
-        workspaceId
+        workspaceId,
     });
 
     const [activeProject, setActiveProject] = useState<Project>();
@@ -60,7 +60,7 @@ function RouteComponent() {
                 workspace: currentWorkspace,
                 projects,
                 activeProject,
-                entries
+                entries,
             }}
         >
             <Layout>

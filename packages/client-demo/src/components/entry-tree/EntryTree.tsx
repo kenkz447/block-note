@@ -18,7 +18,7 @@ interface EntryTreeProps {
 
 export function EntryTree({ entries }: EntryTreeProps) {
     const { projectId, workspaceId } = useParams({
-        from: '/editor/$workspaceId/$projectId',
+        from: '/app/editor/$workspaceId/$projectId',
     });
 
     const { entryId: activeEntryId } = useParams({
@@ -110,7 +110,7 @@ export function EntryTree({ entries }: EntryTreeProps) {
                 title={(
                     <EntryTreeItem
                         entry={entry}
-                        entryUrl={`/editor/${workspaceId}/${projectId}/${entry.id}`}
+                        entryUrl={`/app/editor/${workspaceId}/${projectId}/${entry.id}`}
                         expanded={openKeys.includes(entry.id)}
                         handleEntryCreate={insert}
                         handleEntryUpdate={update}

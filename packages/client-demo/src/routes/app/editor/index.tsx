@@ -5,7 +5,7 @@ import { createFileRoute, Navigate } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { z } from 'zod';
 
-export const Route = createFileRoute('/editor/')({
+export const Route = createFileRoute('/app/editor/')({
     component: RouteComponent,
     validateSearch: z.object({
         entryId: z.string().optional(),
@@ -34,12 +34,12 @@ function RouteComponent() {
     }, [workspaces]);
 
     if (defaultWorkspace === null) {
-        return <Navigate to="/workspaces" />;
+        return <Navigate to="/app/workspaces" />;
     }
 
     if (defaultWorkspace === undefined) {
         return <LoadingScreen />;
     }
 
-    return <Navigate to={`/editor/${defaultWorkspace?.id}`} />;
+    return <Navigate to={'/app/editor/$workspaceId'} params={{ workspaceId: defaultWorkspace.id }} />;
 }

@@ -33,7 +33,7 @@ export function AppSidebarHeader({ workspace, projects, activeProject }: AppSide
 
                         closeDialog();
                         navigate({
-                            to: '/editor/$workspaceId/$projectId',
+                            to: '/app/editor/$workspaceId/$projectId',
                             params: {
                                 workspaceId: workspace.id,
                                 projectId: newProject.id
@@ -77,7 +77,7 @@ export function AppSidebarHeader({ workspace, projects, activeProject }: AppSide
                                 checked={activeProject?.id === project.id}
                                 key={project.id}
                                 onClick={() => navigate({
-                                    to: '/editor/$workspaceId/$projectId',
+                                    to: '/app/editor/$workspaceId/$projectId',
                                     params: {
                                         workspaceId: workspace.id,
                                         projectId: project.id
@@ -96,7 +96,7 @@ export function AppSidebarHeader({ workspace, projects, activeProject }: AppSide
                     <DropdownMenuItem className="text-foreground/70" onClick={onNewProject}>
                         <Plus /> Create Project
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="text-foreground/70" onClick={() => navigate({ to: '/workspaces' })}>
+                    <DropdownMenuItem className="text-foreground/70" onClick={() => navigate({ to: '/app/workspaces' })}>
                         <ArrowLeftRight /> Switch Workspace
                     </DropdownMenuItem>
                 </DropdownMenuContent>
