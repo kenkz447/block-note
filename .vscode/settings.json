@@ -1,0 +1,30 @@
+{
+    "cSpell.words": [
+        "blocksuite",
+        "Dexie",
+        "firestore",
+        "hookform",
+        "lucide",
+        "Rxdb",
+        "shadcn",
+        "tanstack",
+        "thenby",
+        "writefy"
+    ],
+    "editor.indentSize": 4,
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "always"
+    },
+    "typescript.format.semicolons": "insert",
+    "typescript.preferences.quoteStyle": "single",
+    "explorer.fileNesting.enabled": true,
+    "explorer.fileNesting.expand": false,
+    "explorer.fileNesting.patterns": {
+        ".env": ".env.*",
+        "*.ts": "${capture}.js, ${capture}.test.ts",
+        "*.tsx": "${capture}.ts, ${capture}.test.tsx",
+        "tsconfig.json": "tsconfig.*",
+        "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb"
+    }
+}
