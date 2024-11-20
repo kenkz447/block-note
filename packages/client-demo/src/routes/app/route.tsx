@@ -14,7 +14,7 @@ function RouteComponent() {
     }
 
     return (
-        <WorkspaceSync user={currentUser}>
+        <WorkspaceSync userId={currentUser.uid}>
             {(synced) => {
                 if (!synced) {
                     return <LoadingScreen />;

@@ -5,10 +5,36 @@ import { LoadingScreen } from '@/components/layout/LoadingScreen';
 import { useContext } from 'react';
 import { AppSidebarContext } from '@/components/layout/sidebar/children/AppSidebarContext';
 import { useEntries } from '@/libs/rxdb';
+import { useCurrentUser } from '@writefy/client-shared';
+import { EntrySync } from '@/components/sync/EntrySync';
 
 export const Route = createFileRoute('/app/editor/$workspaceId/$projectId')({
-    component: RouteComponent,
+    component: WithEntrySync,
 });
+
+function WithEntrySync() {
+    const { workspaceId, projectId } = useParams({
+        from: '/app/editor/$workspaceId/$projectId',
+    });
+
+    const currentUser = useCurrentUser();
+
+    if (currentUser === null) {
+        return <RouteComponent />;
+    }
+
+    return (
+        <EntrySync userId={currentUser.uid} workspaceId={workspaceId} projectId={projectId}>
+            {(synced) => {
+                if (!synced) {
+                    return <LoadingScreen />;
+                }
+
+                return <RouteComponent />;
+            }}
+        </EntrySync>
+    );
+}
 
 function RouteComponent() {
     const { setActiveProject, setEntries } = useContext(AppSidebarContext)!;

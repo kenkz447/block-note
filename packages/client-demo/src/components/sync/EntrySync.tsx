@@ -1,26 +1,28 @@
-import { useRxdb } from '@/libs/rxdb';
+import { Entry, useRxdb } from '@/libs/rxdb';
 import { createFirebaseReplication } from '@/libs/rxdb/rxdbHelpers';
 import { shallowEqual } from '@/utils/reactUtils';
-import { DocumentData, where } from 'firebase/firestore';
+import { DocumentData } from 'firebase/firestore';
 import { memo, useEffect, useState } from 'react';
 import { RxFirestoreReplicationState } from 'rxdb/plugins/replication-firestore';
 
-interface WorkspaceSyncProps {
+interface EntrySyncProps {
     readonly userId: string;
+    readonly workspaceId: string;
+    readonly projectId: string;
     readonly children: (workspaceSynced: boolean) => React.ReactNode;
 }
 
-function WorkspaceSyncImpl({ userId, children }: WorkspaceSyncProps) {
+function EntrySyncImpl({ userId, workspaceId, projectId, children }: EntrySyncProps) {
     const db = useRxdb();
 
     const [replicaState, setReplicateState] = useState<RxFirestoreReplicationState<DocumentData>>();
 
     // Start syncing the workspace when the user is logged in
     useEffect(() => {
-        const replicateState = createFirebaseReplication({
-            rxCollection: db.collections.workspaces,
-            remotePath: ['workspaces'],
-            pullFilter: where('activeMembers', 'array-contains', userId)
+        const replicateState = createFirebaseReplication<Entry>({
+            rxCollection: db.collections.projects,
+            remotePath: ['workspaces', workspaceId, 'projects', projectId, 'entries'],
+            pushFilter: (doc) => doc.workspaceId === workspaceId && doc.projectId === projectId,
         });
 
         const initializeReplication = async () => {
@@ -41,9 +43,9 @@ function WorkspaceSyncImpl({ userId, children }: WorkspaceSyncProps) {
 
             stopReplication();
         };
-    }, [db, userId]);
+    }, [db, userId, workspaceId, projectId]);
 
     return children(replicaState !== undefined);
 }
 
-export const WorkspaceSync = memo(WorkspaceSyncImpl, shallowEqual('userId'));
+export const EntrySync = memo(EntrySyncImpl, shallowEqual('userId', 'workspaceId', 'projectId'));

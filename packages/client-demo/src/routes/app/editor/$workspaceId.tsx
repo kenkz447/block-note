@@ -9,10 +9,36 @@ import { MasterLayoutMobile } from '@/components/layout/MasterLayoutMobile';
 import { MasterLayout } from '@/components/layout/MasterLayout';
 import { AppSidebarContext } from '@/components/layout/sidebar/children/AppSidebarContext';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
+import { useCurrentUser } from '@writefy/client-shared';
+import { ProjectSync } from '@/components/sync/ProjectSync';
 
 export const Route = createFileRoute('/app/editor/$workspaceId')({
-    component: RouteComponent,
+    component: WithProjectSync,
 });
+
+function WithProjectSync() {
+    const { workspaceId } = useParams({
+        from: '/app/editor/$workspaceId',
+    });
+
+    const currentUser = useCurrentUser();
+
+    if (currentUser === null) {
+        return <RouteComponent />;
+    }
+
+    return (
+        <ProjectSync userId={currentUser.uid} workspaceId={workspaceId}>
+            {(synced) => {
+                if (!synced) {
+                    return <LoadingScreen />;
+                }
+
+                return <RouteComponent />;
+            }}
+        </ProjectSync>
+    );
+}
 
 function RouteComponent() {
     const isMobile = useIsMobile();

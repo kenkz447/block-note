@@ -1,26 +1,27 @@
-import { useRxdb } from '@/libs/rxdb';
+import { Project, useRxdb } from '@/libs/rxdb';
 import { createFirebaseReplication } from '@/libs/rxdb/rxdbHelpers';
 import { shallowEqual } from '@/utils/reactUtils';
-import { DocumentData, where } from 'firebase/firestore';
+import { DocumentData } from 'firebase/firestore';
 import { memo, useEffect, useState } from 'react';
 import { RxFirestoreReplicationState } from 'rxdb/plugins/replication-firestore';
 
-interface WorkspaceSyncProps {
+interface ProjectSyncProps {
     readonly userId: string;
+    readonly workspaceId: string;
     readonly children: (workspaceSynced: boolean) => React.ReactNode;
 }
 
-function WorkspaceSyncImpl({ userId, children }: WorkspaceSyncProps) {
+function ProjectSyncImpl({ userId, workspaceId, children }: ProjectSyncProps) {
     const db = useRxdb();
 
     const [replicaState, setReplicateState] = useState<RxFirestoreReplicationState<DocumentData>>();
 
     // Start syncing the workspace when the user is logged in
     useEffect(() => {
-        const replicateState = createFirebaseReplication({
-            rxCollection: db.collections.workspaces,
-            remotePath: ['workspaces'],
-            pullFilter: where('activeMembers', 'array-contains', userId)
+        const replicateState = createFirebaseReplication<Project>({
+            rxCollection: db.collections.projects,
+            remotePath: ['workspaces', workspaceId, 'projects'],
+            pushFilter: (doc) => doc.workspaceId === workspaceId,
         });
 
         const initializeReplication = async () => {
@@ -41,9 +42,9 @@ function WorkspaceSyncImpl({ userId, children }: WorkspaceSyncProps) {
 
             stopReplication();
         };
-    }, [db, userId]);
+    }, [db, userId, workspaceId]);
 
     return children(replicaState !== undefined);
 }
 
-export const WorkspaceSync = memo(WorkspaceSyncImpl, shallowEqual('userId'));
+export const ProjectSync = memo(ProjectSyncImpl, shallowEqual('userId', 'workspaceId'));

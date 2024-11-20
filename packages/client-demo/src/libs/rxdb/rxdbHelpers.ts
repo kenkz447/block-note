@@ -1,4 +1,4 @@
-import { addRxPlugin, createRxDatabase, RxCollection } from 'rxdb';
+import { addRxPlugin, createRxDatabase, RxCollection, WithDeleted } from 'rxdb';
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
 import { rxdbSchema } from './rxdbSchema';
 import { wrappedValidateAjvStorage } from 'rxdb/plugins/validate-ajv';
@@ -42,17 +42,19 @@ export const initRxdb = async (dbName: string) => {
 };
 
 
-interface CreateFirebaseReplication {
+interface CreateFirebaseReplication<T> {
     readonly rxCollection: RxCollection;
     readonly remotePath: string[];
-    readonly filter: QueryFieldFilterConstraint | QueryFieldFilterConstraint[];
+    readonly pullFilter?: QueryFieldFilterConstraint | QueryFieldFilterConstraint[];
+    readonly pushFilter?: (item: WithDeleted<T>) => boolean;
 }
 
-export const createFirebaseReplication = async ({
+export const createFirebaseReplication = <T>({
     rxCollection,
     remotePath,
-    filter
-}: CreateFirebaseReplication) => {
+    pullFilter,
+    pushFilter
+}: CreateFirebaseReplication<T>) => {
     const [path, ...subPath] = remotePath;
     const remoteCollection = collection(firestore, path, ...subPath);
 
@@ -65,8 +67,8 @@ export const createFirebaseReplication = async ({
                 database: firestore,
                 collection: remoteCollection
             },
-            pull: { filter },
-            push: {},
+            pull: { filter: pullFilter },
+            push: { filter: pushFilter },
             live: true,
             serverTimestampField: 'serverTimestamp',
             autoStart: true
@@ -77,7 +79,6 @@ export const createFirebaseReplication = async ({
         console.error('Replication error:', err);
     });
 
-    await replicaState.awaitInitialReplication();
     return replicaState;
 };
 
