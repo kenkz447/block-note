@@ -1,5 +1,5 @@
-import { Workspace } from '@/libs/rxdb';
-import { useWorkspaces } from '@/libs/rxdb/hooks/orm/useWorkspaces';
+import { Workspace } from '@writefy/client-shared';
+import { useWorkspaces } from '@writefy/client-shared';
 import { useEffect, useState } from 'react';
 
 interface UserWorkspaceOptions {

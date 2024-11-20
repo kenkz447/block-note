@@ -1,6 +1,6 @@
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
-import { Workspace } from '@/libs/rxdb';
-import { useWorkspaces } from '@/libs/rxdb/hooks/orm/useWorkspaces';
+import { Workspace } from '@writefy/client-shared';
+import { useWorkspaces } from '@writefy/client-shared';
 import { createFileRoute, Navigate } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { z } from 'zod';

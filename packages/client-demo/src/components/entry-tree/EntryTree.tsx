@@ -1,4 +1,4 @@
-import { Entry, EntryTreeNode, InsertEntryParams, useEntries } from '@/libs/rxdb';
+import { Entry, EntryTreeNode, InsertEntryParams, useEntries } from '@writefy/client-shared';
 import { FilePlus, FolderPlus, InboxIcon, Plus } from 'lucide-react';
 import { arrayToTree } from 'performant-array-to-tree';
 import Tree from 'rc-tree';

@@ -1,11 +1,11 @@
 import { render, waitFor } from '@testing-library/react';
 import { EntrySync } from './EntrySync';
-import { useRxdb } from '@/libs/rxdb';
-import { createFirebaseReplication } from '@/libs/rxdb/rxdbHelpers';
-import { vi, describe, it, expect, beforeEach, afterEach, Mock } from 'vitest';
+import { vi, describe, it, expect, beforeEach, afterEach, type Mock } from 'vitest';
+import { useRxdb } from '../../hooks/useRxdb';
+import { createFirebaseReplication } from '../../rxdbHelpers';
 
-vi.mock('@/libs/rxdb');
-vi.mock('@/libs/rxdb/rxdbHelpers');
+vi.mock('../../hooks/useRxdb');
+vi.mock('../../rxdbHelpers');
 
 describe('EntrySync', () => {
     const mockUseRxdb = useRxdb as Mock;

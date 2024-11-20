@@ -1,4 +1,4 @@
-import { LocalDoc, Entry, AppRxDatabase } from '@/libs/rxdb';
+import { LocalDoc, Entry, AppRxDatabase } from '@writefy/client-shared';
 import { DocSource } from '@blocksuite/sync';
 import { RxCollection, RxDocument } from 'rxdb';
 import { diffUpdate, encodeStateVectorFromUpdate, mergeUpdates } from 'yjs';

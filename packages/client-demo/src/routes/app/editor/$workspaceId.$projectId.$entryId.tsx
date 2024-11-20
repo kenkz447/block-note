@@ -1,6 +1,6 @@
 import { createFileRoute, useParams } from '@tanstack/react-router';
 import { EditorContainer, EditorProvider } from '@/libs/editor';
-import { Entry, useEntries } from '@/libs/rxdb';
+import { Entry, useEntries } from '@writefy/client-shared';
 import { useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
 import { EditorContext } from '@/libs/editor/editorContext';

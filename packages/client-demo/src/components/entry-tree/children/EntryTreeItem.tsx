@@ -1,7 +1,7 @@
 import { DeleteEntryForm } from '@/components/forms/entry/DeleteEntryForm';
 import { UpdateEntryForm, UpdateEntryValues } from '@/components/forms/entry/UpdateEntryForm';
 import { usePopupDialog } from '@/libs/popup';
-import { Entry, EntryTreeNode, InsertEntryParams, UpdateEntryParams } from '@/libs/rxdb';
+import { Entry, EntryTreeNode, InsertEntryParams, UpdateEntryParams } from '@writefy/client-shared';
 import { Button } from '@/libs/shadcn-ui/components/button';
 import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuSeparator } from '@/libs/shadcn-ui/components/dropdown-menu';
 import { FileText, Folder, FolderOpen, MoreHorizontal, SquarePen, Trash } from 'lucide-react';

@@ -1,3 +1,4 @@
 export * from './src/ui';
 export * from './src/auth';
-export * from './src/hooks/useEvents';
+export * from './src/rxdb';
+export * from './src/hooks';

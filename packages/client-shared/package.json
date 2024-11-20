@@ -2,6 +2,9 @@
     "name": "@writefy/client-shared",
     "module": "index.ts",
     "type": "module",
+    "scripts": {
+        "test": "bun run test"
+    },
     "dependencies": {
         "eventemitter3": "^5.0.1"
     },

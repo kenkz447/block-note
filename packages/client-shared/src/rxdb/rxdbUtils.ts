@@ -13,3 +13,7 @@ export const ensureCollectionExist = (db: AppRxDatabase | undefined, collectionN
         throw new Error(`Collection ${collectionName} not found`);
     }
 };
+
+export const generateRxId = () => {
+    return Math.random().toString(36).substring(7);
+};

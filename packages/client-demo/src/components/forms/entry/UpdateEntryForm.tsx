@@ -1,4 +1,4 @@
-import { Entry } from '@/libs/rxdb';
+import { Entry } from '@writefy/client-shared';
 import { Button } from '@/libs/shadcn-ui/components/button';
 import { DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogContent } from '@/libs/shadcn-ui/components/dialog';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/libs/shadcn-ui/components/form';
@@ -9,12 +9,12 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 export interface UpdateEntryValues {
-    readonly name: string
+    readonly name: string;
 }
 
 interface UpdateEntryFormProps {
-    readonly entry: Entry
-    readonly onSubmit: (data: UpdateEntryValues) => void
+    readonly entry: Entry;
+    readonly onSubmit: (data: UpdateEntryValues) => void;
 }
 
 const createSchema = z.object({

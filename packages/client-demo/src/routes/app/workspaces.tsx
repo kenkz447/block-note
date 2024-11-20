@@ -14,9 +14,9 @@ import {
     CarouselContent,
     CarouselItem,
 } from '@/libs/shadcn-ui/components/carousel';
-import { useWorkspaces } from '@/libs/rxdb/hooks/orm/useWorkspaces';
+import { useWorkspaces } from '@writefy/client-shared';
 import { useEffect, useState } from 'react';
-import { Workspace } from '@/libs/rxdb';
+import { Workspace } from '@writefy/client-shared';
 import { Button } from '@/libs/shadcn-ui/components/button';
 import { usePopupDialogContext } from '@/libs/popup/hooks/usePopupContexts';
 import { CreateWorkspaceForm } from '@/components/forms/workspace/CreateWorkspaceForm';

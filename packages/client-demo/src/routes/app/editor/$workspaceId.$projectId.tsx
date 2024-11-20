@@ -4,9 +4,9 @@ import { useProject } from '@/hooks/helpers/useProject';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
 import { useContext } from 'react';
 import { AppSidebarContext } from '@/components/layout/sidebar/children/AppSidebarContext';
-import { useEntries } from '@/libs/rxdb';
+import { useEntries } from '@writefy/client-shared';
 import { useCurrentUser } from '@writefy/client-shared';
-import { EntrySync } from '@/components/sync/EntrySync';
+import { EntrySync } from '@writefy/client-shared';
 
 export const Route = createFileRoute('/app/editor/$workspaceId/$projectId')({
     component: WithEntrySync,

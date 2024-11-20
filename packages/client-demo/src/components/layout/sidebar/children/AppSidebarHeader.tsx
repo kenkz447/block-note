@@ -1,9 +1,8 @@
 import { Button } from '@/libs/shadcn-ui/components/button';
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/libs/shadcn-ui/components/dropdown-menu';
 import { ArrowLeftRight, ChevronsUpDown, Layers, Plus } from 'lucide-react';
-import { Project, Workspace } from '@/libs/rxdb';
+import { Project, Workspace, useProjects } from '@writefy/client-shared';
 import { CreateProjectForm } from '@/components/forms/project/CreateProjectForm';
-import { useProjects } from '@/libs/rxdb/hooks/orm/useProjects';
 import { useNavigate } from '@tanstack/react-router';
 import { usePopupDialog } from '@/libs/popup';
 import { useCallback } from 'react';

@@ -4,10 +4,9 @@ import { rxdbSchema } from './rxdbSchema';
 import { wrappedValidateAjvStorage } from 'rxdb/plugins/validate-ajv';
 
 import { RxDBUpdatePlugin } from 'rxdb/plugins/update';
-import { collection, QueryFieldFilterConstraint } from 'firebase/firestore';
+import { collection, getFirestore, QueryFieldFilterConstraint } from 'firebase/firestore';
 import { replicateFirestore } from 'rxdb/plugins/replication-firestore';
-import { firestore } from '@/bootstraps/firebase';
-import { env } from '@/config/env';
+
 import { AppRxCollections } from './rxdbTypes';
 import { RxDBDevModePlugin } from 'rxdb/plugins/dev-mode';
 
@@ -55,15 +54,23 @@ export const createFirebaseReplication = <T>({
     pullFilter,
     pushFilter
 }: CreateFirebaseReplication<T>) => {
+    const firestore = getFirestore();
+    if (!firestore.app) {
+        throw new Error('Firestore app not initialized');
+    }
+
+    const remoteId = firestore.app.options.projectId!;
+
     const [path, ...subPath] = remotePath;
+
     const remoteCollection = collection(firestore, path, ...subPath);
 
     const replicaState = replicateFirestore(
         {
-            replicationIdentifier: env.firebaseConfig.projectId,
+            replicationIdentifier: remoteId,
             collection: rxCollection,
             firestore: {
-                projectId: env.firebaseConfig.projectId,
+                projectId: remoteId,
                 database: firestore,
                 collection: remoteCollection
             },
@@ -80,8 +87,4 @@ export const createFirebaseReplication = <T>({
     });
 
     return replicaState;
-};
-
-export const generateRxId = () => {
-    return Math.random().toString(36).substring(7);
 };

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { EditorContextType } from '../editorContext';
 import { createDefaultDocCollection, initDefaultDocCollection } from '../utils/docCollectionUtils';
 import { DocCollection } from '@blocksuite/store';
-import { useEntries, useRxdb } from '@/libs/rxdb';
+import { useEntries, useRxdb } from '@writefy/client-shared';
 import { createDefaultDoc } from '@blocksuite/blocks';
 
 

@@ -1,4 +1,4 @@
-import { Entry, Project, Workspace } from '@/libs/rxdb';
+import { Entry, Project, Workspace } from '@writefy/client-shared';
 import { createContext } from 'react';
 
 interface AppSidebarContextType {

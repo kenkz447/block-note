@@ -16,7 +16,7 @@ import {
 } from '@blocksuite/sync';
 
 import { RxdbDocSource } from '../source/RxdbDocSource';
-import { AppRxDatabase } from '@/libs/rxdb';
+import { AppRxDatabase } from '@writefy/client-shared';
 
 export async function createDefaultDocCollection(db: AppRxDatabase, collectionId: string) {
     const idGenerator: IdGeneratorType = IdGeneratorType.NanoID;

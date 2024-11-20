@@ -1,27 +1,27 @@
-import { Project, useRxdb } from '@/libs/rxdb';
-import { createFirebaseReplication } from '@/libs/rxdb/rxdbHelpers';
-import { shallowEqual } from '@/utils/reactUtils';
-import { DocumentData } from 'firebase/firestore';
+
+import { DocumentData, where } from 'firebase/firestore';
 import { memo, useEffect, useState } from 'react';
 import { RxFirestoreReplicationState } from 'rxdb/plugins/replication-firestore';
+import { useRxdb } from '../../hooks/useRxdb';
+import { createFirebaseReplication } from '../../rxdbHelpers';
+import { shallowEqual } from '../../../utils';
 
-interface ProjectSyncProps {
+interface WorkspaceSyncProps {
     readonly userId: string;
-    readonly workspaceId: string;
     readonly children: (workspaceSynced: boolean) => React.ReactNode;
 }
 
-function ProjectSyncImpl({ userId, workspaceId, children }: ProjectSyncProps) {
+function WorkspaceSyncImpl({ userId, children }: WorkspaceSyncProps) {
     const db = useRxdb();
 
     const [replicaState, setReplicateState] = useState<RxFirestoreReplicationState<DocumentData>>();
 
     // Start syncing the workspace when the user is logged in
     useEffect(() => {
-        const replicateState = createFirebaseReplication<Project>({
-            rxCollection: db.collections.projects,
-            remotePath: ['workspaces', workspaceId, 'projects'],
-            pushFilter: (doc) => doc.workspaceId === workspaceId,
+        const replicateState = createFirebaseReplication({
+            rxCollection: db.collections.workspaces,
+            remotePath: ['workspaces'],
+            pullFilter: where('activeMembers', 'array-contains', userId)
         });
 
         const initializeReplication = async () => {
@@ -42,9 +42,9 @@ function ProjectSyncImpl({ userId, workspaceId, children }: ProjectSyncProps) {
 
             stopReplication();
         };
-    }, [db, userId, workspaceId]);
+    }, [db, userId]);
 
     return children(replicaState !== undefined);
 }
 
-export const ProjectSync = memo(ProjectSyncImpl, shallowEqual('userId', 'workspaceId'));
+export const WorkspaceSync = memo(WorkspaceSyncImpl, shallowEqual('userId'));

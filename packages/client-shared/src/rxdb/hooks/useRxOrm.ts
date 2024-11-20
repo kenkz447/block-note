@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { AppRxCollections, AppRxDocumentBase } from '../rxdbTypes';
 import { useRxCollection } from './useRxCollection';
-import { generateRxId } from '../rxdbHelpers';
+import { generateRxId } from '../rxdbUtils';
 import { MangoQuery } from 'rxdb';
 
 export const useRxOrm = <T extends AppRxDocumentBase>(collectionName: keyof AppRxCollections) => {

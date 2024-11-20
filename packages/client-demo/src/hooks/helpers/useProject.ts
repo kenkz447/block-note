@@ -1,5 +1,5 @@
-import { Project } from '@/libs/rxdb';
-import { useProjects } from '@/libs/rxdb/hooks/orm/useProjects';
+import { Project } from '@writefy/client-shared';
+import { useProjects } from '@writefy/client-shared';
 import { useEffect, useState } from 'react';
 
 interface UserProjectOptions {

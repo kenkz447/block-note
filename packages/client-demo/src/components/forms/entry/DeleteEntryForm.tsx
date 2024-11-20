@@ -1,4 +1,4 @@
-import { Entry } from '@/libs/rxdb';
+import { Entry } from '@writefy/client-shared';
 import { Button } from '@/libs/shadcn-ui/components/button';
 import { Checkbox } from '@/libs/shadcn-ui/components/checkbox';
 import { DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogContent } from '@/libs/shadcn-ui/components/dialog';

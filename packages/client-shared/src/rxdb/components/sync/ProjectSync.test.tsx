@@ -1,11 +1,11 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi, Mock } from 'vitest';
+import { describe, it, expect, vi, type Mock, beforeEach } from 'vitest';
 import { ProjectSync } from './ProjectSync';
-import { useRxdb } from '@/libs/rxdb';
-import { createFirebaseReplication } from '@/libs/rxdb/rxdbHelpers';
+import { useRxdb } from '../../hooks/useRxdb';
+import { createFirebaseReplication } from '../../rxdbHelpers';
 
-vi.mock('@/libs/rxdb');
-vi.mock('@/libs/rxdb/rxdbHelpers');
+vi.mock('../../hooks/useRxdb');
+vi.mock('../../rxdbHelpers');
 
 describe('ProjectSync', () => {
     const mockDb = {

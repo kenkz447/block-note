@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router';
-import { WorkspaceSync } from '@/components/sync/WorkspaceSync';
+import { WorkspaceSync } from '@writefy/client-shared';
 import { useCurrentUser } from '@writefy/client-shared';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
 

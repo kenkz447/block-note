@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { useDocCollection } from '../hooks/useDocCollection';
-import { Entry } from '@/libs/rxdb';
+import { Entry } from '@writefy/client-shared';
 import { setupEditor } from '../utils/editorUtils';
 import { ColorScheme, RefNodeSlotsProvider } from '@blocksuite/blocks';
 import { useNavigate } from '@tanstack/react-router';

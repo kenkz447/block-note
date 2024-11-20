@@ -1,28 +1,29 @@
-import { Entry, useRxdb } from '@/libs/rxdb';
-import { createFirebaseReplication } from '@/libs/rxdb/rxdbHelpers';
-import { shallowEqual } from '@/utils/reactUtils';
+
 import { DocumentData } from 'firebase/firestore';
 import { memo, useEffect, useState } from 'react';
 import { RxFirestoreReplicationState } from 'rxdb/plugins/replication-firestore';
+import { useRxdb } from '../../hooks/useRxdb';
+import { createFirebaseReplication } from '../../rxdbHelpers';
+import { Project } from '../../rxdbTypes';
+import { shallowEqual } from '../../../utils';
 
-interface EntrySyncProps {
+interface ProjectSyncProps {
     readonly userId: string;
     readonly workspaceId: string;
-    readonly projectId: string;
     readonly children: (workspaceSynced: boolean) => React.ReactNode;
 }
 
-function EntrySyncImpl({ userId, workspaceId, projectId, children }: EntrySyncProps) {
+function ProjectSyncImpl({ userId, workspaceId, children }: ProjectSyncProps) {
     const db = useRxdb();
 
     const [replicaState, setReplicateState] = useState<RxFirestoreReplicationState<DocumentData>>();
 
     // Start syncing the workspace when the user is logged in
     useEffect(() => {
-        const replicateState = createFirebaseReplication<Entry>({
-            rxCollection: db.collections.entries,
-            remotePath: ['workspaces', workspaceId, 'projects', projectId, 'entries'],
-            pushFilter: (doc) => doc.workspaceId === workspaceId && doc.projectId === projectId,
+        const replicateState = createFirebaseReplication<Project>({
+            rxCollection: db.collections.projects,
+            remotePath: ['workspaces', workspaceId, 'projects'],
+            pushFilter: (doc) => doc.workspaceId === workspaceId,
         });
 
         const initializeReplication = async () => {
@@ -43,9 +44,9 @@ function EntrySyncImpl({ userId, workspaceId, projectId, children }: EntrySyncPr
 
             stopReplication();
         };
-    }, [db, userId, workspaceId, projectId]);
+    }, [db, userId, workspaceId]);
 
     return children(replicaState !== undefined);
 }
 
-export const EntrySync = memo(EntrySyncImpl, shallowEqual('userId', 'workspaceId', 'projectId'));
+export const ProjectSync = memo(ProjectSyncImpl, shallowEqual('userId', 'workspaceId'));
