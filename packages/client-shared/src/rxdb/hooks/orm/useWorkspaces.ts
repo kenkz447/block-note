@@ -1,4 +1,4 @@
-import { getUserDisplayName, getUserId, useCurrentUser } from '@writefy/client-shared';
+import { getUserDisplayName, getUserId, useCurrentUser } from '../../../auth';
 import { Workspace } from '../../rxdbTypes';
 import { useRxOrm } from '../useRxOrm';
 import { useCallback } from 'react';

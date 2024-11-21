@@ -2,7 +2,7 @@ import { firstBy } from 'thenby';
 import { useCallback } from 'react';
 import { Entry } from '../../rxdbTypes';
 import { useRxOrm } from '../useRxOrm';
-import { getUserId, useCurrentUser } from '@writefy/client-shared';
+import { getUserId, useCurrentUser } from '../../../auth';
 
 export interface InsertEntryParams {
     readonly id?: string;

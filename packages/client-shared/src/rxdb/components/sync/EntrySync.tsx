@@ -1,7 +1,7 @@
 import { DocumentData } from 'firebase/firestore';
 import { memo, useEffect, useState } from 'react';
 import { RxFirestoreReplicationState } from 'rxdb/plugins/replication-firestore';
-import { shallowEqual } from '../../../utils';
+import { shallowEqualByKey } from '../../../utils';
 import { useRxdb } from '../../hooks/useRxdb';
 import { createFirebaseReplication } from '../../rxdbHelpers';
 import { Entry } from '../../rxdbTypes';
@@ -49,4 +49,4 @@ function EntrySyncImpl({ userId, workspaceId, projectId, children }: EntrySyncPr
     return children(replicaState !== undefined);
 }
 
-export const EntrySync = memo(EntrySyncImpl, shallowEqual('userId', 'workspaceId', 'projectId'));
+export const EntrySync = memo(EntrySyncImpl, shallowEqualByKey('userId', 'workspaceId', 'projectId'));

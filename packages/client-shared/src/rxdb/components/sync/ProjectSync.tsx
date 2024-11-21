@@ -5,7 +5,7 @@ import { RxFirestoreReplicationState } from 'rxdb/plugins/replication-firestore'
 import { useRxdb } from '../../hooks/useRxdb';
 import { createFirebaseReplication } from '../../rxdbHelpers';
 import { Project } from '../../rxdbTypes';
-import { shallowEqual } from '../../../utils';
+import { shallowEqualByKey } from '../../../utils';
 
 interface ProjectSyncProps {
     readonly userId: string;
@@ -49,4 +49,4 @@ function ProjectSyncImpl({ userId, workspaceId, children }: ProjectSyncProps) {
     return children(replicaState !== undefined);
 }
 
-export const ProjectSync = memo(ProjectSyncImpl, shallowEqual('userId', 'workspaceId'));
+export const ProjectSync = memo(ProjectSyncImpl, shallowEqualByKey('userId', 'workspaceId'));

@@ -42,15 +42,15 @@ export const useRxOrm = <T extends AppRxDocumentBase>(collectionName: keyof AppR
     }, [collection]);
 
     const subscribe = useCallback((query: MangoQuery<T>, callback: (entry: T[]) => void) => {
-        const getWorkspaces = async () => {
+        const getDocs = async () => {
             const rxDocuments = await collection.find(query).exec();
             const listOfData = rxDocuments.map((doc) => doc._data);
             callback(listOfData);
         };
 
-        getWorkspaces();
+        getDocs();
 
-        const subscription = collection.$.subscribe(getWorkspaces);
+        const subscription = collection.$.subscribe(getDocs);
 
         return subscription;
     }, [collection]);
@@ -68,15 +68,9 @@ export const useRxOrm = <T extends AppRxDocumentBase>(collectionName: keyof AppR
         return subscription;
     }, [collection]);
 
-    const checkExists = useCallback(async (entryId: string) => {
-        const doc = await collection.findOne(entryId).exec();
-        return !!doc;
-    }, [collection]);
-
     return {
         subscribe,
         subscribeSingle,
-        checkExists,
         insert,
         update,
         remove,

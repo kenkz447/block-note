@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { Project } from '../../rxdbTypes';
 import { useRxOrm } from '../useRxOrm';
-import { getUserId, useCurrentUser } from '@writefy/client-shared';
+import { getUserId, useCurrentUser } from '../../../auth';
 
 interface ProjectInsertParams {
     readonly name: string;

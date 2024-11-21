@@ -4,7 +4,7 @@ import { memo, useEffect, useState } from 'react';
 import { RxFirestoreReplicationState } from 'rxdb/plugins/replication-firestore';
 import { useRxdb } from '../../hooks/useRxdb';
 import { createFirebaseReplication } from '../../rxdbHelpers';
-import { shallowEqual } from '../../../utils';
+import { shallowEqualByKey } from '../../../utils';
 
 interface WorkspaceSyncProps {
     readonly userId: string;
@@ -47,4 +47,4 @@ function WorkspaceSyncImpl({ userId, children }: WorkspaceSyncProps) {
     return children(replicaState !== undefined);
 }
 
-export const WorkspaceSync = memo(WorkspaceSyncImpl, shallowEqual('userId'));
+export const WorkspaceSync = memo(WorkspaceSyncImpl, shallowEqualByKey('userId'));
