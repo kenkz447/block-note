@@ -1,5 +1,5 @@
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
-import { Workspace } from '@writefy/client-shared';
+import { useCurrentUser, Workspace } from '@writefy/client-shared';
 import { useWorkspaces } from '@writefy/client-shared';
 import { createFileRoute, Navigate } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
@@ -13,17 +13,22 @@ export const Route = createFileRoute('/app/editor/')({
 });
 
 function RouteComponent() {
+    const currentUser = useCurrentUser();
     const { subscribe } = useWorkspaces();
 
     const [defaultWorkspace, setDefaultWorkspace] = useState<Workspace | null>();
     const [workspaces, setWorkspaces] = useState<Workspace[]>();
 
     useEffect(() => {
-        const subscription = subscribe({}, setWorkspaces);
+        const subscription = subscribe({
+            selector: {
+                activeMembers: { $in: [currentUser?.uid ?? 'anonymous'] },
+            }
+        }, setWorkspaces);
         return () => {
             subscription.unsubscribe();
         };
-    }, [subscribe]);
+    }, [currentUser?.uid, subscribe]);
 
     useEffect(() => {
         if (!workspaces) return;

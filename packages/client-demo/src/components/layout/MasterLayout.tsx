@@ -5,8 +5,8 @@ import { AppSidebar } from './sidebar/AppSidebar';
 import { ImperativePanelHandle } from 'react-resizable-panels';
 
 export function MasterLayout({ children }: React.PropsWithChildren) {
-
     const sidebarPanelRef = React.useRef<ImperativePanelHandle>(null);
+
     const toggleSidebar = useCallback(() => {
         const isCollapsed = sidebarPanelRef.current?.isCollapsed();
         if (isCollapsed) {
