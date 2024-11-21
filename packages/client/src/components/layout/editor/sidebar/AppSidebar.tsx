@@ -1,4 +1,4 @@
-import { EntryTree } from '../../entry-tree/EntryTree';
+import { EntryTree } from '../../../entry-tree/EntryTree';
 import { useContext } from 'react';
 import { AppSidebarContext } from './children/AppSidebarContext';
 import { AppSidebarHeader } from './children/AppSidebarHeader';

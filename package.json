@@ -6,7 +6,6 @@
     ],
     "scripts": {
         "client": "bun run --cwd packages/client",
-        "client-demo": "bun run --cwd packages/client-demo",
         "server": "bun run --cwd packages/server dev",
         "theme": "bun run --cwd packages/theme"
     },

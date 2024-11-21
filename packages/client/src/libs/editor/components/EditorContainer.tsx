@@ -4,7 +4,7 @@ import { Entry } from '@writefy/client-shared';
 import { setupEditor } from '../utils/editorUtils';
 import { ColorScheme, RefNodeSlotsProvider } from '@blocksuite/blocks';
 import { useNavigate } from '@tanstack/react-router';
-import { useTheme } from '@writefy/client-shared';
+import { useTheme } from '@/components/layout/ThemeProvider';
 import { editorTheme } from '../editorServices';
 
 interface EditorContainerProps {

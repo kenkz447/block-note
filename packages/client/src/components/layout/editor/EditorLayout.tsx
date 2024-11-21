@@ -1,5 +1,5 @@
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/libs/shadcn-ui/components/resizable';
-import { Header } from './top-bar/Header';
+import { Header } from './topbar/Header';
 import React, { useCallback, useMemo } from 'react';
 import { AppSidebar } from './sidebar/AppSidebar';
 import { ImperativePanelHandle } from 'react-resizable-panels';

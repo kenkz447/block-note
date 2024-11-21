@@ -3,7 +3,7 @@ import { createFileRoute, Outlet, useParams } from '@tanstack/react-router';
 import { useProject } from '@/hooks/helpers/useProject';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
 import { useContext } from 'react';
-import { AppSidebarContext } from '@/components/layout/sidebar/children/AppSidebarContext';
+import { AppSidebarContext } from '@/components/layout/editor/sidebar/children/AppSidebarContext';
 import { useEntries } from '@writefy/client-shared';
 import { useCurrentUser } from '@writefy/client-shared';
 import { EntrySync } from '@writefy/client-shared';

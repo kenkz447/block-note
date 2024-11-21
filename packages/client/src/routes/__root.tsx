@@ -1,8 +1,9 @@
 import { createRootRoute, Outlet, useNavigate } from '@tanstack/react-router';
 import { PopupProvider } from '@/libs/popup';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
-import { AuthProvider, RxdbContext, RxdbProvider, ThemeProvider, useEventListener } from '@writefy/client-shared';
+import { AuthProvider, RxdbContext, RxdbProvider, useEventListener } from '@writefy/client-shared';
 import { AuthContext } from '@writefy/client-shared/src/auth/authContext';
+import { ThemeProvider } from '@/components/layout/ThemeProvider';
 
 export const Route = createRootRoute({
     component: () => (

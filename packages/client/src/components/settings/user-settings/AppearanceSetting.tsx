@@ -3,7 +3,7 @@ import { SettingHeader } from '../_shared/SettingHeader';
 import { useForm } from 'react-hook-form';
 import { Tabs, TabsList, TabsTrigger } from '@/libs/shadcn-ui/components/tab';
 import { useEffect, useMemo } from 'react';
-import { useTheme } from '@writefy/client-shared';
+import { useTheme } from '@/components/layout/ThemeProvider';
 
 export function AppearanceSetting() {
     const { setTheme, theme } = useTheme();
