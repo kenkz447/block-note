@@ -5,7 +5,6 @@ import { DocCollection } from '@blocksuite/store';
 import { useEntries, useRxdb } from '@writefy/client-shared';
 import { createDefaultDoc } from '@blocksuite/blocks';
 
-
 const ANONYMOUS_COLLECTION_NAME = 'blocksuite-anonymous';
 
 interface EditorProviderProps {
@@ -48,7 +47,7 @@ export function EditorProvider({ workspaceId, projectId, children }: EditorProvi
 
         setDocCollection(collection);
         setActiveCollectionId(collection.id);
-    }, [db]);
+    }, [db, entryCollection]);
 
     useEffect(() => {
         if (activeCollectionId !== docCollection?.id) {
@@ -73,7 +72,6 @@ export function EditorProvider({ workspaceId, projectId, children }: EditorProvi
         else {
             setupCollection(activeCollectionId);
         }
-
     }, [activeCollectionId, docCollection, setupCollection]);
 
     /**

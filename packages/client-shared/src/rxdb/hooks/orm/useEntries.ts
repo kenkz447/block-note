@@ -2,7 +2,7 @@ import { firstBy } from 'thenby';
 import { useCallback } from 'react';
 import { Entry } from '../../rxdbTypes';
 import { useRxOrm } from '../useRxOrm';
-import { useCurrentUser } from '@writefy/client-shared';
+import { getUserId, useCurrentUser } from '@writefy/client-shared';
 
 export interface InsertEntryParams {
     readonly id?: string;
@@ -24,7 +24,7 @@ interface UserEntryOptions {
 
 export const useEntries = ({ workspaceId, projectId }: UserEntryOptions) => {
     const currentUser = useCurrentUser();
-    const userId = currentUser?.uid ?? 'anonymous';
+    const userId = getUserId(currentUser);
 
     const { collection, insert, subscribe, ...rest } = useRxOrm<Entry>('entries');
 

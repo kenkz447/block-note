@@ -3,8 +3,7 @@ import { RxdbContextType } from '../rxdbContexts';
 import { initRxdb } from '../rxdbHelpers';
 import { User } from 'firebase/auth';
 import { AppRxDatabase } from '../rxdbTypes';
-
-const ANONYMOUS_DB_NAME = 'anonymous';
+import { getUserId } from '../../auth';
 
 interface RxdbProviderProps {
     readonly currentUser: User | null;
@@ -42,12 +41,8 @@ export const RxdbProvider = ({ currentUser, children }: RxdbProviderProps) => {
      * Set the active database name based on the current user
      */
     useEffect(() => {
-        if (!currentUser) {
-            setActiveDbName(ANONYMOUS_DB_NAME.toLowerCase());
-        }
-        else {
-            setActiveDbName(currentUser.uid.toLowerCase());
-        }
+        const userId = getUserId(currentUser);
+        setActiveDbName(userId.toLowerCase());
     }, [currentUser]);
 
     const contextValue: RxdbContextType = useMemo(() => {

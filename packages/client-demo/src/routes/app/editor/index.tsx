@@ -1,5 +1,5 @@
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
-import { useCurrentUser, Workspace } from '@writefy/client-shared';
+import { getUserId, useCurrentUser, Workspace } from '@writefy/client-shared';
 import { useWorkspaces } from '@writefy/client-shared';
 import { createFileRoute, Navigate } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
@@ -22,13 +22,13 @@ function RouteComponent() {
     useEffect(() => {
         const subscription = subscribe({
             selector: {
-                activeMembers: { $in: [currentUser?.uid ?? 'anonymous'] },
+                activeMembers: { $in: [getUserId(currentUser)] },
             }
         }, setWorkspaces);
         return () => {
             subscription.unsubscribe();
         };
-    }, [currentUser?.uid, subscribe]);
+    }, [currentUser, subscribe]);
 
     useEffect(() => {
         if (!workspaces) return;

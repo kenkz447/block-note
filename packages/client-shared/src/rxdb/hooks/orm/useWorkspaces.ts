@@ -1,4 +1,4 @@
-import { useCurrentUser } from '@writefy/client-shared';
+import { getUserDisplayName, getUserId, useCurrentUser } from '@writefy/client-shared';
 import { Workspace } from '../../rxdbTypes';
 import { useRxOrm } from '../useRxOrm';
 import { useCallback } from 'react';
@@ -12,8 +12,8 @@ export const useWorkspaces = () => {
 
     const { insert, ...rest } = useRxOrm<Workspace>('workspaces');
 
-    const userId = currentUser?.uid ?? 'anonymous';
-    const userDisplayName = currentUser?.displayName ?? 'Anonymous';
+    const userId = getUserId(currentUser);
+    const userDisplayName = getUserDisplayName(currentUser);
 
     return {
         ...rest,
