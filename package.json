@@ -1,5 +1,5 @@
 {
-    "name": "docspace",
+    "name": "writefy",
     "type": "module",
     "workspaces": [
         "packages/*"
