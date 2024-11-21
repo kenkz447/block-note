@@ -15,7 +15,6 @@
         "build:release": "npm run clean && tsc -p tsconfig.release.json",
         "lint": "eslint ."
     },
-    "author": "Jakub Synowiec <jsynowiec@users.noreply.github.com>",
     "license": "Apache-2.0",
     "dependencies": {
         "nodemon": "^3.1.7",

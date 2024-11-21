@@ -1,3 +1,4 @@
+import React from 'react';
 import { render, waitFor } from '@testing-library/react';
 import { EntrySync } from './EntrySync';
 import { vi, describe, it, expect, beforeEach, afterEach, type Mock } from 'vitest';

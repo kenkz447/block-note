@@ -3,7 +3,8 @@
     "module": "index.ts",
     "type": "module",
     "scripts": {
-        "test": "bun run test"
+        "test": "bun run vitest",
+        "coverage": "vitest run --coverage"
     },
     "dependencies": {
         "eventemitter3": "^5.0.1"

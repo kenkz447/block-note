@@ -1,3 +1,4 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, type Mock, beforeEach } from 'vitest';
 import { ProjectSync } from './ProjectSync';
