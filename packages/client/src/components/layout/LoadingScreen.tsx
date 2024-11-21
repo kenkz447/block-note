@@ -1,4 +1,4 @@
-import { Skeleton } from '@/libs/shadcn-ui/components/skeleton';
+import { Skeleton } from '@writefy/client-shadcn';
 
 export const LoadingScreen = () => {
     return (

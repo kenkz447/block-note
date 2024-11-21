@@ -1,4 +1,4 @@
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/libs/shadcn-ui/components/resizable';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@writefy/client-shadcn';
 import { Header } from './topbar/Header';
 import React, { useCallback, useMemo } from 'react';
 import { AppSidebar } from './sidebar/AppSidebar';

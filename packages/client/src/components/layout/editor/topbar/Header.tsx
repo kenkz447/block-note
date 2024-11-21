@@ -1,4 +1,4 @@
-import { Button } from '@/libs/shadcn-ui/components/button';
+import { Button } from '@writefy/client-shadcn';
 import { Sidebar } from 'lucide-react';
 
 interface HeaderProps {

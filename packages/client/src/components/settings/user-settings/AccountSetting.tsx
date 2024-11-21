@@ -1,8 +1,6 @@
 import { SettingHeader } from '../_shared/SettingHeader';
 import { useForm } from 'react-hook-form';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/libs/shadcn-ui/components/form';
-import { Input } from '@/libs/shadcn-ui/components/input';
-import { Button } from '@/libs/shadcn-ui/components/button';
+import { Input, Button, Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@writefy/client-shadcn';
 import { updateProfile } from 'firebase/auth';
 import { useCurrentUser } from '@writefy/client-shared';
 

@@ -1,10 +1,10 @@
-import { Button } from '@/libs/shadcn-ui/components/button';
+import { Button } from '@writefy/client-shadcn';
 import { memo, useCallback } from 'react';
 import { useAuth, useCurrentUser } from '@writefy/client-shared';
-import { Avatar, AvatarImage } from '@/libs/shadcn-ui/components/avatar';
+import { Avatar, AvatarImage } from '@writefy/client-shadcn';
 import { ChevronsUpDown } from 'lucide-react';
 import { UserSettings } from '@/components/settings/UserSettings';
-import { usePopupDialog } from '@/libs/popup';
+import { usePopupDialog } from '@writefy/client-shadcn';
 
 function AppSidebarFooterImpl() {
     const currentUser = useCurrentUser();

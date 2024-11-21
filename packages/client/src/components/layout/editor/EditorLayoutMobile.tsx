@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { Header } from './topbar/Header';
-import { Sheet, SheetContent } from '@/libs/shadcn-ui/components/sheet';
+import { Sheet, SheetContent } from '@writefy/client-shadcn';
 import { AppSidebar } from './sidebar/AppSidebar';
 
 export function MasterLayoutMobile({ children }: React.PropsWithChildren) {

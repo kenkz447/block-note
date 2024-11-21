@@ -1,10 +1,9 @@
-import { Button } from '@/libs/shadcn-ui/components/button';
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/libs/shadcn-ui/components/dropdown-menu';
+import { Button } from '@writefy/client-shadcn';
+import { usePopupDialog, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@writefy/client-shadcn';
 import { ArrowLeftRight, ChevronsUpDown, Layers, Plus } from 'lucide-react';
 import { Project, Workspace, useProjects } from '@writefy/client-shared';
 import { CreateProjectForm } from '@/components/forms/project/CreateProjectForm';
 import { useNavigate } from '@tanstack/react-router';
-import { usePopupDialog } from '@/libs/popup';
 import { useCallback } from 'react';
 
 interface AppSidebarHeaderProps {

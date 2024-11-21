@@ -3,7 +3,7 @@ import { useWorkspace } from '@/hooks/helpers/useWorkspace';
 import { } from '@writefy/client-shared';
 import { useEffect, useState } from 'react';
 import { Entry, Project } from '@writefy/client-shared';
-import { useIsMobile } from '@/libs/shadcn-ui/hooks/use-mobile';
+import { useIsMobile } from '@writefy/client-shadcn';
 import { MasterLayoutMobile } from '@/components/layout/editor/EditorLayoutMobile';
 import { MasterLayout } from '@/components/layout/editor/EditorLayout';
 import { AppSidebarContext } from '@/components/layout/editor/sidebar/children/AppSidebarContext';

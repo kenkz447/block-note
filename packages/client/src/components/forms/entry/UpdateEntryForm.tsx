@@ -1,8 +1,5 @@
 import { Entry } from '@writefy/client-shared';
-import { Button } from '@/libs/shadcn-ui/components/button';
-import { DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogContent } from '@/libs/shadcn-ui/components/dialog';
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/libs/shadcn-ui/components/form';
-import { Input } from '@/libs/shadcn-ui/components/input';
+import { Button, Input, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogContent, Form, FormControl, FormField, FormItem, FormMessage } from '@writefy/client-shadcn';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';

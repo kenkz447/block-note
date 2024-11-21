@@ -1,0 +1,25 @@
+{
+    "name": "@writefy/client-blocksuite-theme",
+    "version": "0.0.1",
+    "type": "module",
+    "scripts": {
+        "build": "vite build"
+    },
+    "main": "./src/index.css.ts",
+    "module": "./src/index.css.ts",
+    "exports": {
+        "./style.css": "./dist/style.css"
+    },
+    "files": [
+        "dist"
+    ],
+    "devDependencies": {},
+    "dependencies": {
+        "ajv": "^8.17.1",
+        "@vanilla-extract/css": "^1.16.0",
+        "@vanilla-extract/vite-plugin": "^4.0.17",
+        "vite": "^5.4.11",
+        "vite-plugin-dts": "^4.3.0",
+        "@toeverything/theme": "^1.0.15"
+    }
+}

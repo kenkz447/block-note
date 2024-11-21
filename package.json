@@ -8,7 +8,7 @@
         "client": "bun run --cwd packages/client",
         "client-shared": "bun run --cwd packages/client-shared",
         "server": "bun run --cwd packages/server dev",
-        "theme": "bun run --cwd packages/theme"
+        "client-blocksuite-theme": "bun run --cwd packages/client-blocksuite-theme build"
     },
     "devDependencies": {
         "@eslint/js": "~9.14.0",
@@ -25,10 +25,5 @@
         "jsdom": "^25.0.1",
         "typescript": "~5.6.3",
         "typescript-eslint": "~8.14.0"
-    },
-    "dependencies": {
-        "@radix-ui/react-aspect-ratio": "^1.1.0",
-        "@radix-ui/react-tabs": "^1.1.1",
-        "embla-carousel-react": "^8.3.1"
     }
 }

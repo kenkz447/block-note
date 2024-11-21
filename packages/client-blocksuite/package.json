@@ -1,0 +1,26 @@
+{
+    "name": "@writefy/client-blocksuite",
+    "module": "index.ts",
+    "type": "module",
+    "scripts": {
+        "test": "bun run vitest",
+        "coverage": "vitest run --coverage"
+    },
+    "dependencies": {
+        "@blocksuite/block-std": "^0.17.27",
+        "@blocksuite/blocks": "^0.17.27",
+        "@blocksuite/global": "^0.17.27",
+        "@blocksuite/presets": "^0.17.27",
+        "@blocksuite/store": "^0.17.27",
+        "@blocksuite/sync": "^0.17.27",
+        "@writefy/client-shadcn": "*"
+    },
+    "devDependencies": {
+        "@types/bun": "latest",
+        "@vitest/coverage-v8": "2.1.5"
+    },
+    "peerDependencies": {
+        "typescript": "~5",
+        "react": "~18"
+    }
+}

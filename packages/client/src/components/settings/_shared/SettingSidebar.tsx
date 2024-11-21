@@ -1,4 +1,4 @@
-import { Button } from '@/libs/shadcn-ui/components/button';
+import { Button } from '@writefy/client-shadcn';
 import { useNavigate } from '@tanstack/react-router';
 import { useAuth } from '@writefy/client-shared';
 import { LogOut, Palette, User } from 'lucide-react';

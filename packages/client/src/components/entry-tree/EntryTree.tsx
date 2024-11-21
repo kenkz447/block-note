@@ -4,12 +4,8 @@ import { arrayToTree } from 'performant-array-to-tree';
 import Tree from 'rc-tree';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { EntryTreeItem } from './children/EntryTreeItem';
-import { cn } from '@/libs/shadcn-ui/utils';
+import { usePopupDialog, cn, Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Input } from '@writefy/client-shadcn';
 import { useParams } from '@tanstack/react-router';
-import { Input } from '@/libs/shadcn-ui/components/input';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/libs/shadcn-ui/components/dropdown-menu';
-import { Button } from '@/libs/shadcn-ui/components/button';
-import { usePopupDialog } from '@/libs/popup';
 import { CreateEntryForm, CreateEntryValues } from '../forms/entry/CreateEntryForm';
 
 interface EntryTreeProps {

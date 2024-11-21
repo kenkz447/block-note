@@ -1,4 +1,4 @@
-import { DialogContent } from '@/libs/shadcn-ui/components/dialog';
+import { DialogContent } from '@writefy/client-shadcn';
 import { useState } from 'react';
 import { SettingSidebar, SettingTab } from './_shared/SettingSidebar';
 import { AppearanceSetting } from './user-settings/AppearanceSetting';

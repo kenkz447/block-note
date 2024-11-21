@@ -1,9 +1,7 @@
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/libs/shadcn-ui/components/form';
+import { useTheme, Tabs, TabsList, TabsTrigger, Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@writefy/client-shadcn';
 import { SettingHeader } from '../_shared/SettingHeader';
 import { useForm } from 'react-hook-form';
-import { Tabs, TabsList, TabsTrigger } from '@/libs/shadcn-ui/components/tab';
 import { useEffect, useMemo } from 'react';
-import { useTheme } from '@/components/layout/ThemeProvider';
 
 export function AppearanceSetting() {
     const { setTheme, theme } = useTheme();

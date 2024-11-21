@@ -1,9 +1,8 @@
 import { createFileRoute, useParams } from '@tanstack/react-router';
-import { EditorContainer, EditorProvider } from '@/libs/editor';
+import { EditorContainer, EditorProvider, EditorContext } from '@writefy/client-blocksuite';
 import { Entry, useEntries } from '@writefy/client-shared';
 import { useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
-import { EditorContext } from '@/libs/editor/editorContext';
 import { z } from 'zod';
 
 export const Route = createFileRoute(

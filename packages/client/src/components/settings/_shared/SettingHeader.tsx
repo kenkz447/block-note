@@ -1,4 +1,4 @@
-import { Separator } from '@/libs/shadcn-ui/components/separator';
+import { Separator } from '@writefy/client-shadcn';
 
 interface SettingHeaderProps {
     readonly title: string;
