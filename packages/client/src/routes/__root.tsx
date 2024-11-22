@@ -4,6 +4,7 @@ import { LoadingScreen } from '@/components/layout/LoadingScreen';
 import { AuthProvider, RxdbContext, RxdbProvider, useEventListener } from '@writefy/client-shared';
 import { AuthContext } from '@writefy/client-shared';
 import { ThemeProvider } from '@writefy/client-shadcn';
+import { EditorSettingsContext, EditorSettingsProvider } from '@writefy/client-blocksuite';
 
 export const Route = createRootRoute({
     component: () => (
@@ -41,13 +42,25 @@ function AppRoot() {
                             }
 
                             return (
-                                <AuthContext.Provider value={authContext}>
-                                    <RxdbContext.Provider value={rxdbContext}>
-                                        <PopupProvider>
-                                            <Outlet />
-                                        </PopupProvider>
-                                    </RxdbContext.Provider>
-                                </AuthContext.Provider>
+                                <EditorSettingsProvider db={rxdbContext.db}>
+                                    {(editorSettingsContext) => {
+                                        if (!editorSettingsContext) {
+                                            return <LoadingScreen />;
+                                        }
+
+                                        return (
+                                            <AuthContext.Provider value={authContext}>
+                                                <RxdbContext.Provider value={rxdbContext}>
+                                                    <EditorSettingsContext.Provider value={editorSettingsContext}>
+                                                        <PopupProvider>
+                                                            <Outlet />
+                                                        </PopupProvider>
+                                                    </EditorSettingsContext.Provider>
+                                                </RxdbContext.Provider>
+                                            </AuthContext.Provider>
+                                        );
+                                    }}
+                                </EditorSettingsProvider>
                             );
                         }}
                     </RxdbProvider>

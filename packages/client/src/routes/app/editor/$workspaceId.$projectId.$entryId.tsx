@@ -1,5 +1,5 @@
 import { createFileRoute, useParams } from '@tanstack/react-router';
-import { EditorContainer, EditorProvider, EditorContext } from '@writefy/client-blocksuite';
+import { EditorContainer, EditorProvider, EditorContext, EditorSettingsContext } from '@writefy/client-blocksuite';
 import { Entry, useEntries } from '@writefy/client-shared';
 import { useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
@@ -17,6 +17,7 @@ export const Route = createFileRoute(
 });
 
 function RouteComponent() {
+
     const { entryId, projectId, workspaceId } = useParams({
         from: '/app/editor/$workspaceId/$projectId/$entryId',
     });

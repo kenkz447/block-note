@@ -1,12 +1,12 @@
+import '@toeverything/theme/style.css';
+
 import './styles/index.css';
 import './styles/tree.css';
-import '@writefy/client-blocksuite-theme/style.css';
 
 import './bootstraps/firebase';
 
 import { createRoot } from 'react-dom/client';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
-
 
 // Import the generated route tree
 import { routeTree } from './routeTree.gen';

@@ -206,7 +206,8 @@ const localDocSchema = {
 
 export const rxdbSchema = {
     entry: entrySchema,
-    localDoc: localDocSchema,
     project: projectSchema,
-    workspace: workspaceSchema
+    workspace: workspaceSchema,
+    // local
+    localDoc: localDocSchema
 };

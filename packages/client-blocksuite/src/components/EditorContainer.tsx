@@ -1,17 +1,22 @@
+import './EditorContainer.css';
+
 import { useEffect, useMemo, useRef } from 'react';
 import { useDocCollection } from '../hooks/useDocCollection';
 import { Entry } from '@writefy/client-shared';
 import { setupEditor } from '../utils/editorUtils';
 import { ColorScheme, RefNodeSlotsProvider } from '@blocksuite/blocks';
 import { useNavigate } from '@tanstack/react-router';
-import { useTheme } from '@writefy/client-shadcn';
+import { cn, useTheme } from '@writefy/client-shadcn';
 import { editorTheme } from '../editorServices';
+import { usePageSettings } from '../hooks/useEditorSettings';
 
 interface EditorContainerProps {
     readonly entry: Entry;
 }
 
 export function EditorContainer({ entry }: EditorContainerProps) {
+    const { settings } = usePageSettings();
+
     const { theme } = useTheme();
 
     const docCollection = useDocCollection();
@@ -88,7 +93,13 @@ export function EditorContainer({ entry }: EditorContainerProps) {
         editorTheme.setTheme(editorColorScheme);
     }, [theme]);
 
+    const classNames = cn('editor-container', {
+        'size-full': settings.pageWidth === '100%',
+        'size-75': settings.pageWidth === '75%',
+        'size-50': settings.pageWidth === '50%',
+    });
+
     return (
-        <div className="editor-container" ref={editorContainerRef} />
+        <div className={classNames} ref={editorContainerRef} />
     );
 }

@@ -1,0 +1,15 @@
+.editor-container {
+    height: 100%;
+}
+
+.editor-container.size-full {
+    --affine-editor-width: 100%;
+}
+
+.editor-container.size-75 {
+    --affine-editor-width: 75%;
+}
+
+.editor-container.size-50 {
+    --affine-editor-width: 50%;
+}

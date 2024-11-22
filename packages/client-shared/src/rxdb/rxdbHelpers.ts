@@ -9,7 +9,9 @@ import { replicateFirestore } from 'rxdb/plugins/replication-firestore';
 
 import { AppRxCollections } from './rxdbTypes';
 import { RxDBDevModePlugin } from 'rxdb/plugins/dev-mode';
+import { RxDBStatePlugin } from 'rxdb/plugins/state';
 
+addRxPlugin(RxDBStatePlugin);
 addRxPlugin(RxDBUpdatePlugin);
 addRxPlugin(RxDBDevModePlugin);
 

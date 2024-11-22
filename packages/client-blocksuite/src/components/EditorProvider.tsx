@@ -134,7 +134,7 @@ export function EditorProvider({ workspaceId, projectId, children }: EditorProvi
 
     const contextValue = useMemo((): EditorContextType => {
         return {
-            collection: docCollection
+            collection: docCollection,
         };
     }, [docCollection]);
 
