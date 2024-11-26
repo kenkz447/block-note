@@ -26,10 +26,6 @@ export function EditorSettingsProvider({ db, children }: EditorSettingsProviderP
     const [settings, setSettings] = useState<EditorSettings>();
 
     useEffect(() => {
-        if (settings) {
-            return;
-        }
-
         const setupRxState = async () => {
             const rxState = await db.addState('editor-settings') as RxState<EditorSettings>;
             const stateValue = await rxState.get();
@@ -38,17 +34,12 @@ export function EditorSettingsProvider({ db, children }: EditorSettingsProviderP
         };
 
         setupRxState();
-
-        return () => {
-            setSettings(undefined);
-        };
-    }, [db, settings]);
+    }, [db]);
 
     const setSettingByKey = useCallback((key: keyof EditorSettings, value: EditorSettingValue) => {
         setSettings((prev) => {
             const nextState = { ...prev, [key]: value };
             settingsSchema.parse(nextState);
-            localStorage.setItem('local_settings', JSON.stringify(nextState));
             return nextState;
         });
     }, []);
