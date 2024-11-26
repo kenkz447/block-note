@@ -1,8 +1,8 @@
-import { EntryTree } from '../../../entry-tree/EntryTree';
 import { useContext } from 'react';
 import { AppSidebarContext } from './children/AppSidebarContext';
 import { AppSidebarHeader } from './children/AppSidebarHeader';
 import { AppSidebarFooter } from './children/AppSidebarFooter';
+import { AppSidebarBody } from './children/AppSidebarBody';
 
 export function AppSidebar() {
     const context = useContext(AppSidebarContext);
@@ -10,22 +10,16 @@ export function AppSidebar() {
         throw new Error('AppSidebarContext must be provided');
     }
 
-    const { workspace, projects, activeProject, entries } = context;
+    const { workspace, projects, activeProject } = context;
 
     return (
         <div className="h-full flex flex-col bg-sidebar gap-2 text-sidebar-foreground">
-            <div className="grow flex flex-col">
-                <AppSidebarHeader workspace={workspace} projects={projects} activeProject={activeProject} />
-                {
-                    (activeProject) && (
-                        <div className="px-2">
-                            <EntryTree
-                                entries={entries}
-                            />
-                        </div>
-                    )
-                }
-            </div>
+            <AppSidebarHeader workspace={workspace} projects={projects} activeProject={activeProject} />
+            {
+                activeProject
+                    ? (<AppSidebarBody />)
+                    : (<div className="grow" />)
+            }
             <AppSidebarFooter />
         </div>
     );

@@ -21,30 +21,6 @@ export function EntryTree({ entries }: EntryTreeProps) {
         strict: false
     });
 
-    const { openDialog, closeDialog } = usePopupDialog();
-    const { insert, update, remove } = useEntries({
-        workspaceId,
-        projectId
-    });
-
-    const [search, setSearch] = useState<string>();
-
-    const onNewEntry = useCallback((type: string) => {
-        const createEntry = async (formValues: CreateEntryValues) => {
-            await insert({
-                type: type,
-                parent: null,
-                name: formValues.name
-            } as InsertEntryParams);
-
-            closeDialog();
-        };
-
-        openDialog({
-            content: <CreateEntryForm type={type} onSubmit={createEntry} />
-        });
-    }, [insert, openDialog, closeDialog]);
-
     const [filteredEntries, setFilteredEntries] = useState<Entry[] | undefined>(entries);
 
     const [openKeys, setOpenKeys] = useState<React.Key[]>(() => {
@@ -124,22 +100,6 @@ export function EntryTree({ entries }: EntryTreeProps) {
     return (
         <div>
 
-            <div className="flex gap-2 px-2 my-2">
-                <Input placeholder="Search" onChange={(e) => setSearch(e.currentTarget.value)} />
-                <div>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="icon" className="text-sidebar-foreground/70 hover:bg-sidebar-accent data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
-                                <Plus />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent side="right" align="start" className="w-[150px]">
-                            <DropdownMenuItem onClick={() => onNewEntry('folder')}><FolderPlus />New Folder</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => onNewEntry('document')}><FilePlus />New Document</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
-            </div>
             {
                 tree.length > 0 && (
                     <Tree
