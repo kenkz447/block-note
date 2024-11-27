@@ -1,10 +1,11 @@
 import { DocTree } from '@/components/docs-tree/DocTree';
 import { CreateEntryForm, CreateEntryValues } from '@/components/forms/entry/CreateEntryForm';
 import { Input, usePopupDialog } from '@writefy/client-shadcn';
-import { InsertEntryParams, useEntries } from '@writefy/client-shared';
+import { Entry, InsertEntryParams, useEntries } from '@writefy/client-shared';
 import { useCallback, useContext, useState } from 'react';
 import { AppSidebarContext } from './AppSidebarContext';
 import { useParams } from '@tanstack/react-router';
+import { UpdateEntryForm, UpdateEntryValues } from '@/components/forms/entry/UpdateEntryForm';
 
 export function AppSidebarBody() {
     const context = useContext(AppSidebarContext)!;
@@ -15,14 +16,14 @@ export function AppSidebarBody() {
     });
 
     const { openDialog, closeDialog } = usePopupDialog();
-    const { insert } = useEntries({
+    const { insert, update: updateEntry } = useEntries({
         workspaceId,
         projectId
     });
 
     const [search, setSearch] = useState<string>();
 
-    const onNewEntry = useCallback((type: string) => {
+    const showCreateEntryForm = useCallback((type: string) => {
         const createEntry = async (formValues: CreateEntryValues) => {
             await insert({
                 type: type,
@@ -37,6 +38,20 @@ export function AppSidebarBody() {
             content: <CreateEntryForm type={type} onSubmit={createEntry} />
         });
     }, [insert, openDialog, closeDialog]);
+
+    const showUpdateEntryForm = useCallback(async (entryId: string, entry: Entry) => {
+        openDialog({
+            content: (
+                <UpdateEntryForm
+                    entry={entry}
+                    onSubmit={async (formValues: UpdateEntryValues) => {
+                        await updateEntry(entryId, formValues);
+                        closeDialog();
+                    }}
+                />
+            )
+        });
+    }, [closeDialog, openDialog, updateEntry]);
 
     return (
         <div className="grow">
@@ -55,7 +70,9 @@ export function AppSidebarBody() {
                     <div className="px-2">
                         <DocTree
                             entries={entries}
-                            onAddEntry={onNewEntry}
+                            showCreateEntryForm={showCreateEntryForm}
+                            showUpdateEntryForm={showUpdateEntryForm}
+                            updateEntry={updateEntry}
                         />
                     </div>
                 )

@@ -1,46 +1,98 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import {
     Tree,
     MultiBackend,
     getBackendOptions,
-    NodeModel
+    NodeModel,
+    TreeProps
 } from '@minoru/react-dnd-treeview';
-import { DocNode } from './children/DocNode';
+import { DocNode, TreeNodeData } from './children/DocNode';
 import { Entry } from '@writefy/client-shared';
 import { Button } from '@writefy/client-shadcn';
 import { Plus } from 'lucide-react';
+import { DocNodePreview } from './children/DocNodePreview';
+import { DocNodeDropPlaceHolder } from './children/DocNodeDropPlaceHolder';
 
 interface DocTreeProps {
     readonly entries?: Entry[];
-    readonly onAddEntry: (type: string) => void;
+    readonly showCreateEntryForm: (type: string) => void;
+    readonly showUpdateEntryForm: (entry: Entry) => void;
+    readonly updateEntry: (entryId: string, data: Partial<Entry>) => Promise<void>;
 }
 
-const entriesToTree = (entries: Entry[] | undefined): NodeModel<Entry>[] => {
+const entriesToTree = (entries: Entry[] | undefined): NodeModel<TreeNodeData>[] => {
     if (!entries) return [];
 
-    const treeData: NodeModel<Entry>[] = entries.map((entry) => ({
+    const treeData: NodeModel<TreeNodeData>[] = entries.map((entry) => ({
         id: entry.id,
         parent: entry.parent ?? 0,
         text: entry.name,
-        data: entry
+        data: {
+            entry,
+            children: entries.filter((e) => e.parent === entry.id)
+        },
+        droppable: true
     }));
 
     return treeData;
 };
 
-export function DocTree({ entries, onAddEntry }: DocTreeProps) {
+export function DocTree({ entries, showCreateEntryForm, updateEntry }: DocTreeProps) {
 
-    const [treeData, setTreeData] = useState<NodeModel<Entry>[]>();
+    const [treeData, setTreeData] = useState<NodeModel<TreeNodeData>[]>();
 
     useEffect(() => {
         const tree = entriesToTree(entries);
         setTreeData(tree);
     }, [entries]);
 
-    const handleDrop = (newTree) => {
-        setTreeData(newTree);
-    };
+    const handleDrop: TreeProps<TreeNodeData>['onDrop'] = useCallback(async (_tree, options) => {
+        const draggingEntry = options.dragSource!.data!.entry;
+        const dropEntry = options.dropTarget?.data?.entry;
+
+        const isDropOnRoot = !dropEntry;
+        const parentId = isDropOnRoot ? null : dropEntry?.id;
+
+        const now = new Date().getTime();
+
+        const siblings = _tree?.filter((node) => node.parent === parentId);
+        const currentIndex = siblings?.findIndex((node) => node.id === draggingEntry.id);
+        const prevSibling = siblings?.[currentIndex - 1];
+        const nextSibling = siblings?.[currentIndex + 1];
+
+        const prevOrder = prevSibling?.data?.entry.order;
+        const nextOrder = nextSibling?.data?.entry.order;
+
+        if (prevOrder && nextOrder) {
+            await updateEntry(draggingEntry.id, {
+                parent: parentId,
+                order: (prevOrder + nextOrder!) / 2
+            });
+            return;
+        }
+
+        if (prevOrder) {
+            await updateEntry(draggingEntry.id, {
+                parent: parentId,
+                order: prevOrder! + 1000
+            });
+            return;
+        }
+
+        if (nextOrder) {
+            await updateEntry(draggingEntry.id, {
+                parent: parentId,
+                order: nextOrder! - 1000
+            });
+            return;
+        }
+
+        await updateEntry(draggingEntry.id, {
+            parent: parentId,
+            order: now
+        });
+    }, [treeData, updateEntry]);
 
     if (!treeData) {
         return null;
@@ -53,7 +105,7 @@ export function DocTree({ entries, onAddEntry }: DocTreeProps) {
             >
                 <span className="grow font-medium text-primary/60">Pages</span>
                 <span className="hidden group-hover:flex">
-                    <Button size="iconXs" variant="ghost" className="text-primary/50 hover:bg-gray-200" onClick={() => onAddEntry('document')}>
+                    <Button size="iconXs" variant="ghost" className="text-primary/50 hover:bg-gray-200" onClick={() => showCreateEntryForm('document')}>
                         <Plus size={16} />
                     </Button>
                 </span>
@@ -62,10 +114,25 @@ export function DocTree({ entries, onAddEntry }: DocTreeProps) {
                 tree={treeData}
                 rootId={0}
                 render={(node, params) => <DocNode node={node} params={params} />}
-                dragPreviewRender={(monitorProps) => (
-                    <div>{monitorProps.item.text}</div>
+                dragPreviewRender={({ item }) => (
+                    <DocNodePreview node={item} />
                 )}
                 onDrop={handleDrop}
+                classes={{
+                    dropTarget: 'transition-all bg-accent rounded-lg translation',
+                    placeholder: 'relative'
+                }}
+                sort={false}
+                insertDroppableFirst={false}
+                canDrop={(tree, { dragSource, dropTargetId, dropTarget }) => {
+                    if (dragSource?.parent === dropTargetId) {
+                        return true;
+                    }
+                }}
+                dropTargetOffset={5}
+                placeholderRender={(_node, { depth }) => (
+                    <DocNodeDropPlaceHolder depth={depth} />
+                )}
             />
         </DndProvider>
     );
