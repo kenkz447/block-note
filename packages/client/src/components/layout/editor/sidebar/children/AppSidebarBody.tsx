@@ -16,7 +16,7 @@ export function AppSidebarBody() {
     });
 
     const { openDialog, closeDialog } = usePopupDialog();
-    const { insert, update: updateEntry } = useEntries({
+    const { insert, update: updateEntry, remove: removeEntry } = useEntries({
         workspaceId,
         projectId
     });
@@ -39,13 +39,13 @@ export function AppSidebarBody() {
         });
     }, [insert, openDialog, closeDialog]);
 
-    const showUpdateEntryForm = useCallback(async (entryId: string, entry: Entry) => {
+    const showUpdateEntryForm = useCallback(async (entry: Entry) => {
         openDialog({
             content: (
                 <UpdateEntryForm
                     entry={entry}
                     onSubmit={async (formValues: UpdateEntryValues) => {
-                        await updateEntry(entryId, formValues);
+                        await updateEntry(entry.id, formValues);
                         closeDialog();
                     }}
                 />
@@ -73,6 +73,7 @@ export function AppSidebarBody() {
                             showCreateEntryForm={showCreateEntryForm}
                             showUpdateEntryForm={showUpdateEntryForm}
                             updateEntry={updateEntry}
+                            removeEntry={removeEntry}
                         />
                     </div>
                 )

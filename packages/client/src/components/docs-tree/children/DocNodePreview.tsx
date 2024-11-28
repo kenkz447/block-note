@@ -1,7 +1,7 @@
 import { NodeModel } from '@minoru/react-dnd-treeview';
 import { FileText, Folder } from 'lucide-react';
 import { Link, useParams } from '@tanstack/react-router';
-import { TreeNodeData } from './DocNode';
+import { TreeNodeData } from './';
 import { memo } from 'react';
 
 interface DocNodePreviewProps {

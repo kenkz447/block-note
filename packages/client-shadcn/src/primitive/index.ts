@@ -22,3 +22,4 @@ export * from './components/sidebar';
 export * from './components/skeleton';
 export * from './components/tab';
 export * from './components/tooltip';
+export * from './components/context-menu';

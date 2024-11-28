@@ -1,11 +1,18 @@
 import { NodeModel, RenderParams } from '@minoru/react-dnd-treeview';
-import { ChevronDown, ChevronRight, FileText, Folder, MoreVertical, PlusIcon } from 'lucide-react';
+import { ChevronDown, ChevronRight, FileText, Folder, MoreVertical } from 'lucide-react';
 import { Link, useParams } from '@tanstack/react-router';
 import { Entry } from '@writefy/client-shared';
-import { memo } from 'react';
+import { memo, useCallback, useState } from 'react';
+import { Button } from '@writefy/client-shadcn';
+import { DocNodeContextMenu } from './DocNodeContextMenu';
+import { DocNodeEditable } from './DocNodeEditable';
 
 export interface TreeNodeData {
     readonly entry: Entry;
+    readonly actions: {
+        readonly rename: (name: string) => Promise<void>;
+        readonly remove: () => Promise<void>;
+    };
     readonly children: Entry[];
 }
 
@@ -21,12 +28,16 @@ function DocNodeImpl({ node, params }: DocNodeProps) {
 
     const { depth, isOpen, onToggle } = params;
 
+    const [isRenaming, setIsRenaming] = useState(false);
+    const toggleRename = useCallback(() => setIsRenaming((prev) => !prev), []);
+
     const icon = node.data?.children.length ? <Folder size={16} /> : <FileText size={16} />;
 
-    return (
+    const children = (
         <div
             style={{ paddingLeft: depth * 16 }}
-            className="group flex items-center gap-2 hover:bg-sidebar-accent px-2 py-2 rounded-lg text-primary/80"
+            className="group flex items-center gap-2 hover:bg-sidebar-accent px-2 py-2 rounded-lg text-primary/80 data-[state=open]:bg-sidebar-accent data-[rename=true]:bg-sidebar-accent"
+            data-rename={isRenaming}
         >
             {
                 node.data?.children.length ? (
@@ -44,26 +55,47 @@ function DocNodeImpl({ node, params }: DocNodeProps) {
                     </span>
                 )
             }
-            <Link
-                to="/app/editor/$workspaceId/$projectId/$entryId"
-                params={{
-                    workspaceId,
-                    projectId,
-                    entryId: node.id as string,
-                }}
-                className="grow"
-            >
-                <span>{node.text}</span>
-            </Link>
-            <span className="hidden group-hover:flex text-primary/60" onClick={(e) => e.stopPropagation()}>
-                <span className="flex items-center justify-center hover:bg-gray-200 rounded-sm h-6 w-6">
-                    <MoreVertical size={16} />
-                </span>
-                <span className="flex items-center justify-center hover:bg-gray-200 rounded-sm h-6 w-6">
-                    <PlusIcon size={16} />
-                </span>
-            </span>
+            {
+                isRenaming
+                    ? (
+                        <DocNodeEditable
+                            value={node.text}
+                            onFinish={toggleRename}
+                            onSubmit={node.data!.actions.rename}
+                        />
+                    )
+                    : (
+                        <>
+                            <Link
+                                to="/app/editor/$workspaceId/$projectId/$entryId"
+                                params={{
+                                    workspaceId,
+                                    projectId,
+                                    entryId: node.id as string,
+                                }}
+                                className="grow grid"
+                            >
+                                <span className="whitespace-nowrap	overflow-hidden text-ellipsis">{node.text}</span>
+                            </Link>
+                            <span className="hidden group-hover:flex text-primary/60">
+                                <Button size="iconXs" variant="ghost" className="hover:bg-gray-200">
+                                    <MoreVertical size={16} />
+                                </Button>
+                            </span></>
+                    )}
         </div>
+    );
+
+    if (isRenaming) {
+        return children;
+    }
+
+    return (
+        <DocNodeContextMenu
+            onRename={() => setIsRenaming(true)}
+        >
+            {children}
+        </DocNodeContextMenu>
     );
 }
 

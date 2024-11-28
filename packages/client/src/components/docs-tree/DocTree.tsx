@@ -18,34 +18,39 @@ interface DocTreeProps {
     readonly entries?: Entry[];
     readonly showCreateEntryForm: (type: string) => void;
     readonly showUpdateEntryForm: (entry: Entry) => void;
-    readonly updateEntry: (entryId: string, data: Partial<Entry>) => Promise<void>;
+    readonly updateEntry: (entryId: string, data: Partial<Entry>) => Promise<unknown>;
+    readonly removeEntry: (entryId: string) => Promise<void>;
 }
 
-const entriesToTree = (entries: Entry[] | undefined): NodeModel<TreeNodeData>[] => {
-    if (!entries) return [];
-
-    const treeData: NodeModel<TreeNodeData>[] = entries.map((entry) => ({
-        id: entry.id,
-        parent: entry.parent ?? 0,
-        text: entry.name,
-        data: {
-            entry,
-            children: entries.filter((e) => e.parent === entry.id)
-        },
-        droppable: true
-    }));
-
-    return treeData;
-};
-
-export function DocTree({ entries, showCreateEntryForm, updateEntry }: DocTreeProps) {
+export function DocTree({ entries, showCreateEntryForm, updateEntry, removeEntry }: DocTreeProps) {
 
     const [treeData, setTreeData] = useState<NodeModel<TreeNodeData>[]>();
+
+    const entriesToTree = useCallback((entries: Entry[] | undefined): NodeModel<TreeNodeData>[] => {
+        if (!entries) return [];
+
+        const tree: NodeModel<TreeNodeData>[] = entries.map((entry) => ({
+            id: entry.id,
+            parent: entry.parent ?? 0,
+            text: entry.name,
+            data: {
+                entry,
+                actions: {
+                    rename: async (name: string) => { await updateEntry(entry.id, { name }); },
+                    remove: () => removeEntry(entry.id),
+                },
+                children: entries.filter((e) => e.parent === entry.id)
+            },
+            droppable: true
+        }));
+
+        return tree;
+    }, [removeEntry, updateEntry]);
 
     useEffect(() => {
         const tree = entriesToTree(entries);
         setTreeData(tree);
-    }, [entries]);
+    }, [entries, entriesToTree]);
 
     const handleDrop: TreeProps<TreeNodeData>['onDrop'] = useCallback(async (_tree, options) => {
         const draggingEntry = options.dragSource!.data!.entry;
@@ -92,7 +97,7 @@ export function DocTree({ entries, showCreateEntryForm, updateEntry }: DocTreePr
             parent: parentId,
             order: now
         });
-    }, [treeData, updateEntry]);
+    }, [updateEntry]);
 
     if (!treeData) {
         return null;
@@ -119,12 +124,13 @@ export function DocTree({ entries, showCreateEntryForm, updateEntry }: DocTreePr
                 )}
                 onDrop={handleDrop}
                 classes={{
+                    listItem: '',
                     dropTarget: 'transition-all bg-accent rounded-lg translation',
                     placeholder: 'relative'
                 }}
                 sort={false}
                 insertDroppableFirst={false}
-                canDrop={(tree, { dragSource, dropTargetId, dropTarget }) => {
+                canDrop={(tree, { dragSource, dropTargetId }) => {
                     if (dragSource?.parent === dropTargetId) {
                         return true;
                     }

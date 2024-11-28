@@ -31,7 +31,8 @@
         "noUncheckedSideEffectImports": true
     },
     "include": [
-        "src"
+        "src",
+        "src/components/docs-tree/children/.tsx"
     ],
     "exclude": [
         "src/**/*.test.ts",
