@@ -1,5 +1,5 @@
 import { Dialog } from '../../primitive';
-import { usePopupDialogContext } from '../hooks/usePopupContexts';
+import { usePopupDialogContext } from '../hooks/usePopupDialogContext';
 
 export const PopupDialog = () => {
     const popupDialogContext = usePopupDialogContext();

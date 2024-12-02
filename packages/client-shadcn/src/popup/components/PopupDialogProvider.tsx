@@ -2,13 +2,13 @@ import { PropsWithChildren, useMemo, useState } from 'react';
 import { PopupDialogContext, PopupDialogContextType, PopupDialogProps } from '../popupContexts';
 import { PopupDialog } from './PopupDialog';
 
-export const PopupProvider = ({ children }: PropsWithChildren) => {
+export const PopupDialogProvider = ({ children }: PropsWithChildren) => {
     const [dialogProps, setDialogProps] = useState<PopupDialogProps>(() => ({
         visible: false,
         content: null,
     }));
 
-    const dialogContext = useMemo((): PopupDialogContextType => ({
+    const popupDialogContext = useMemo((): PopupDialogContextType => ({
         dialogProps,
         openDialog: (dialogProps) => setDialogProps({
             ...dialogProps,
@@ -21,7 +21,7 @@ export const PopupProvider = ({ children }: PropsWithChildren) => {
     }), [dialogProps]);
 
     return (
-        <PopupDialogContext.Provider value={dialogContext}>
+        <PopupDialogContext.Provider value={popupDialogContext}>
             {children}
             <PopupDialog />
         </PopupDialogContext.Provider>

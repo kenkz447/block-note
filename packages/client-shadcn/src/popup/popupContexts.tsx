@@ -12,3 +12,5 @@ export interface PopupDialogContextType {
 }
 
 export const PopupDialogContext = createContext<PopupDialogContextType | null>(null);
+
+export const PopupAlertContext = createContext<PopupDialogContextType | null>(null);

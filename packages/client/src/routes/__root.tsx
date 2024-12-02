@@ -1,5 +1,5 @@
 import { createRootRoute, Outlet, useNavigate } from '@tanstack/react-router';
-import { PopupProvider } from '@writefy/client-shadcn';
+import { PopupAlertProvider, PopupDialogProvider } from '@writefy/client-shadcn';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
 import { AuthProvider, RxdbContext, RxdbProvider, useEventListener } from '@writefy/client-shared';
 import { AuthContext } from '@writefy/client-shared';
@@ -52,9 +52,11 @@ function AppRoot() {
                                             <AuthContext.Provider value={authContext}>
                                                 <RxdbContext.Provider value={rxdbContext}>
                                                     <EditorSettingsContext.Provider value={editorSettingsContext}>
-                                                        <PopupProvider>
-                                                            <Outlet />
-                                                        </PopupProvider>
+                                                        <PopupDialogProvider>
+                                                            <PopupAlertProvider>
+                                                                <Outlet />
+                                                            </PopupAlertProvider>
+                                                        </PopupDialogProvider>
                                                     </EditorSettingsContext.Provider>
                                                 </RxdbContext.Provider>
                                             </AuthContext.Provider>

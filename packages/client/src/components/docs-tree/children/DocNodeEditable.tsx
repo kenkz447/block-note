@@ -23,12 +23,11 @@ export function DocNodeEditableImpl({ value, onFinish, onSubmit }: DocNodeEditab
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
-            handleSubmit();
-            e.currentTarget.blur();
+            return void e.currentTarget.blur();
         }
 
         if (e.key === 'Escape') {
-            onFinish();
+            return void onFinish();
         }
     };
 

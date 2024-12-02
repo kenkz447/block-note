@@ -93,6 +93,7 @@ function DocNodeImpl({ node, params }: DocNodeProps) {
     return (
         <DocNodeContextMenu
             onRename={() => setIsRenaming(true)}
+            onDelete={() => node.data?.actions.remove()}
         >
             {children}
         </DocNodeContextMenu>

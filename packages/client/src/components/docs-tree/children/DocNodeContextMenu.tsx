@@ -1,18 +1,29 @@
-import { ContextMenu, ContextMenuTrigger } from '@radix-ui/react-context-menu';
 import {
     ContextMenuContent,
     ContextMenuItem,
     ContextMenuSeparator,
+    AlertDialog,
+    AlertDialogTitle,
+    ContextMenu,
+    ContextMenuTrigger,
+    AlertDialogContent,
+    AlertDialogTrigger,
+    AlertDialogHeader,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogCancel,
+    AlertDialogAction
 } from '@writefy/client-shadcn';
 import { memo } from 'react';
 
 interface DocNodeContextMenuProps {
     readonly children: React.ReactNode;
     readonly onRename: () => void;
+    readonly onDelete: () => void;
 }
 
 function DocNodeContextMenuImpl(props: DocNodeContextMenuProps) {
-    const { onRename } = props;
+    const { onRename, onDelete } = props;
 
     return (
         <ContextMenu>
@@ -24,12 +35,29 @@ function DocNodeContextMenuImpl(props: DocNodeContextMenuProps) {
                     Add page
                 </ContextMenuItem>
                 <ContextMenuSeparator />
-                <ContextMenuItem inset onClick={() => setTimeout(onRename, 0)}>
+                <ContextMenuItem inset onClick={onRename}>
                     Rename
                 </ContextMenuItem>
-                <ContextMenuItem inset className="text-red-600">
-                    Delete
-                </ContextMenuItem>
+                <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                        <ContextMenuItem inset className="text-red-600" onClick={onDelete}>
+                            Delete
+                        </ContextMenuItem>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                This action cannot be undone. This will permanently delete your
+                                account and remove your data from our servers.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction>Continue</AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
             </ContextMenuContent>
         </ContextMenu>
     );

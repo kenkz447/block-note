@@ -1,8 +1,8 @@
 import React from 'react';
-import { usePopupDialogContext } from './usePopupDialogContext';
+import { usePopupAlertContext } from './usePopupAlertContext';
 
-export const usePopupDialog = () => {
-    const popupDialogContext = usePopupDialogContext();
+export const usePopupAlert = () => {
+    const popupDialogContext = usePopupAlertContext();
 
     return React.useMemo(() => ({
         openDialog: popupDialogContext.openDialog,
