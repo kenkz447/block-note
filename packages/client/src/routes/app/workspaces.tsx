@@ -15,7 +15,7 @@ import {
 
 } from '@writefy/client-shared';
 import {
-    usePopupDialogContext,
+    usePopupDialog,
     Carousel,
     CarouselContent,
     CarouselItem,
@@ -37,7 +37,7 @@ function RouteComponent() {
     const currentUser = useCurrentUser();
     const { subscribe, insert } = useWorkspaces();
 
-    const { openDialog, closeDialog } = usePopupDialogContext();
+    const { openDialog, closeDialog } = usePopupDialog();
 
     const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
     const openUserSettingsDialog = () => {

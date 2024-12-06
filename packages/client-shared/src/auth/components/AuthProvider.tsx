@@ -10,34 +10,29 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
 
     const emitLoggedIn = useEventEmitter('AUTH:LOGGED_IN');
-    const editLogout = useEventEmitter('AUTH:LOGGED_OUT');
+    const emitLogout = useEventEmitter('AUTH:LOGGED_OUT');
 
     const [currentUser, setCurrentUser] = useState<User | null>();
 
     useEffect(() => {
         const auth = getAuth();
-        const unsubscribe = auth.onAuthStateChanged(setCurrentUser);
-        return () => unsubscribe();
-    }, [editLogout, emitLoggedIn]);
-
-    useEffect(() => {
-        if (currentUser === undefined) {
-            return;
-        }
-
-        if (currentUser !== null) {
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+            setCurrentUser(user);
             emitLoggedIn();
-        }
-        else {
-            editLogout();
-        }
-    }, [currentUser, editLogout, emitLoggedIn]);
+        });
+        return () => unsubscribe();
+    }, [emitLoggedIn]);
 
     const contextValue = useMemo((): AuthContextType => {
         return {
-            currentUser
+            currentUser,
+            signOut: async () => {
+                const auth = getAuth();
+                await auth.signOut();
+                emitLogout();
+            }
         };
-    }, [currentUser]);
+    }, [currentUser, emitLogout]);
 
     return children(contextValue);
 }

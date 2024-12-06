@@ -1,7 +1,10 @@
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useCallback } from 'react';
+import { useAuthContext } from './useAuthContext';
 
 export const useAuth = () => {
+    const { signOut } = useAuthContext();
+
     const showGoogleSignIn = useCallback(async () => {
         const auth = getAuth();
         const provider = new GoogleAuthProvider();
@@ -16,11 +19,6 @@ export const useAuth = () => {
             }).catch((error) => {
                 console.error(error);
             });
-    }, []);
-
-    const signOut = useCallback(async () => {
-        const auth = getAuth();
-        await auth.signOut();
     }, []);
 
     return {
