@@ -18,7 +18,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const auth = getAuth();
         const unsubscribe = auth.onAuthStateChanged((user) => {
             setCurrentUser(user);
-            emitLoggedIn();
+            if (user) {
+                emitLoggedIn();
+            }
         });
         return () => unsubscribe();
     }, [emitLoggedIn]);

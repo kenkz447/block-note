@@ -9,12 +9,12 @@ import { EditorSettingsContext, EditorSettingsProvider } from '@writefy/client-b
 export const Route = createRootRoute({
     component: () => (
         <ThemeProvider>
-            <AppRoot />
+            <Initializer />
         </ThemeProvider>
     ),
 });
 
-function AppRoot() {
+function App() {
     const navigate = useNavigate();
 
     useEventListener({
@@ -27,6 +27,10 @@ function AppRoot() {
         handler: () => navigate({ to: '/', replace: true })
     });
 
+    return <Outlet />;
+}
+
+function Initializer() {
     return (
         <AuthProvider>
             {(authContext) => {
@@ -54,7 +58,7 @@ function AppRoot() {
                                                     <EditorSettingsContext.Provider value={editorSettingsContext}>
                                                         <PopupDialogProvider>
                                                             <PopupAlertProvider>
-                                                                <Outlet />
+                                                                <App />
                                                             </PopupAlertProvider>
                                                         </PopupDialogProvider>
                                                     </EditorSettingsContext.Provider>
