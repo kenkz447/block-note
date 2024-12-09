@@ -41,7 +41,7 @@ function DocNodeImpl({ node, params }: DocNodeProps) {
         >
             {
                 node.data?.children.length ? (
-                    <span className="ml-2 flex items-center justify-center hover:bg-gray-200 rounded-sm h-6 w-6 text-primary/60">
+                    <span className="ml-2 flex items-center justify-center hover:bg-primary/10 rounded-sm h-6 w-6 text-primary/60">
                         <span onClick={onToggle} className="hidden group-hover:flex">
                             {isOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                         </span>
@@ -77,11 +77,7 @@ function DocNodeImpl({ node, params }: DocNodeProps) {
                             >
                                 <span className="whitespace-nowrap	overflow-hidden text-ellipsis">{node.text}</span>
                             </Link>
-                            <span className="hidden group-hover:flex text-primary/60">
-                                <Button size="iconXs" variant="ghost" className="hover:bg-gray-200">
-                                    <MoreVertical size={16} />
-                                </Button>
-                            </span></>
+                        </>
                     )}
         </div>
     );

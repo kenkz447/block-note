@@ -110,7 +110,7 @@ export function DocTree({ entries, showCreateEntryForm, updateEntry, removeEntry
             >
                 <span className="grow font-medium text-primary/60">Pages</span>
                 <span className="hidden group-hover:flex">
-                    <Button size="iconXs" variant="ghost" className="text-primary/50 hover:bg-gray-200" onClick={() => showCreateEntryForm('document')}>
+                    <Button size="iconXs" variant="ghost" className="text-primary/50 hover:bg-primary/10" onClick={() => showCreateEntryForm('document')}>
                         <Plus size={16} />
                     </Button>
                 </span>

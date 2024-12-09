@@ -5,6 +5,7 @@
         "packages/*"
     ],
     "scripts": {
+        "start": "bun run --cwd packages/client dev",
         "client": "bun run --cwd packages/client",
         "client-shared": "bun run --cwd packages/client-shared",
         "server": "bun run --cwd packages/server dev",
