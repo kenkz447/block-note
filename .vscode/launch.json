@@ -10,7 +10,10 @@
             "name": "Attach to Chrome",
             "port": 9222,
             "urlFilter": "http://localhost:8001/*",
-            "webRoot": "${workspaceFolder}/packages/client"
+            "webRoot": "${workspaceFolder}/packages/client",
+            "pathMapping": {
+                "/**/*/packages": "${workspaceFolder}/packages"
+            }
         }
     ]
 }

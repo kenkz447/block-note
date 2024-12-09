@@ -11,5 +11,3 @@ bun run client dev
 
 ### Available packages:
 - client
-- server
-- theme
