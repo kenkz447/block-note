@@ -21,7 +21,7 @@ export function AppSidebarBody() {
         projectId
     });
 
-    const [search, setSearch] = useState<string>();
+    const [, setSearch] = useState<string>();
 
     const showCreateEntryForm = useCallback((type: string) => {
         const createEntry = async (formValues: CreateEntryValues) => {

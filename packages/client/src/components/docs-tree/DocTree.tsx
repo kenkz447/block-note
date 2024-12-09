@@ -130,7 +130,7 @@ export function DocTree({ entries, showCreateEntryForm, updateEntry, removeEntry
                 }}
                 sort={false}
                 insertDroppableFirst={false}
-                canDrop={(tree, { dragSource, dropTargetId }) => {
+                canDrop={(_tree, { dragSource, dropTargetId }) => {
                     if (dragSource?.parent === dropTargetId) {
                         return true;
                     }

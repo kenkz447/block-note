@@ -1,5 +1,5 @@
 import { createRootRoute, Outlet, useNavigate } from '@tanstack/react-router';
-import { Alert, AlertDescription, AlertTitle, Button, PopupAlertProvider, PopupDialogProvider, useIsMobile } from '@writefy/client-shadcn';
+import { Alert, AlertDescription, AlertTitle, PopupAlertProvider, PopupDialogProvider, useIsMobile } from '@writefy/client-shadcn';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
 import { AuthProvider, RxdbContext, RxdbProvider, useEventListener } from '@writefy/client-shared';
 import { AuthContext } from '@writefy/client-shared';
