@@ -16,7 +16,7 @@
         "@writefy/client-blocksuite": "*",
         "@writefy/client-shadcn": "*",
         "@writefy/client-shared": "*",
-        "firebase": "10.14.1",
+        "firebase": "~11",
         "lucide-react": "^0.454.0",
         "performant-array-to-tree": "^1.11.0",
         "rc-tree": "^5.10.1",

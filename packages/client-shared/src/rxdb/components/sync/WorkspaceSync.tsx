@@ -34,7 +34,6 @@ function WorkspaceSyncImpl({ userId, children }: WorkspaceSyncProps) {
         return () => {
             const stopReplication = async () => {
                 if (replicateState) {
-                    await replicateState.cancel();
                     await replicateState.remove();
                     setReplicateState(undefined);
                 }

@@ -36,7 +36,6 @@ function EntrySyncImpl({ userId, workspaceId, projectId, children }: EntrySyncPr
         return () => {
             const stopReplication = async () => {
                 if (replicateState) {
-                    await replicateState.cancel();
                     await replicateState.remove();
                     setReplicateState(undefined);
                 }

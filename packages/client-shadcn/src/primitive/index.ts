@@ -24,3 +24,4 @@ export * from './components/tab';
 export * from './components/tooltip';
 export * from './components/context-menu';
 export * from './components/alert-dialog';
+export * from './components/alert';

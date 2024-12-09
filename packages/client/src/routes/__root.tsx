@@ -1,10 +1,11 @@
 import { createRootRoute, Outlet, useNavigate } from '@tanstack/react-router';
-import { PopupAlertProvider, PopupDialogProvider } from '@writefy/client-shadcn';
+import { Alert, AlertDescription, AlertTitle, Button, PopupAlertProvider, PopupDialogProvider, useIsMobile } from '@writefy/client-shadcn';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
 import { AuthProvider, RxdbContext, RxdbProvider, useEventListener } from '@writefy/client-shared';
 import { AuthContext } from '@writefy/client-shared';
 import { ThemeProvider } from '@writefy/client-shadcn';
 import { EditorSettingsContext, EditorSettingsProvider } from '@writefy/client-blocksuite';
+import { CircleAlert } from 'lucide-react';
 
 export const Route = createRootRoute({
     component: () => (
@@ -31,6 +32,23 @@ function App() {
 }
 
 function Initializer() {
+    const isMobile = useIsMobile();
+
+    if (isMobile) {
+        return (
+            <div className="h-screen flex flex-col justify-center items-center p-8 gap-8">
+                <h1 className="text-4xl font-mono ">WRI.</h1>
+                <Alert className="text-2xl">
+                    <CircleAlert />
+                    <AlertTitle className="!pl-10">Sorry</AlertTitle>
+                    <AlertDescription className="!pl-10 text-muted-foreground">
+                        the app not supported on mobile devices yet
+                    </AlertDescription>
+                </Alert>
+            </div>
+        );
+    }
+
     return (
         <AuthProvider>
             {(authContext) => {
