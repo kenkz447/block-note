@@ -10,10 +10,7 @@ import {
 } from 'lucide-react';
 import { useWorkspaces } from '@writefy/client-shared';
 import { useEffect, useState } from 'react';
-import {
-    Workspace,
-
-} from '@writefy/client-shared';
+import { Workspace, } from '@writefy/client-shared';
 import {
     usePopupDialog,
     Carousel,
@@ -27,6 +24,7 @@ import {
 import { CreateWorkspaceForm } from '@/components/forms/workspace/CreateWorkspaceForm';
 import { useAuth, useCurrentUser } from '@writefy/client-shared';
 import { UserSettings } from '@/components/settings/UserSettings';
+import { WorkspaceSettings } from '@/components/settings/WorkspaceSettings';
 
 export const Route = createFileRoute('/app/workspaces')({
     component: RouteComponent,
@@ -56,6 +54,12 @@ function RouteComponent() {
                     }}
                 />
             ),
+        });
+    };
+
+    const openWorkspaceSettings = (workspace: Workspace) => {
+        openDialog({
+            content: <WorkspaceSettings workspace={workspace} />,
         });
     };
 
@@ -137,6 +141,7 @@ function RouteComponent() {
                                             size="icon"
                                             variant="ghost"
                                             className="text-primary/70 hidden absolute right-1 top-0 group-hover:flex"
+                                            onClick={() => openWorkspaceSettings(workspace)}
                                         >
                                             <Pen />
                                         </Button>

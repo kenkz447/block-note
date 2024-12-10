@@ -1,6 +1,6 @@
 import { PropsWithChildren, useMemo, useState } from 'react';
-import { PopupDialogContext, PopupDialogContextType, PopupDialogProps } from '../popupContexts';
-import { PopupDialog } from './PopupDialog';
+import { PopupAlertContext, PopupAlertContextType, PopupDialogProps } from '../popupContexts';
+import { PopupAlert } from './PopupAlert';
 
 export const PopupAlertProvider = ({ children }: PropsWithChildren) => {
     const [dialogProps, setDialogProps] = useState<PopupDialogProps>(() => ({
@@ -8,7 +8,7 @@ export const PopupAlertProvider = ({ children }: PropsWithChildren) => {
         content: null,
     }));
 
-    const popupDialogContext = useMemo((): PopupDialogContextType => ({
+    const popupAlertContext = useMemo((): PopupAlertContextType => ({
         dialogProps,
         openDialog: (dialogProps) => setDialogProps({
             ...dialogProps,
@@ -21,9 +21,9 @@ export const PopupAlertProvider = ({ children }: PropsWithChildren) => {
     }), [dialogProps]);
 
     return (
-        <PopupDialogContext.Provider value={popupDialogContext}>
+        <PopupAlertContext.Provider value={popupAlertContext}>
             {children}
-            <PopupDialog />
-        </PopupDialogContext.Provider>
+            <PopupAlert />
+        </PopupAlertContext.Provider>
     );
 };

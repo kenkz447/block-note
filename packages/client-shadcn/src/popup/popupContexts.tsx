@@ -13,4 +13,10 @@ export interface PopupDialogContextType {
 
 export const PopupDialogContext = createContext<PopupDialogContextType | null>(null);
 
-export const PopupAlertContext = createContext<PopupDialogContextType | null>(null);
+
+export interface PopupAlertContextType {
+    dialogProps?: PopupDialogProps;
+    openDialog: (payload: Omit<PopupDialogProps, 'visible'>) => void;
+    closeDialog: () => void;
+}
+export const PopupAlertContext = createContext<PopupAlertContextType | null>(null);

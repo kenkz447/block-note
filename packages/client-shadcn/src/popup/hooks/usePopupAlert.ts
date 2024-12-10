@@ -5,7 +5,7 @@ export const usePopupAlert = () => {
     const popupDialogContext = usePopupAlertContext();
 
     return React.useMemo(() => ({
-        openDialog: popupDialogContext.openDialog,
-        closeDialog: popupDialogContext.closeDialog,
+        openAlert: popupDialogContext.openDialog,
+        closeAlert: popupDialogContext.closeDialog,
     }), [popupDialogContext]);
 };

@@ -4,15 +4,15 @@ import { useAuth } from '@writefy/client-shared';
 import { LogOut, Palette, User } from 'lucide-react';
 import { useCallback } from 'react';
 
-export type SettingTab = 'account' | 'appearance';
+export type UserSettingsSidebarTab = 'account' | 'appearance';
 
 interface SettingSidebarProps {
-    readonly currentTab: SettingTab;
+    readonly currentTab: UserSettingsSidebarTab;
     readonly onSignOut: () => void;
-    readonly onTabChange: (tab: SettingTab) => void;
+    readonly onTabChange: (tab: UserSettingsSidebarTab) => void;
 }
 
-export function SettingSidebar({ currentTab, onSignOut, onTabChange }: SettingSidebarProps) {
+export function UserSettingsSidebar({ currentTab, onSignOut, onTabChange }: SettingSidebarProps) {
     const { signOut } = useAuth();
 
     const navigate = useNavigate();
