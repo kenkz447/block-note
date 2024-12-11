@@ -6,7 +6,7 @@ const emitter = new EventEmitter();
 
 interface UseEventOptions<TDetail> {
     readonly event: AppEvent;
-    readonly handler: (callback: (detail?: TDetail) => void) => void;
+    readonly handler: (detail: TDetail | undefined) => void;
 }
 
 export const useEventListener = <TDetail = undefined>(options: UseEventOptions<TDetail>) => {

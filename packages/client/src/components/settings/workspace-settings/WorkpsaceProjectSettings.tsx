@@ -1,22 +1,23 @@
 import { memo } from 'react';
 import { useForm } from 'react-hook-form';
 import { SettingHeader } from '../_shared/SettingHeader';
-import { useWorkspaces, Workspace } from '@writefy/client-shared';
-import { Alert, AlertDescription, AlertTitle, Button, Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, Input, Separator, usePopupAlert, usePopupDialog } from '@writefy/client-shadcn';
+import { Project, useProjects } from '@writefy/client-shared';
+import { Alert, AlertDescription, AlertTitle, Button, Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, Input, Separator, usePopupAlert } from '@writefy/client-shadcn';
 import { DeleteConfirm } from './DeleteConfirm';
 
-interface WorkspaceGeneralSettingsProps {
-    readonly workspace: Workspace;
+interface WorkpsaceProjectSettingsProps {
+    readonly project: Project;
 }
 
-export function WorkspaceGeneralSettingsImpl({ workspace }: WorkspaceGeneralSettingsProps) {
-    const { update, remove } = useWorkspaces();
+export function WorkpsaceProjectSettingsImpl({ project }: WorkpsaceProjectSettingsProps) {
+    const { update, remove } = useProjects({
+        workspaceId: project.workspaceId
+    });
 
-    const { closeDialog } = usePopupDialog();
     const { openAlert } = usePopupAlert();
 
     const defaultValues = {
-        name: workspace.name
+        name: project.name
     };
 
     const form = useForm({
@@ -24,7 +25,7 @@ export function WorkspaceGeneralSettingsImpl({ workspace }: WorkspaceGeneralSett
     });
 
     const onSubmit = async (data: typeof defaultValues) => {
-        await update(workspace.id, {
+        await update(project.id, {
             name: data.name
         });
 
@@ -34,20 +35,19 @@ export function WorkspaceGeneralSettingsImpl({ workspace }: WorkspaceGeneralSett
     };
 
     const showDeleteAlert = () => {
-        const onWorkspaceDelete = async () => {
-            await remove(workspace.id);
-            closeDialog();
+        const onDelete = async () => {
+            await remove(project.id);
         };
         openAlert({
-            content: <DeleteConfirm confirmText="DELETE" onConfirm={onWorkspaceDelete} />
+            content: <DeleteConfirm confirmText="DELETE" onConfirm={onDelete} />
         });
     };
 
     return (
         <div>
             <SettingHeader
-                title="General"
-                description="Settings for your workspace"
+                title={project.name}
+                description="Project settings"
             />
             <div className="flex flex-col gap-10">
                 <Form {...form}>
@@ -84,7 +84,7 @@ export function WorkspaceGeneralSettingsImpl({ workspace }: WorkspaceGeneralSett
                 <Separator />
                 <div>
                     <Alert className="cursor-pointer" onClick={showDeleteAlert}>
-                        <AlertTitle className="text-destructive">Delete workspace</AlertTitle>
+                        <AlertTitle className="text-destructive">Delete this project</AlertTitle>
                         <AlertDescription className="text-destructive">
                             This action is irreversible. All data will be lost.
                         </AlertDescription>
@@ -95,4 +95,4 @@ export function WorkspaceGeneralSettingsImpl({ workspace }: WorkspaceGeneralSett
     );
 };
 
-export const WorkspaceGeneralSettings = memo(WorkspaceGeneralSettingsImpl);
+export const WorkpsaceProjectSettings = memo(WorkpsaceProjectSettingsImpl);

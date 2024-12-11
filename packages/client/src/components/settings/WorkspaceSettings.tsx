@@ -1,31 +1,50 @@
 import { DialogContent } from '@writefy/client-shadcn';
-import { memo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { WorkspaceSettingsSidebar } from './workspace-settings/WorkspaceSettingsSidebar';
 import { WorkspaceGeneralSettings } from './workspace-settings/WorkspaceGeneralSettings';
-import { Workspace } from '@writefy/client-shared';
+import { Project, useProjects, Workspace } from '@writefy/client-shared';
+import { WorkpsaceProjectSettings } from './workspace-settings/WorkpsaceProjectSettings';
 
 interface WorkspaceSettingsProps {
     readonly workspace: Workspace;
 }
 
 export function WorkspaceSettingsImpl({ workspace }: WorkspaceSettingsProps) {
+    const { subscribe: subscribeProjects } = useProjects({
+        workspaceId: workspace.id,
+    });
+    const [projects, setProjects] = useState<Project[]>([]);
+
     const [currentTab, setCurrentTab] = useState<string>('account');
+
+    useEffect(() => {
+        const subscription = subscribeProjects({}, setProjects);
+        return () => {
+            subscription.unsubscribe();
+        };
+    }, [subscribeProjects]);
+
+    const selectedProject = projects.find((project) => project.id === currentTab);
 
     return (
         <DialogContent className="w-9/12 min-w-[800px] max-w-[1024px] p-0">
             <div className="flex gap-4">
                 <WorkspaceSettingsSidebar
                     workspace={workspace}
+                    projects={projects}
                     onTabChange={setCurrentTab}
                     currentTab={currentTab}
                 />
                 <div className="flex flex-col items-center p-8 w-full">
                     <div className="w-full max-w-[560px]">
                         {
-                            currentTab === 'account' ? (
+                            currentTab === 'account' && (
                                 <WorkspaceGeneralSettings workspace={workspace} />
-                            ) : (
-                                null
+                            )
+                        }
+                        {
+                            selectedProject && (
+                                <WorkpsaceProjectSettings project={selectedProject} />
                             )
                         }
                     </div>

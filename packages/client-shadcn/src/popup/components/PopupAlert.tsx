@@ -1,24 +1,52 @@
+import { useCallback, useState } from 'react';
 import { AlertDialog } from '../../primitive';
-import { usePopupAlertContext } from '../hooks/usePopupAlertContext';
+import { useEventListener } from '@writefy/client-shared';
+
+export interface ShowAlertOptions {
+    content: React.ReactNode;
+}
+
+interface PopupAlertState extends ShowAlertOptions {
+    visible: boolean;
+}
 
 export const PopupAlert = () => {
-    const popupDialogContext = usePopupAlertContext();
+    const [alertState, setAlertState] = useState<PopupAlertState>({ visible: false, content: null });
 
-    if (!popupDialogContext) {
-        return null;
-    }
+    const hide = useCallback(() => {
+        setAlertState(({ content }) => ({ visible: false, content: content }));
+    }, []);
 
-    const { dialogProps, closeDialog } = popupDialogContext;
+    useEventListener({
+        event: 'popup-alert:show',
+        handler: useCallback((options?: ShowAlertOptions) => {
+            if (!options) {
+                throw new Error('popup-alert:show event must have options');
+            }
+
+            setAlertState({
+                content: options.content,
+                visible: true
+            });
+        }, [])
+    });
+
+    useEventListener({
+        event: 'popup-alert:hide',
+        handler: useCallback(() => {
+            hide();
+        }, [hide])
+    });
 
     const onOpenChange = (isOpen: boolean) => {
         if (!isOpen) {
-            closeDialog();
+            hide();
         }
     };
 
     return (
-        <AlertDialog open={dialogProps?.visible} onOpenChange={onOpenChange}>
-            {dialogProps?.content}
+        <AlertDialog open={alertState.visible} onOpenChange={onOpenChange}>
+            {alertState.content}
         </AlertDialog>
     );
 };

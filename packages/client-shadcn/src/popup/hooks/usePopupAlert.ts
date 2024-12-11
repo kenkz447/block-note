@@ -1,11 +1,17 @@
-import React from 'react';
-import { usePopupAlertContext } from './usePopupAlertContext';
+import { useEventEmitter } from '@writefy/client-shared';
+import { useCallback } from 'react';
+import { ShowAlertOptions } from '../components/PopupAlert';
 
 export const usePopupAlert = () => {
-    const popupDialogContext = usePopupAlertContext();
+    const emitShow = useEventEmitter<ShowAlertOptions>('popup-alert:show');
+    const emitHide = useEventEmitter('popup-alert:hide');
 
-    return React.useMemo(() => ({
-        openAlert: popupDialogContext.openDialog,
-        closeAlert: popupDialogContext.closeDialog,
-    }), [popupDialogContext]);
+    return {
+        openAlert: useCallback(({ content }: ShowAlertOptions) => {
+            emitShow({ content });
+        }, [emitShow]),
+        closeAlert: useCallback(() => {
+            emitHide();
+        }, [emitHide])
+    };
 };
