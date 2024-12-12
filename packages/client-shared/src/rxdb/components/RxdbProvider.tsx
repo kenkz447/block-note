@@ -42,7 +42,8 @@ export const RxdbProvider = ({ currentUser, children }: RxdbProviderProps) => {
      */
     useEffect(() => {
         const userId = getUserId(currentUser);
-        setActiveDbName(userId.toLowerCase());
+        const nextDbName = `user_${userId.toLowerCase()}`;
+        setActiveDbName(nextDbName);
     }, [currentUser]);
 
     const contextValue: RxdbContextType = useMemo(() => {

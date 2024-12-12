@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "block-note-1"
+    "default": "block-note-1",
+    "production": "wri-prod-1"
   }
 }

@@ -1,10 +1,11 @@
 
-import { DocumentData, where } from 'firebase/firestore';
+import { serverTimestamp, Timestamp, where } from 'firebase/firestore';
 import { memo, useEffect, useState } from 'react';
 import { RxFirestoreReplicationState } from 'rxdb/plugins/replication-firestore';
 import { useRxdb } from '../../hooks/useRxdb';
 import { createFirebaseReplication } from '../../rxdbHelpers';
 import { shallowEqualByKey } from '../../../utils';
+import { Workspace } from '../../rxdbTypes';
 
 interface WorkspaceSyncProps {
     readonly userId: string;
@@ -14,14 +15,26 @@ interface WorkspaceSyncProps {
 function WorkspaceSyncImpl({ userId, children }: WorkspaceSyncProps) {
     const db = useRxdb();
 
-    const [replicaState, setReplicateState] = useState<RxFirestoreReplicationState<DocumentData>>();
+    const [replicaState, setReplicateState] = useState<RxFirestoreReplicationState<Workspace>>();
 
     // Start syncing the workspace when the user is logged in
     useEffect(() => {
-        const replicateState = createFirebaseReplication({
+        const replicateState = createFirebaseReplication<Workspace>({
             rxCollection: db.collections.workspaces,
             remotePath: ['workspaces'],
-            pullFilter: where('activeMembers', 'array-contains', userId)
+            pullFilter: where('activeMembers', 'array-contains', userId),
+            pushModifier: async (doc): Promise<Workspace> => {
+                const existingDoc = await db.collections.workspaces.findOne(doc.id).exec();
+
+                if (!existingDoc) {
+                    doc.createdAt = serverTimestamp();
+                    doc.createdBy = userId;
+                    return doc;
+                }
+                else {
+                    return doc;
+                }
+            },
         });
 
         const initializeReplication = async () => {

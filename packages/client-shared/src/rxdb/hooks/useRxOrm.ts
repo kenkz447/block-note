@@ -8,11 +8,8 @@ export const useRxOrm = <T extends AppRxDocumentBase>(collectionName: keyof AppR
     const collection = useRxCollection<T>(collectionName);
 
     const insert = useCallback(async (params: Partial<T>) => {
-        const now = new Date();
-
         const entry = await collection.insert({
             id: generateRxId(),
-            createdAt: now.toISOString(),
             ...params
         } as T);
 

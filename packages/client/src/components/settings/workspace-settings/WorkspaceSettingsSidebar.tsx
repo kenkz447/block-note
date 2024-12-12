@@ -1,4 +1,4 @@
-import { Button, Separator } from '@writefy/client-shadcn';
+import { Button, DialogHeader, DialogTitle, Separator } from '@writefy/client-shadcn';
 import { Project, Workspace } from '@writefy/client-shared';
 import { Dot, Settings } from 'lucide-react';
 
@@ -14,9 +14,9 @@ interface SettingSidebarProps {
 export function WorkspaceSettingsSidebar({ workspace, projects, currentTab, onTabChange }: SettingSidebarProps) {
     return (
         <div className="flex flex-col p-4 bg-sidebar w-[250px] h-[500px]">
-            <p className="text-xl font-medium mb-4 px-4 line-clamp-1">
-                {workspace.name}
-            </p>
+            <DialogHeader className=" mb-4 px-4">
+                <DialogTitle className="line-clamp-1">{workspace.name}</DialogTitle>
+            </DialogHeader>
             <div className="flex flex-col gap-1 h-full">
                 <div className="grow flex flex-col gap-1">
                     <Button onClick={() => onTabChange('account')} variant={currentTab === 'account' ? 'secondary' : 'ghost'} className="w-full text-left flex gap-3 justify-start">

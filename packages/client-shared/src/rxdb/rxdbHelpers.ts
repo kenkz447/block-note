@@ -1,10 +1,10 @@
-import { addRxPlugin, createRxDatabase, RxCollection, WithDeleted } from 'rxdb';
+import { addRxPlugin, createRxDatabase, MaybePromise, RxCollection, WithDeleted } from 'rxdb';
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
 import { rxdbSchema } from './rxdbSchema';
 import { wrappedValidateAjvStorage } from 'rxdb/plugins/validate-ajv';
 
 import { RxDBUpdatePlugin } from 'rxdb/plugins/update';
-import { collection, getFirestore, QueryFieldFilterConstraint } from 'firebase/firestore';
+import { collection, CollectionReference, getFirestore, QueryFieldFilterConstraint } from 'firebase/firestore';
 import { replicateFirestore } from 'rxdb/plugins/replication-firestore';
 
 import { AppRxCollections } from './rxdbTypes';
@@ -48,13 +48,15 @@ interface CreateFirebaseReplication<T> {
     readonly remotePath: string[];
     readonly pullFilter?: QueryFieldFilterConstraint | QueryFieldFilterConstraint[];
     readonly pushFilter?: (item: WithDeleted<T>) => boolean;
+    readonly pushModifier?: (item: T) => MaybePromise<T>;
 }
 
 export const createFirebaseReplication = <T>({
     rxCollection,
     remotePath,
     pullFilter,
-    pushFilter
+    pushFilter,
+    pushModifier
 }: CreateFirebaseReplication<T>) => {
     const firestore = getFirestore();
     if (!firestore.app) {
@@ -74,10 +76,10 @@ export const createFirebaseReplication = <T>({
             firestore: {
                 projectId: remoteId,
                 database: firestore,
-                collection: remoteCollection
+                collection: remoteCollection as CollectionReference<T>
             },
             pull: { filter: pullFilter },
-            push: { filter: pushFilter },
+            push: { filter: pushFilter, modifier: pushModifier },
             live: true,
             serverTimestampField: 'serverTimestamp',
             autoStart: true
