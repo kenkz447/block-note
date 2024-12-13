@@ -27,7 +27,7 @@ export function WorkspaceSettingsImpl({ workspace }: WorkspaceSettingsProps) {
     const selectedProject = projects.find((project) => project.id === currentTab);
 
     return (
-        <DialogContent className="w-9/12 min-w-[800px] max-w-[1024px] p-0">
+        <DialogContent className="w-9/12 min-w-[600px] max-w-[800px] p-0">
             <div className="flex gap-4">
                 <WorkspaceSettingsSidebar
                     workspace={workspace}

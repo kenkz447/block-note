@@ -33,7 +33,7 @@ export const RxdbProvider = ({ currentUser, children }: RxdbProviderProps) => {
             return;
         }
         return () => {
-            db.destroy().then(() => setDb(undefined));
+            db.close().then(() => setDb(undefined));
         };
     }, [db]);
 

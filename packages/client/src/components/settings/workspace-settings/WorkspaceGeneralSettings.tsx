@@ -4,10 +4,16 @@ import { SettingHeader } from '../_shared/SettingHeader';
 import { useWorkspaces, Workspace } from '@writefy/client-shared';
 import { Alert, AlertDescription, AlertTitle, Button, Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, Input, Separator, usePopupAlert, usePopupDialog } from '@writefy/client-shadcn';
 import { DeleteConfirm } from './DeleteConfirm';
+import { Layers } from 'lucide-react';
 
 interface WorkspaceGeneralSettingsProps {
     readonly workspace: Workspace;
 }
+
+const icons = [{
+    Icon: Layers,
+    color: 'bg-blue-500'
+}];
 
 export function WorkspaceGeneralSettingsImpl({ workspace }: WorkspaceGeneralSettingsProps) {
     const { update, remove } = useWorkspaces();
@@ -51,38 +57,48 @@ export function WorkspaceGeneralSettingsImpl({ workspace }: WorkspaceGeneralSett
             />
             <div className="flex flex-col gap-10">
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)}>
-                        <FormField
-                            control={form.control}
-                            name="name"
-                            render={({ field }) => (
-                                <FormItem className="flex items-center gap-4">
-                                    <div className="grow">
-                                        <FormLabel>Name</FormLabel>
-                                        <FormDescription>
-                                            Should short and memorable
-                                        </FormDescription>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="">
+                        <div className="flex gap-4 items-end w-full">
+                            <FormField
+                                control={form.control}
+                                name="name"
+                                render={({ field }) => (
+                                    <div className="flex items-center gap-4">
+                                        {icons.map(({ Icon, color }) =>
+                                            <div key={color} className={`flex items-center gap-4 ${color} size-16 rounded-lg flex justify-center items-center`}>
+                                                <Icon size={24} />
+                                            </div>
+                                        )}
                                     </div>
-                                    <FormControl className="max-w-[250px]" >
-                                        <Input {...field} value={field.value?.toString()} />
-                                    </FormControl>
-                                    <FormMessage />
-                                    <FormDescription>
-                                        <Button
-                                            type="submit"
-                                            variant="secondary"
-                                            disabled={!form.formState.isValid || form.formState.isSubmitting || !form.formState.isDirty}
-                                        >
-                                            Save
-                                        </Button>
-                                    </FormDescription>
-                                </FormItem>
-                            )}
-                        />
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="name"
+                                render={({ field }) => (
+                                    <FormItem className="">
+                                        <FormLabel className="text-primary/50">Workspace name</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} value={field.value?.toString()} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <Button
+                                className="mt-0"
+                                type="submit"
+                                variant="secondary"
+                                disabled={!form.formState.isValid || form.formState.isSubmitting || !form.formState.isDirty}
+                            >
+                                Save
+                            </Button>
+                        </div>
                     </form>
                 </Form>
                 <Separator />
                 <div>
+                    <div className="mb-2 text-primary/50">Danger zone</div>
                     <Alert className="cursor-pointer" onClick={showDeleteAlert}>
                         <AlertTitle className="text-destructive">Delete workspace</AlertTitle>
                         <AlertDescription className="text-destructive">
