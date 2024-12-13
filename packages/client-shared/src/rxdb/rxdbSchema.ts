@@ -5,14 +5,24 @@ const sharedSchema = {
             maxLength: 64
         },
         createdAt: {
-            type: 'number'
+            type: 'string',
+            format: 'date-time'
         },
         createdBy: {
             type: 'string'
         },
+        updatedBy: {
+            type: 'string'
+        },
+        updatedAt: {
+            type: 'string',
+            format: 'date-time'
+        }
     },
     required: [
-        'id'
+        'id',
+        'createdAt',
+        'createdBy',
     ]
 };
 

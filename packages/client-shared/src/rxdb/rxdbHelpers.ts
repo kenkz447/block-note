@@ -10,10 +10,12 @@ import { replicateFirestore } from 'rxdb/plugins/replication-firestore';
 import { AppRxCollections } from './rxdbTypes';
 import { RxDBDevModePlugin } from 'rxdb/plugins/dev-mode';
 import { RxDBStatePlugin } from 'rxdb/plugins/state';
+import { RxDBLocalDocumentsPlugin } from 'rxdb/plugins/local-documents';
 
 addRxPlugin(RxDBStatePlugin);
 addRxPlugin(RxDBUpdatePlugin);
 addRxPlugin(RxDBDevModePlugin);
+addRxPlugin(RxDBLocalDocumentsPlugin);
 
 export const initRxdb = async (dbName: string) => {
     const db = await createRxDatabase<AppRxCollections>({
@@ -21,18 +23,22 @@ export const initRxdb = async (dbName: string) => {
         storage: wrappedValidateAjvStorage({
             storage: getRxStorageDexie()
         }),
-        eventReduce: true
+        eventReduce: true,
+        localDocuments: true
     });
 
     await db.addCollections({
         workspaces: {
-            schema: rxdbSchema.workspace
+            schema: rxdbSchema.workspace,
+            localDocuments: true
         },
         projects: {
-            schema: rxdbSchema.project
+            schema: rxdbSchema.project,
+            localDocuments: true
         },
         entries: {
-            schema: rxdbSchema.entry
+            schema: rxdbSchema.entry,
+            localDocuments: true
         },
         local_docs: {
             schema: rxdbSchema.localDoc
@@ -87,7 +93,7 @@ export const createFirebaseReplication = <T>({
     );
 
     replicaState.error$.subscribe(err => {
-        console.error('Replication error:', err);
+        console.error(`"${rxCollection.name}" replication:`, err);
     });
 
     return replicaState;

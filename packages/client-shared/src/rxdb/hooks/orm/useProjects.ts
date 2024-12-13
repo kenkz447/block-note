@@ -30,6 +30,7 @@ export const useProjects = ({ workspaceId }: UserProjectOptions) => {
                 ...project,
                 order: now.getTime(),
                 createdBy: userId,
+                createdAt: now.toISOString(),
                 workspaceId
             });
         }, [insert, userId, workspaceId]),

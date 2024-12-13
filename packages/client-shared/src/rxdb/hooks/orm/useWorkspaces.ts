@@ -17,18 +17,23 @@ export const useWorkspaces = () => {
 
     return {
         ...rest,
-        insert: useCallback((values: WorkspaceInsertValues) => insert({
-            ...values,
-            createdBy: userId,
-            owner: userId,
-            activeMembers: [userId],
-            members: [{
-                id: userId,
-                name: userDisplayName,
-                role: 'owner',
-                addedAt: new Date().toISOString(),
-                addedBy: userId,
-            }]
-        }), [userDisplayName, insert, userId])
+        insert: useCallback((values: WorkspaceInsertValues) => {
+            const now = new Date().toISOString();
+
+            return insert({
+                ...values,
+                createdAt: now,
+                createdBy: userId,
+                owner: userId,
+                activeMembers: [userId],
+                members: [{
+                    id: userId,
+                    name: userDisplayName,
+                    role: 'owner',
+                    addedAt: now,
+                    addedBy: userId,
+                }]
+            });
+        }, [userDisplayName, insert, userId])
     };
 };

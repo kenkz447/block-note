@@ -23,19 +23,19 @@ export const RxdbProvider = ({ currentUser, children }: RxdbProviderProps) => {
         }
 
         initRxdb(activeDbName).then(setDb);
-
     }, [activeDbName, db]);
 
     /**
      * Destroy the database when the user changes
      */
     useEffect(() => {
-        if (activeDbName !== db?.name) {
-            db?.destroy().then(() => {
-                setDb(undefined);
-            });
+        if (!db) {
+            return;
         }
-    }, [activeDbName, db]);
+        return () => {
+            db.destroy().then(() => setDb(undefined));
+        };
+    }, [db]);
 
     /**
      * Set the active database name based on the current user

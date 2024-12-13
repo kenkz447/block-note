@@ -2,7 +2,7 @@ import { RxCollection, RxDatabase } from 'rxdb';
 
 export interface AppRxDocumentBase {
     readonly id: string;
-    readonly createdAt: unknown;
+    readonly createdAt: string;
     readonly createdBy: string;
 }
 

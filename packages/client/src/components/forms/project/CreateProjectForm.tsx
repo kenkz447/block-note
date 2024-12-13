@@ -15,6 +15,10 @@ const createSchema = z.object({
     name: z.string().min(1),
 });
 
+const defaultValues: CreateProjectValues = {
+    name: ''
+};
+
 export function CreateProjectForm({ onSubmit }: CreateProjectFormProps) {
     const {
         reset,
@@ -22,6 +26,7 @@ export function CreateProjectForm({ onSubmit }: CreateProjectFormProps) {
         ...form
     } = useForm<CreateProjectValues>({
         resolver: zodResolver(createSchema),
+        defaultValues
     });
 
 
