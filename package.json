@@ -11,6 +11,10 @@
         "server": "bun run --cwd packages/server dev",
         "client-blocksuite-theme": "bun run --cwd packages/client-blocksuite-theme build"
     },
+    "peerDependencies": {
+        "ajv": "^8.17.1",
+        "ws": "8.16.0"
+    },
     "devDependencies": {
         "@eslint/js": "~9.14.0",
         "@testing-library/jest-dom": "^6.6.3",

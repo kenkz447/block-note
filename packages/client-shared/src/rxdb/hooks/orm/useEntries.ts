@@ -63,6 +63,7 @@ export const useEntries = ({ workspaceId, projectId }: UserEntryOptions) => {
                 ...params,
                 name: params.name || DEFAULT_ENTRY_NAME,
                 order: now.getTime(),
+                createdAt: now.toISOString(),
                 createdBy: userId,
                 workspaceId,
                 projectId
