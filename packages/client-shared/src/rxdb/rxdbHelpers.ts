@@ -50,6 +50,7 @@ export const initRxdb = async (dbName: string) => {
 
 
 interface CreateFirebaseReplication<T> {
+    readonly userId: string;
     readonly rxCollection: RxCollection;
     readonly remotePath: string[];
     readonly pullFilter?: QueryFieldFilterConstraint | QueryFieldFilterConstraint[];
@@ -58,12 +59,17 @@ interface CreateFirebaseReplication<T> {
 }
 
 export const createFirebaseReplication = <T>({
+    userId,
     rxCollection,
     remotePath,
     pullFilter,
     pushFilter,
     pushModifier
 }: CreateFirebaseReplication<T>) => {
+    if (rxCollection.database.name !== `user_${userId.toLowerCase()}`) {
+        throw new Error('Database name does not match the user ID');
+    };
+
     const firestore = getFirestore();
     if (!firestore.app) {
         throw new Error('Firestore app not initialized');

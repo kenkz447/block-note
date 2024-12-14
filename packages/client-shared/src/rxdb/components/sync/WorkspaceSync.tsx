@@ -21,6 +21,7 @@ function WorkspaceSyncImpl({ userId, children }: WorkspaceSyncProps) {
     // Start syncing the workspace when the user is logged in
     useEffect(() => {
         const replicateState = createFirebaseReplication<Workspace>({
+            userId,
             rxCollection: db.collections.workspaces,
             remotePath: ['workspaces'],
             pullFilter: where('activeMembers', 'array-contains', userId),
@@ -50,7 +51,7 @@ function WorkspaceSyncImpl({ userId, children }: WorkspaceSyncProps) {
         return () => {
             const stopReplication = async () => {
                 if (replicateState) {
-                    if (!db.destroyed) {
+                    if (!db.closed) {
                         await replicateState.remove();
                     }
                     setReplicateState(undefined);

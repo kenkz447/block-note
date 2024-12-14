@@ -57,7 +57,7 @@ function Initializer() {
                 }
 
                 return (
-                    <RxdbProvider currentUser={authContext.currentUser}>
+                    <RxdbProvider key={authContext.currentUser?.uid ?? 'anonymous'} currentUser={authContext.currentUser}>
                         {(rxdbContext) => {
                             if (!rxdbContext.db) {
                                 return <LoadingScreen />;

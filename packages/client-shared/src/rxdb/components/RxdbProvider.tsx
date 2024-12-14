@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import React, { createElement, ReactNode, useEffect, useMemo, useState } from 'react';
 import { RxdbContextType } from '../rxdbContexts';
 import { initRxdb } from '../rxdbHelpers';
 import { User } from 'firebase/auth';
