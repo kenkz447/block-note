@@ -6,11 +6,21 @@
   <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Wri</title>
-  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
   <meta name="apple-mobile-web-app-title" content="Wri" />
   <link rel="manifest" href="/site.webmanifest" />
+  <script>
+    // Set favicon based on user's color scheme
+    const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const favico = document.createElement('link');
+    favico.rel = 'icon';
+    if (isDarkMode) {
+      favico.href = '/favicon-dark.ico';
+    } else {
+      favico.href = '/favicon-light.ico';
+    }
+    document.head.appendChild(favico);
+  </script>
 </head>
 
 <body class="min-h-screen bg-background font-sans antialiased">
