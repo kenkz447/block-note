@@ -10,11 +10,6 @@ interface WorkspaceGeneralSettingsProps {
     readonly workspace: Workspace;
 }
 
-const icons = [{
-    Icon: Layers,
-    color: 'bg-blue-500'
-}];
-
 export function WorkspaceGeneralSettingsImpl({ workspace }: WorkspaceGeneralSettingsProps) {
     const { update, remove } = useWorkspaces();
 
@@ -49,6 +44,8 @@ export function WorkspaceGeneralSettingsImpl({ workspace }: WorkspaceGeneralSett
         });
     };
 
+    const avatar = workspace.name[0].toUpperCase();
+
     return (
         <div>
             <SettingHeader
@@ -63,12 +60,8 @@ export function WorkspaceGeneralSettingsImpl({ workspace }: WorkspaceGeneralSett
                                 control={form.control}
                                 name="name"
                                 render={({ field }) => (
-                                    <div className="flex items-center gap-4">
-                                        {icons.map(({ Icon, color }) =>
-                                            <div key={color} className={`flex items-center gap-4 ${color} size-16 rounded-lg flex justify-center items-center`}>
-                                                <Icon size={24} />
-                                            </div>
-                                        )}
+                                    <div className="bg-secondary flex items-center justify-center gap-4 size-16 rounded-lg ">
+                                        <div className="text-primary/50 text-xl font-bold">{avatar}</div>
                                     </div>
                                 )}
                             />
