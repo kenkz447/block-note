@@ -7,6 +7,7 @@ import { AppSidebarContext } from '@/components/layout/editor/sidebar/children/A
 import { useEntries } from '@writefy/client-shared';
 import { useCurrentUser } from '@writefy/client-shared';
 import { EntrySync } from '@writefy/client-shared';
+import { EditorContext, EditorProvider } from '@writefy/client-blocksuite';
 
 export const Route = createFileRoute('/app/editor/$workspaceId/$projectId')({
     component: WithEntrySync,
@@ -75,5 +76,19 @@ function RouteComponent() {
         return <LoadingScreen />;
     }
 
-    return <Outlet />;
+    return (
+        <EditorProvider workspaceId={workspaceId} projectId={projectId}>
+            {(editorContext) => {
+                if (!editorContext.collection) {
+                    return <LoadingScreen />;
+                }
+
+                return (
+                    <EditorContext.Provider value={editorContext}>
+                        <Outlet />
+                    </EditorContext.Provider>
+                );
+            }}
+        </EditorProvider>
+    );
 }

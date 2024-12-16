@@ -7,6 +7,7 @@ import { createDefaultDoc } from '@blocksuite/blocks';
 
 import { effects as blocksEffects } from '@blocksuite/blocks/effects';
 import { effects as presetsEffects } from '@blocksuite/presets/effects';
+import { shallowEqualByKey } from '@writefy/client-shared/src/utils';
 
 blocksEffects();
 presetsEffects();
@@ -19,7 +20,7 @@ interface EditorProviderProps {
     readonly children: (editorContext: EditorContextType) => React.ReactNode;
 }
 
-export function EditorProvider({ workspaceId, projectId, children }: EditorProviderProps) {
+function EditorProviderImpl({ workspaceId, projectId, children }: EditorProviderProps) {
     const db = useRxdb();
 
     const {
@@ -98,7 +99,7 @@ export function EditorProvider({ workspaceId, projectId, children }: EditorProvi
                 if (isDocExists) {
                     return;
                 }
-                createDefaultDoc(docCollection, { id: e.documentId });
+                createDefaultDoc(docCollection, { id: e.documentId, title: e.documentData.name });
             }),
             entryCollection.remove$.subscribe((e) => {
                 if (e.documentData.type === 'folder') {
@@ -140,3 +141,5 @@ export function EditorProvider({ workspaceId, projectId, children }: EditorProvi
 
     return children(contextValue);
 }
+
+export const EditorProvider = React.memo(EditorProviderImpl, shallowEqualByKey('workspaceId', 'projectId'));

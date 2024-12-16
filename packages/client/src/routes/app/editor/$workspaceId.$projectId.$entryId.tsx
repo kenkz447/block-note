@@ -63,18 +63,6 @@ function RouteComponent() {
     }
 
     return (
-        <EditorProvider workspaceId={workspaceId} projectId={projectId}>
-            {(editorContext) => {
-                if (!editorContext.collection) {
-                    return <LoadingScreen />;
-                }
-
-                return (
-                    <EditorContext.Provider value={editorContext}>
-                        <EditorContainer entry={entry} />
-                    </EditorContext.Provider>
-                );
-            }}
-        </EditorProvider>
+        <EditorContainer entry={entry} />
     );
 }
