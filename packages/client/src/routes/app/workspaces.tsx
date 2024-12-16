@@ -2,7 +2,6 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import {
     ChevronRight,
     Info,
-    Layers,
     Pen,
     Plus,
     UserRound,

@@ -2,9 +2,8 @@ import { memo } from 'react';
 import { useForm } from 'react-hook-form';
 import { SettingHeader } from '../_shared/SettingHeader';
 import { useWorkspaces, Workspace } from '@writefy/client-shared';
-import { Alert, AlertDescription, AlertTitle, Button, Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, Input, Separator, usePopupAlert, usePopupDialog } from '@writefy/client-shadcn';
+import { Alert, AlertDescription, AlertTitle, Button, Form, FormControl, FormField, FormItem, FormLabel, FormMessage, Input, Separator, usePopupAlert, usePopupDialog } from '@writefy/client-shadcn';
 import { DeleteConfirm } from './DeleteConfirm';
-import { Layers } from 'lucide-react';
 
 interface WorkspaceGeneralSettingsProps {
     readonly workspace: Workspace;
@@ -59,7 +58,7 @@ export function WorkspaceGeneralSettingsImpl({ workspace }: WorkspaceGeneralSett
                             <FormField
                                 control={form.control}
                                 name="name"
-                                render={({ field }) => (
+                                render={() => (
                                     <div className="bg-secondary flex items-center justify-center gap-4 size-16 rounded-lg ">
                                         <div className="text-primary/50 text-xl font-bold">{avatar}</div>
                                     </div>
