@@ -112,7 +112,7 @@ export function DocTree({ activeEntry, entries, showCreateEntryForm, updateEntry
     return (
         <DndProvider backend={MultiBackend} options={getBackendOptions()}>
             <div
-                className="group flex items-center gap-2 hover:bg-sidebar-accent px-2 py-2 rounded-lg"
+                className="mb-[2px] group flex items-center gap-2 hover:bg-sidebar-accent px-2 py-2 rounded-lg"
             >
                 <span className="grow font-medium text-primary/60">Pages</span>
                 <span className="hidden group-hover:flex">
