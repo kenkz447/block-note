@@ -1,5 +1,5 @@
 import { createFileRoute, useParams } from '@tanstack/react-router';
-import { EditorContainer, EditorProvider, EditorContext } from '@writefy/client-blocksuite';
+import { EditorContainer } from '@writefy/client-blocksuite';
 import { Entry, useEntries } from '@writefy/client-shared';
 import { useContext, useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
