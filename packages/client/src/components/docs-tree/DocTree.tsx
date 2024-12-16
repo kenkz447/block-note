@@ -23,6 +23,8 @@ interface DocTreeProps {
     readonly removeEntry: (entryId: string) => Promise<void>;
 }
 
+const ROOT_ID = 0;
+
 export function DocTree({ activeEntry, entries, showCreateEntryForm, updateEntry, removeEntry }: DocTreeProps) {
 
     const [treeData, setTreeData] = useState<NodeModel<TreeNodeData>[]>();
@@ -32,7 +34,7 @@ export function DocTree({ activeEntry, entries, showCreateEntryForm, updateEntry
 
         const tree: NodeModel<TreeNodeData>[] = entries.map((entry) => ({
             id: entry.id,
-            parent: entry.parent ?? 0,
+            parent: entry.parent ?? ROOT_ID,
             text: entry.name,
             data: {
                 actived: activeEntry?.id === entry.id,
@@ -59,11 +61,11 @@ export function DocTree({ activeEntry, entries, showCreateEntryForm, updateEntry
         const dropEntry = options.dropTarget?.data?.entry;
 
         const isDropOnRoot = !dropEntry;
-        const parentId = isDropOnRoot ? null : dropEntry?.id;
+        const nodeParentId = isDropOnRoot ? ROOT_ID : dropEntry?.id;
 
         const now = new Date().getTime();
 
-        const siblings = _tree?.filter((node) => node.parent === parentId);
+        const siblings = _tree?.filter((node) => node.parent === nodeParentId);
         const currentIndex = siblings?.findIndex((node) => node.id === draggingEntry.id);
         const prevSibling = siblings?.[currentIndex - 1];
         const nextSibling = siblings?.[currentIndex + 1];
@@ -71,9 +73,11 @@ export function DocTree({ activeEntry, entries, showCreateEntryForm, updateEntry
         const prevOrder = prevSibling?.data?.entry.order;
         const nextOrder = nextSibling?.data?.entry.order;
 
+        const nextParentId = nodeParentId === 0 ? null : nodeParentId;
+
         if (prevOrder && nextOrder) {
             await updateEntry(draggingEntry.id, {
-                parent: parentId,
+                parent: nextParentId,
                 order: (prevOrder + nextOrder!) / 2
             });
             return;
@@ -81,7 +85,7 @@ export function DocTree({ activeEntry, entries, showCreateEntryForm, updateEntry
 
         if (prevOrder) {
             await updateEntry(draggingEntry.id, {
-                parent: parentId,
+                parent: nextParentId,
                 order: prevOrder! + 1000
             });
             return;
@@ -89,14 +93,14 @@ export function DocTree({ activeEntry, entries, showCreateEntryForm, updateEntry
 
         if (nextOrder) {
             await updateEntry(draggingEntry.id, {
-                parent: parentId,
+                parent: nextParentId,
                 order: nextOrder! - 1000
             });
             return;
         }
 
         await updateEntry(draggingEntry.id, {
-            parent: parentId,
+            parent: nextParentId,
             order: now
         });
     }, [updateEntry]);
