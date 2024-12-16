@@ -15,6 +15,7 @@ import { DocNodePreview } from './children/DocNodePreview';
 import { DocNodeDropPlaceHolder } from './children/DocNodeDropPlaceHolder';
 
 interface DocTreeProps {
+    readonly activeEntry?: Entry;
     readonly entries?: Entry[];
     readonly showCreateEntryForm: (type: string) => void;
     readonly showUpdateEntryForm: (entry: Entry) => void;
@@ -22,7 +23,7 @@ interface DocTreeProps {
     readonly removeEntry: (entryId: string) => Promise<void>;
 }
 
-export function DocTree({ entries, showCreateEntryForm, updateEntry, removeEntry }: DocTreeProps) {
+export function DocTree({ activeEntry, entries, showCreateEntryForm, updateEntry, removeEntry }: DocTreeProps) {
 
     const [treeData, setTreeData] = useState<NodeModel<TreeNodeData>[]>();
 
@@ -34,6 +35,7 @@ export function DocTree({ entries, showCreateEntryForm, updateEntry, removeEntry
             parent: entry.parent ?? 0,
             text: entry.name,
             data: {
+                actived: activeEntry?.id === entry.id,
                 entry,
                 actions: {
                     rename: async (name: string) => { await updateEntry(entry.id, { name }); },
@@ -45,7 +47,7 @@ export function DocTree({ entries, showCreateEntryForm, updateEntry, removeEntry
         }));
 
         return tree;
-    }, [removeEntry, updateEntry]);
+    }, [activeEntry?.id, removeEntry, updateEntry]);
 
     useEffect(() => {
         const tree = entriesToTree(entries);

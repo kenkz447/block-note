@@ -1,9 +1,10 @@
 import { createFileRoute, useParams } from '@tanstack/react-router';
 import { EditorContainer, EditorProvider, EditorContext } from '@writefy/client-blocksuite';
 import { Entry, useEntries } from '@writefy/client-shared';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
 import { z } from 'zod';
+import { AppSidebarContext } from '@/components/layout/editor/sidebar/children/AppSidebarContext';
 
 export const Route = createFileRoute(
     '/app/editor/$workspaceId/$projectId/$entryId',
@@ -17,6 +18,7 @@ export const Route = createFileRoute(
 });
 
 function RouteComponent() {
+    const { setActiveEntry } = useContext(AppSidebarContext)!;
 
     const { entryId, projectId, workspaceId } = useParams({
         from: '/app/editor/$workspaceId/$projectId/$entryId',
@@ -40,6 +42,17 @@ function RouteComponent() {
             sub.unsubscribe();
         };
     }, [subscribeSingle, entryId]);
+
+    useEffect(() => {
+        if (!entry) {
+            return;
+        }
+
+        setActiveEntry(entry);
+        return () => {
+            setActiveEntry(undefined);
+        };
+    }, [entry, setActiveEntry]);
 
     if (entry === null) {
         throw new Error('Entry not found');

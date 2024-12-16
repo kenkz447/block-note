@@ -9,7 +9,7 @@ import { UpdateEntryForm, UpdateEntryValues } from '@/components/forms/entry/Upd
 
 export function AppSidebarBody() {
     const context = useContext(AppSidebarContext)!;
-    const { activeProject, entries } = context;
+    const { activeProject, entries, activeEntry } = context;
 
     const { projectId, workspaceId } = useParams({
         from: '/app/editor/$workspaceId/$projectId'
@@ -69,6 +69,7 @@ export function AppSidebarBody() {
                 (activeProject) && (
                     <div className="px-2">
                         <DocTree
+                            activeEntry={activeEntry}
                             entries={entries}
                             showCreateEntryForm={showCreateEntryForm}
                             showUpdateEntryForm={showUpdateEntryForm}

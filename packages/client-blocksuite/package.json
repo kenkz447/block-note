@@ -7,12 +7,12 @@
         "coverage": "vitest run --coverage"
     },
     "dependencies": {
-        "@blocksuite/block-std": "^0.17.27",
-        "@blocksuite/blocks": "^0.17.27",
-        "@blocksuite/global": "^0.17.27",
-        "@blocksuite/presets": "^0.17.27",
-        "@blocksuite/store": "^0.17.27",
-        "@blocksuite/sync": "^0.17.27",
+        "@blocksuite/block-std": "latest",
+        "@blocksuite/blocks": "latest",
+        "@blocksuite/global": "latest",
+        "@blocksuite/presets": "latest",
+        "@blocksuite/store": "latest",
+        "@blocksuite/sync": "latest",
         "@writefy/client-shadcn": "*"
     },
     "devDependencies": {

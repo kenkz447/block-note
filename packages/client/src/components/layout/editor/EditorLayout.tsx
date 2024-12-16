@@ -39,8 +39,10 @@ export function MasterLayout({ children }: React.PropsWithChildren) {
             </ResizablePanel>
             <ResizableHandle />
             <ResizablePanel>
-                <Header toggleSidebar={toggleSidebar} />
-                {children}
+                <div className="h-[100vh]">
+                    <Header toggleSidebar={toggleSidebar} />
+                    {children}
+                </div>
             </ResizablePanel>
         </ResizablePanelGroup>
     );

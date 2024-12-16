@@ -13,3 +13,8 @@
 .editor-container.size-50 {
     --affine-editor-width: 50%;
 }
+
+.page-editor {
+    position: relative;
+    padding-bottom: 100px;
+}

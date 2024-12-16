@@ -60,6 +60,7 @@ function RouteComponent() {
     const [activeProject, setActiveProject] = useState<Project>();
     const [projects, setProjects] = useState<Project[]>();
     const [entries, setEntries] = useState<Entry[]>();
+    const [activeEntry, setActiveEntry] = useState<Entry | undefined>();
 
     useEffect(() => {
         if (!currentWorkspace?.id) {
@@ -82,10 +83,12 @@ function RouteComponent() {
             value={{
                 setActiveProject,
                 setEntries,
+                setActiveEntry,
                 workspace: currentWorkspace,
                 projects,
                 activeProject,
                 entries,
+                activeEntry
             }}
         >
             <Layout>
