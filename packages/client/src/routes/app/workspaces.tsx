@@ -24,6 +24,7 @@ import { CreateWorkspaceForm } from '@/components/forms/workspace/CreateWorkspac
 import { useAuth, useCurrentUser } from '@writefy/client-shared';
 import { UserSettings } from '@/components/settings/UserSettings';
 import { WorkspaceSettings } from '@/components/settings/WorkspaceSettings';
+import { setPageTitle } from '@/utils/pageUtils';
 
 export const Route = createFileRoute('/app/workspaces')({
     component: RouteComponent,
@@ -69,6 +70,10 @@ function RouteComponent() {
             sub.unsubscribe();
         };
     }, [subscribe]);
+
+    useEffect(() => {
+        setPageTitle('Workspaces');
+    }, [currentUser]);
 
     return (
         <div className="h-full flex flex-col justify-center items-center gap-8">

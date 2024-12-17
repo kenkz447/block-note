@@ -5,6 +5,7 @@ import { useContext, useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
 import { z } from 'zod';
 import { AppSidebarContext } from '@/components/layout/editor/sidebar/children/AppSidebarContext';
+import { setPageTitle } from '@/utils/pageUtils';
 
 export const Route = createFileRoute(
     '/app/editor/$workspaceId/$projectId/$entryId',
@@ -53,6 +54,11 @@ function RouteComponent() {
             setActiveEntry(undefined);
         };
     }, [entry, setActiveEntry]);
+
+    // Set page title
+    useEffect(() => {
+        setPageTitle(entry?.name);
+    }, [entry]);
 
     if (entry === null) {
         throw new Error('Entry not found');

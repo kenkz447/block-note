@@ -10,6 +10,7 @@ import { AppSidebarContext } from '@/components/layout/editor/sidebar/children/A
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
 import { useCurrentUser, useProjects } from '@writefy/client-shared';
 import { ProjectSync } from '@writefy/client-shared';
+import { setPageTitle } from '@/utils/pageUtils';
 
 export const Route = createFileRoute('/app/editor/$workspaceId')({
     component: WithProjectSync,
@@ -73,6 +74,11 @@ function RouteComponent() {
             subscription.unsubscribe();
         };
     }, [currentWorkspace?.id, subscribe]);
+
+    // Set page title
+    useEffect(() => {
+        setPageTitle(currentWorkspace?.name);
+    }, [currentWorkspace]);
 
     if (currentWorkspace === undefined) {
         return <LoadingScreen />;

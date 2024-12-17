@@ -1,13 +1,13 @@
-import * as React from 'react';
 import { createFileRoute, Outlet, useParams } from '@tanstack/react-router';
 import { useProject } from '@/hooks/helpers/useProject';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { AppSidebarContext } from '@/components/layout/editor/sidebar/children/AppSidebarContext';
 import { useEntries } from '@writefy/client-shared';
 import { useCurrentUser } from '@writefy/client-shared';
 import { EntrySync } from '@writefy/client-shared';
 import { EditorContext, EditorProvider } from '@writefy/client-blocksuite';
+import { setPageTitle } from '@/utils/pageUtils';
 
 export const Route = createFileRoute('/app/editor/$workspaceId/$projectId')({
     component: WithEntrySync,
@@ -58,7 +58,7 @@ function RouteComponent() {
         throw new Error('Project not found');
     }
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (!currentProject) {
             return;
         }
@@ -71,6 +71,12 @@ function RouteComponent() {
             setEntries(undefined);
         };
     }, [setActiveProject, setEntries, currentProject, subscribeEntries]);
+
+    // Set page title
+    useEffect(() => {
+        setPageTitle(currentProject?.name);
+    }, [currentProject]);
+
 
     if (currentProject === undefined) {
         return <LoadingScreen />;
