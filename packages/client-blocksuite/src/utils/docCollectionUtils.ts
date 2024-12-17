@@ -5,7 +5,6 @@ import {
     DocCollection,
     type DocCollectionOptions,
     IdGeneratorType,
-    Job,
     Schema,
     Text
 } from '@blocksuite/store';
@@ -52,18 +51,17 @@ export async function createDefaultDocCollection(db: AppRxDatabase, collectionId
             enable_synced_doc_block: true,
             enable_pie_menu: true,
             enable_lasso_tool: true,
+            enable_edgeless_text: true,
             enable_color_picker: true,
+            enable_mind_map_import: true,
+            enable_advanced_block_visibility: true,
+            enable_shape_shadow_blur: false,
+            enable_new_dnd: false,
             ...flags,
         },
     };
     const collection = new DocCollection(options);
     collection.start();
-
-    // debug info
-    window.collection = collection;
-    window.blockSchemas = AffineSchemas;
-    window.job = new Job({ collection });
-    window.Y = DocCollection.Y;
 
     return collection;
 }
