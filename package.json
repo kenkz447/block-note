@@ -9,7 +9,8 @@
         "client": "bun run --cwd packages/client",
         "client-shared": "bun run --cwd packages/client-shared",
         "server": "bun run --cwd packages/server dev",
-        "client-blocksuite-theme": "bun run --cwd packages/client-blocksuite-theme build"
+        "client-blocksuite-theme": "bun run --cwd packages/client-blocksuite-theme build",
+        "postinstall": "patch-package"
     },
     "peerDependencies": {
         "ajv": "^8.17.1",
@@ -30,5 +31,8 @@
         "jsdom": "^25.0.1",
         "typescript": "~5.6.3",
         "typescript-eslint": "~8.14.0"
-    }
+    },
+    "trustedDependencies": [
+        "patch-package"
+    ]
 }
