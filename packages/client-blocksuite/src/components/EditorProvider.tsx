@@ -89,6 +89,7 @@ function EditorProviderImpl({ workspaceId, projectId, children }: EditorProvider
             return;
         }
 
+        // RxDB events handling
         const entriesSubscribes = [
             // Create a new document in the editor collection when a new entry is created in the database
             entryCollection.insert$.subscribe((e) => {
@@ -113,6 +114,7 @@ function EditorProviderImpl({ workspaceId, projectId, children }: EditorProvider
             })
         ];
 
+        // Blocksuite events handling
         const docAdded = docCollection.slots.docAdded.on(async (docId) => {
             const isEntryExists = await checkEntryExists(docId);
             if (isEntryExists) {
@@ -130,8 +132,9 @@ function EditorProviderImpl({ workspaceId, projectId, children }: EditorProvider
         return () => {
             entriesSubscribes.forEach((s) => s.unsubscribe());
             docAdded.dispose();
+            // docUpdated.dispose();
         };
-    }, [checkEntryExists, docCollection, entryCollection.insert$, entryCollection.remove$, insertEntry]);
+    }, [checkEntryExists, docCollection, entryCollection.insert$, entryCollection.remove$, entryCollection.update$, insertEntry]);
 
     const contextValue = useMemo((): EditorContextType => {
         return {

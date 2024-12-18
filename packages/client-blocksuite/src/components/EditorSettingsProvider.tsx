@@ -21,20 +21,49 @@ const settingsSchema = z.object({
     pageWidth: z.enum(options.pageWidth.map((option) => option.value) as [string, ...string[]]),
 });
 
+const defaultSettings: EditorSettings = {
+    pageWidth: '100%',
+};
 
 export function EditorSettingsProvider({ db, children }: EditorSettingsProviderProps) {
     const [settings, setSettings] = useState<EditorSettings>();
 
+    // Initialize settings from rxdb
     useEffect(() => {
         const setupRxState = async () => {
-            const rxState = await db.addState('editor-settings') as RxState<EditorSettings>;
-            const stateValue = await rxState.get();
+            const rxState = await db.addState('local-settings') as RxState<{
+                editor: EditorSettings;
+            }>;
 
-            setSettings(stateValue);
+            const stateValue = await rxState.get();
+            if (stateValue?.editor) {
+                setSettings(stateValue.editor);
+            }
+            else {
+                setSettings(defaultSettings);
+            }
         };
 
         setupRxState();
     }, [db]);
+
+    // Save settings to rxdb when settings change
+    useEffect(() => {
+        if (!settings) {
+            return;
+        }
+
+        const saveSettings = async () => {
+            const rxState = await db.addState('local-settings');
+            const stateValue = rxState.get();
+            if (stateValue?.editor === settings) {
+                return;
+            }
+            rxState.set('editor', () => settings);
+        };
+
+        saveSettings();
+    }, [db, settings]);
 
     const setSettingByKey = useCallback((key: keyof EditorSettings, value: EditorSettingValue) => {
         setSettings((prev) => {

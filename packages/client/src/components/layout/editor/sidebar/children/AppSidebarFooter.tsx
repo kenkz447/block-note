@@ -2,7 +2,7 @@ import { Button } from '@writefy/client-shadcn';
 import { memo, useCallback } from 'react';
 import { useAuth, useCurrentUser } from '@writefy/client-shared';
 import { Avatar, AvatarImage } from '@writefy/client-shadcn';
-import { ChevronsUpDown } from 'lucide-react';
+import { Settings } from 'lucide-react';
 import { UserSettings } from '@/components/settings/UserSettings';
 import { usePopupDialog } from '@writefy/client-shadcn';
 
@@ -31,7 +31,7 @@ function AppSidebarFooterImpl() {
                                 <span className="grow text-left">
                                     {currentUser.displayName}
                                 </span>
-                                <ChevronsUpDown />
+                                <Settings />
                             </div>
                         </Button>
                     )

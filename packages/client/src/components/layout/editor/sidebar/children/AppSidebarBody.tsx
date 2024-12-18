@@ -21,7 +21,7 @@ export function AppSidebarBody() {
         projectId
     });
 
-    const [, setSearch] = useState<string>();
+    const [search, setSearch] = useState<string>('');
 
     const showCreateEntryForm = useCallback((type: string) => {
         const createEntry = async (formValues: CreateEntryValues) => {
@@ -59,6 +59,7 @@ export function AppSidebarBody() {
                 activeProject && (
                     <div className="flex gap-2 px-2 my-2">
                         <Input
+                            value={search}
                             placeholder="Search"
                             onChange={(e) => setSearch(e.currentTarget.value)}
                         />
@@ -69,6 +70,7 @@ export function AppSidebarBody() {
                 (activeProject) && (
                     <div className="px-2">
                         <DocTree
+                            search={search}
                             activeEntry={activeEntry}
                             entries={entries}
                             showCreateEntryForm={showCreateEntryForm}

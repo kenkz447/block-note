@@ -41,7 +41,7 @@ export function MasterLayout({ children }: React.PropsWithChildren) {
             <ResizablePanel>
                 <div className="h-[100vh] flex flex-col">
                     <Header toggleSidebar={toggleSidebar} />
-                    <div className="overflow-auto">
+                    <div className="overflow-auto grow">
                         {children}
                     </div>
                 </div>

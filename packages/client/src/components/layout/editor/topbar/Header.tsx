@@ -1,12 +1,13 @@
 import { usePageSettings } from '@writefy/client-blocksuite';
 import { Button, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, Separator } from '@writefy/client-shadcn';
 import { Proportions, Settings2, Sidebar } from 'lucide-react';
+import { memo } from 'react';
 
 interface HeaderProps {
     toggleSidebar: () => void;
 }
 
-export function Header({ toggleSidebar }: HeaderProps) {
+function HeaderImpl({ toggleSidebar }: HeaderProps) {
     const { options, settings, setSettings } = usePageSettings();
 
     return (
@@ -47,3 +48,5 @@ export function Header({ toggleSidebar }: HeaderProps) {
         </header>
     );
 };
+
+export const Header = memo(HeaderImpl);

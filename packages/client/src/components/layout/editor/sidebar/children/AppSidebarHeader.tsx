@@ -5,6 +5,7 @@ import { Project, Workspace, useProjects } from '@writefy/client-shared';
 import { CreateProjectForm } from '@/components/forms/project/CreateProjectForm';
 import { useNavigate } from '@tanstack/react-router';
 import { useCallback } from 'react';
+import { WorkspaceAvatar } from '@/components/display/WorkspaceAvatar';
 
 interface AppSidebarHeaderProps {
     readonly workspace: Workspace;
@@ -49,14 +50,12 @@ export function AppSidebarHeader({ workspace, projects, activeProject }: AppSide
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="w-full block p-2 h-12 data-[state=open]:bg-sidebar-accent">
                         <div className="flex items-center gap-2">
-                            <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                                <Layers />
-                            </div >
+                            <WorkspaceAvatar workspace={workspace} />
                             <div className="grid flex-1 text-left text-sm leading-tight">
-                                <span className="truncate font-semibold">
+                                <span className="truncate font-semibold leading-1">
                                     {workspace.name ?? 'Your Workspace'}
                                 </span>
-                                <span className="truncate text-xs text-primary/50">
+                                <span className="truncate text-xs font-normal text-primary/50">
                                     {activeProject?.name ?? 'No project selected'}
                                 </span>
                             </div>

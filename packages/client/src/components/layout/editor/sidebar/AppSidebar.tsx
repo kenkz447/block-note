@@ -13,7 +13,7 @@ export function AppSidebar() {
     const { workspace, projects, activeProject } = context;
 
     return (
-        <div className="h-full flex flex-col bg-sidebar gap-2 text-sidebar-foreground">
+        <div className="h-full flex flex-col bg-sidebar text-sidebar-foreground">
             <AppSidebarHeader workspace={workspace} projects={projects} activeProject={activeProject} />
             {
                 activeProject

@@ -15,6 +15,7 @@ import { DocNodePreview } from './children/DocNodePreview';
 import { DocNodeDropPlaceHolder } from './children/DocNodeDropPlaceHolder';
 
 interface DocTreeProps {
+    readonly search: string;
     readonly activeEntry?: Entry;
     readonly entries?: Entry[];
     readonly showCreateEntryForm: (type: string) => void;
@@ -25,14 +26,43 @@ interface DocTreeProps {
 
 const ROOT_ID = 0;
 
-export function DocTree({ activeEntry, entries, showCreateEntryForm, updateEntry, removeEntry }: DocTreeProps) {
+const rescursiveFindParents = (entry: Entry, entries: Entry[]): Entry[] => {
+    const parent = entry.parent;
+    if (!parent) return [];
+
+    const parentEntry = entries.find((e) => e.id === parent);
+    if (!parentEntry) return [];
+
+    return [parentEntry, ...rescursiveFindParents(parentEntry, entries)];
+};
+
+export function DocTree({
+    search,
+    activeEntry,
+    entries,
+    showCreateEntryForm,
+    updateEntry,
+    removeEntry
+}: DocTreeProps) {
 
     const [treeData, setTreeData] = useState<NodeModel<TreeNodeData>[]>();
+
 
     const entriesToTree = useCallback((entries: Entry[] | undefined): NodeModel<TreeNodeData>[] => {
         if (!entries) return [];
 
-        const tree: NodeModel<TreeNodeData>[] = entries.map((entry) => ({
+        let treeData: Entry[] = entries;
+
+        const filteredEntries = search
+            ? entries.filter((entry) => entry.name.toLowerCase().includes(search.toLowerCase()))
+            : entries;
+
+        if (filteredEntries !== entries) {
+            const parents = filteredEntries.flatMap((entry) => rescursiveFindParents(entry, entries));
+            treeData = [...new Set([...filteredEntries, ...parents])];
+        }
+
+        const tree: NodeModel<TreeNodeData>[] = treeData.map((entry) => ({
             id: entry.id,
             parent: entry.parent ?? ROOT_ID,
             text: entry.name,
@@ -49,7 +79,7 @@ export function DocTree({ activeEntry, entries, showCreateEntryForm, updateEntry
         }));
 
         return tree;
-    }, [activeEntry?.id, removeEntry, updateEntry]);
+    }, [activeEntry?.id, removeEntry, search, updateEntry]);
 
     useEffect(() => {
         const tree = entriesToTree(entries);
@@ -122,6 +152,7 @@ export function DocTree({ activeEntry, entries, showCreateEntryForm, updateEntry
                 </span>
             </div>
             <Tree
+
                 tree={treeData}
                 rootId={0}
                 render={(node, params) => <DocNode node={node} params={params} />}
