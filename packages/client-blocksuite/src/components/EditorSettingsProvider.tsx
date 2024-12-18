@@ -22,6 +22,7 @@ const settingsSchema = z.object({
 });
 
 const defaultSettings: EditorSettings = {
+    mode: 'page',
     pageWidth: '100%',
 };
 
@@ -67,7 +68,7 @@ export function EditorSettingsProvider({ db, children }: EditorSettingsProviderP
 
     const setSettingByKey = useCallback((key: keyof EditorSettings, value: EditorSettingValue) => {
         setSettings((prev) => {
-            const nextState = { ...prev, [key]: value };
+            const nextState = { ...prev!, [key]: value };
             settingsSchema.parse(nextState);
             return nextState;
         });

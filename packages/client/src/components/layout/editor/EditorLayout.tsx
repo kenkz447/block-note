@@ -5,6 +5,7 @@ import { AppSidebar } from './sidebar/AppSidebar';
 import { ImperativePanelHandle } from 'react-resizable-panels';
 
 export function MasterLayout({ children }: React.PropsWithChildren) {
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = React.useState(false);
     const sidebarPanelRef = React.useRef<ImperativePanelHandle>(null);
 
     const toggleSidebar = useCallback(() => {
@@ -34,13 +35,15 @@ export function MasterLayout({ children }: React.PropsWithChildren) {
                 minSize={panelSizes.minPercent}
                 maxSize={50}
                 defaultSize={panelSizes.defaultPercent}
+                onCollapse={() => setIsSidebarCollapsed(true)}
+                onExpand={() => setIsSidebarCollapsed(false)}
             >
                 <AppSidebar />
             </ResizablePanel>
             <ResizableHandle />
             <ResizablePanel>
                 <div className="h-[100vh] flex flex-col">
-                    <Header toggleSidebar={toggleSidebar} />
+                    <Header isSidebarClose={isSidebarCollapsed} toggleSidebar={toggleSidebar} />
                     <div className="overflow-auto grow">
                         {children}
                     </div>

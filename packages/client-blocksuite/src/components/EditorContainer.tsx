@@ -41,10 +41,9 @@ export function EditorContainer({ entry }: EditorContainerProps) {
 
         const editor = setupEditor(docCollection);
         editor.doc = doc;
+        editor.mode = 'page';
 
         return editor;
-
-
     }, [docCollection, entry.id]);
 
     useEffect(() => {
@@ -53,6 +52,10 @@ export function EditorContainer({ entry }: EditorContainerProps) {
             editorContainerRef.current.appendChild(editor);
         }
     }, [editor]);
+
+    useEffect(() => {
+        editor?.switchEditor(settings.mode);
+    }, [editor, settings.mode]);
 
     useEffect(() => {
         if (!editor) {
@@ -68,15 +71,18 @@ export function EditorContainer({ entry }: EditorContainerProps) {
                 }
 
                 navigate({
-                    from: '/',
-                    search: {
-                        entryId: target.id
+                    to: '/app/editor/$workspaceId/$projectId/$entryId',
+                    params: {
+                        workspaceId: entry.workspaceId,
+                        projectId: entry.projectId,
+                        entryId: docId,
                     }
                 });
             });
 
         return () => {
             disposable.dispose();
+            editor.remove();
         };
     }, [docCollection, editor, navigate]);
 
@@ -97,6 +103,7 @@ export function EditorContainer({ entry }: EditorContainerProps) {
         'size-full': settings.pageWidth === '100%',
         'size-75': settings.pageWidth === '75%',
         'size-50': settings.pageWidth === '50%',
+        'h-full': settings.mode === 'edgeless',
     });
 
     return (

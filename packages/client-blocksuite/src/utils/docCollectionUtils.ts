@@ -1,12 +1,11 @@
 import type { BlockSuiteFlags } from '@blocksuite/global/types';
 
-import { AffineSchemas } from '@blocksuite/blocks';
+import { AffineSchemas, createDefaultDoc } from '@blocksuite/blocks';
 import {
     DocCollection,
     type DocCollectionOptions,
     IdGeneratorType,
-    Schema,
-    Text
+    Schema
 } from '@blocksuite/store';
 import {
     AwarenessSource,
@@ -72,13 +71,9 @@ export async function initDefaultDocCollection(collection: DocCollection) {
     const shouldInit = collection.docs.size === 0;
     if (shouldInit) {
         collection.meta.initialize();
-        const doc = collection.createDoc({ id: 'local:default' });
-        doc.load();
-        const rootId = doc.addBlock('affine:page', {
-            title: new Text(),
+        createDefaultDoc(collection, {
+            id: 'local:default'
         });
-        doc.addBlock('affine:surface', {}, rootId);
-        doc.resetHistory();
-        return;
+
     }
 }

@@ -10,6 +10,7 @@ export const EditorContext = createContext<EditorContextType | null>(null);
 
 export type EditorSettingValue = string | number | boolean | null;
 export type EditorSettings = {
+    mode: 'page' | 'edgeless';
     pageWidth: EditorSettingValue;
 };
 
