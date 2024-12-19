@@ -1,5 +1,5 @@
 import { usePageSettings } from '@writefy/client-blocksuite';
-import { Button, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, Separator, Tabs, TabsList, TabsTrigger } from '@writefy/client-shadcn';
+import { Button, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, Tabs, TabsList, TabsTrigger } from '@writefy/client-shadcn';
 import { LayoutDashboard, Proportions, Settings2, Sidebar, TextIcon } from 'lucide-react';
 import { memo } from 'react';
 

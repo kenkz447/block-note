@@ -1,5 +1,5 @@
 import { AffineEditorContainer } from '@blocksuite/presets';
-import { BlockCollection, Doc, DocCollection } from '@blocksuite/store';
+import { BlockCollection, DocCollection } from '@blocksuite/store';
 import { AttachmentBlockService, CommunityCanvasTextFonts, DocModeExtension, EdgelessEditorBlockSpecs, FontConfigExtension, NotificationExtension, OverrideThemeExtension, PageEditorBlockSpecs, ParseDocUrlExtension, RefNodeSlotsExtension, SpecProvider } from '@blocksuite/blocks';
 import { mockDocModeService, mockNotificationService, mockParseDocUrlService, themeExtension } from '../editorServices';
 import {
