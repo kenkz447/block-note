@@ -1,4 +1,4 @@
-import { createFileRoute, useParams } from '@tanstack/react-router';
+import { createFileRoute, useParams, useSearch } from '@tanstack/react-router';
 import { EditorContainer } from '@writefy/client-blocksuite';
 import { Entry, useEntries } from '@writefy/client-shared';
 import { useContext, useEffect, useState } from 'react';
@@ -12,9 +12,7 @@ export const Route = createFileRoute(
 )({
     component: RouteComponent,
     validateSearch: z.object({
-        workspaceId: z.string().optional(),
-        projectId: z.string().optional(),
-        entryId: z.string().optional(),
+        mode: z.string().optional()
     }),
 });
 
@@ -22,6 +20,10 @@ function RouteComponent() {
     const { setActiveEntry } = useContext(AppSidebarContext)!;
 
     const { entryId, projectId, workspaceId } = useParams({
+        from: '/app/editor/$workspaceId/$projectId/$entryId',
+    });
+
+    const { mode } = useSearch({
         from: '/app/editor/$workspaceId/$projectId/$entryId',
     });
 
@@ -69,6 +71,6 @@ function RouteComponent() {
     }
 
     return (
-        <EditorContainer entry={entry} />
+        <EditorContainer entry={entry} mode={mode ?? 'page'} />
     );
 }
