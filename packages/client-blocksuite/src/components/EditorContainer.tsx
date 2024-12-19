@@ -30,20 +30,7 @@ export function EditorContainer({ entry }: EditorContainerProps) {
     const editorContainerRef = useRef<HTMLDivElement>(null);
 
     const editor = useMemo(() => {
-        const doc = docCollection!.getDoc(entry.id);
-        if (!doc) {
-            console.error(`Failed to get doc: ${entry.id}`);
-            return;
-        }
-
-        doc.load();
-        doc.resetHistory();
-
-        const editor = setupEditor(docCollection);
-        editor.doc = doc;
-        editor.mode = 'page';
-
-        return editor;
+        return setupEditor(docCollection, entry.id);
     }, [docCollection, entry.id]);
 
     useEffect(() => {
@@ -84,7 +71,7 @@ export function EditorContainer({ entry }: EditorContainerProps) {
             disposable.dispose();
             editor.remove();
         };
-    }, [docCollection, editor, navigate]);
+    }, [docCollection, editor, entry.projectId, entry.workspaceId, navigate]);
 
     // Set editor theme
     useEffect(() => {

@@ -1,5 +1,5 @@
 import { AffineEditorContainer } from '@blocksuite/presets';
-import { BlockCollection, DocCollection } from '@blocksuite/store';
+import { BlockCollection, Doc, DocCollection } from '@blocksuite/store';
 import { AttachmentBlockService, CommunityCanvasTextFonts, DocModeExtension, EdgelessEditorBlockSpecs, FontConfigExtension, NotificationExtension, OverrideThemeExtension, PageEditorBlockSpecs, ParseDocUrlExtension, RefNodeSlotsExtension, SpecProvider } from '@blocksuite/blocks';
 import { mockDocModeService, mockNotificationService, mockParseDocUrlService, themeExtension } from '../editorServices';
 import {
@@ -84,7 +84,15 @@ function patchPageRootSpec(editor: AffineEditorContainer, collection: DocCollect
     return newSpec;
 }
 
-export const setupEditor = (collection: DocCollection) => {
+export const setupEditor = (collection: DocCollection, docId: string) => {
+    const doc = collection!.getDoc(docId);
+    if (!doc) {
+        throw new Error('Doc not found: ' + docId);
+    }
+
+    doc.load();
+    doc.resetHistory();
+
     const blockCollection = collection.docs.values().next()
         .value as BlockCollection;
 
@@ -107,6 +115,7 @@ export const setupEditor = (collection: DocCollection) => {
         OverrideThemeExtension(themeExtension),
     ]);
 
+    editor.doc = doc;
     editor.mode = 'page';
 
     return editor;
