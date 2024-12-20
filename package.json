@@ -6,10 +6,8 @@
     ],
     "scripts": {
         "start": "bun run --cwd packages/client dev",
+        "build": "bun run --cwd packages/client build",
         "client": "bun run --cwd packages/client",
-        "client-shared": "bun run --cwd packages/client-shared",
-        "server": "bun run --cwd packages/server dev",
-        "client-blocksuite-theme": "bun run --cwd packages/client-blocksuite-theme build",
         "postinstall": "patch-package"
     },
     "peerDependencies": {

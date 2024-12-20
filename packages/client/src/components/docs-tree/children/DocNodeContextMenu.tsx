@@ -2,28 +2,55 @@ import {
     ContextMenuContent,
     ContextMenuItem,
     ContextMenuSeparator,
-    AlertDialog,
     AlertDialogTitle,
     ContextMenu,
     ContextMenuTrigger,
     AlertDialogContent,
-    AlertDialogTrigger,
     AlertDialogHeader,
     AlertDialogDescription,
     AlertDialogFooter,
     AlertDialogCancel,
-    AlertDialogAction
+    AlertDialogAction,
+    usePopupAlert
 } from '@writefy/client-shadcn';
-import { memo } from 'react';
+import { useEventEmitter } from '@writefy/client-shared';
+import { memo, useCallback } from 'react';
 
 interface DocNodeContextMenuProps {
     readonly children: React.ReactNode;
     readonly onRename: () => void;
-    readonly onDelete: () => void;
+    readonly onDelete: () => Promise<void>;
 }
 
 function DocNodeContextMenuImpl(props: DocNodeContextMenuProps) {
     const { onRename, onDelete } = props;
+    const { openAlert } = usePopupAlert();
+
+    const emitEntryRemoved = useEventEmitter('DATA@ENTRY:REMOVED');
+
+    const handleDelete = useCallback(async () => {
+        await onDelete();
+        emitEntryRemoved();
+    }, [onDelete, emitEntryRemoved]);
+
+    const showDeleteAlert = () => {
+        openAlert({
+            content: (
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Delete page</AlertDialogTitle>
+                    </AlertDialogHeader>
+                    <AlertDialogDescription>
+                        Are you sure you want to delete this page?
+                    </AlertDialogDescription>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            )
+        });
+    };
 
     return (
         <ContextMenu>
@@ -38,26 +65,9 @@ function DocNodeContextMenuImpl(props: DocNodeContextMenuProps) {
                 <ContextMenuItem inset onClick={onRename}>
                     Rename
                 </ContextMenuItem>
-                <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                        <ContextMenuItem inset className="text-red-600" onClick={onDelete}>
-                            Delete
-                        </ContextMenuItem>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                        <AlertDialogHeader>
-                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                                This action cannot be undone. This will permanently delete your
-                                account and remove your data from our servers.
-                            </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction>Continue</AlertDialogAction>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialog>
+                <ContextMenuItem inset className="text-red-600" onClick={showDeleteAlert}>
+                    Delete
+                </ContextMenuItem>
             </ContextMenuContent>
         </ContextMenu>
     );

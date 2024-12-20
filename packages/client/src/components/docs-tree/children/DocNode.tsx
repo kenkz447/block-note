@@ -10,7 +10,7 @@ export interface TreeNodeData {
     readonly actived: boolean;
     readonly entry: Entry;
     readonly actions: {
-        readonly rename: (name: string) => Promise<void>;
+        readonly rename: (name: string) => Promise<Entry>;
         readonly remove: () => Promise<void>;
     };
     readonly children: Entry[];
@@ -95,8 +95,8 @@ function DocNodeImpl({ node, params }: DocNodeProps) {
 
     return (
         <DocNodeContextMenu
-            onRename={() => setIsRenaming(true)}
-            onDelete={() => node.data?.actions.remove()}
+            onRename={toggleRename}
+            onDelete={node.data!.actions.remove}
         >
             {children}
         </DocNodeContextMenu>

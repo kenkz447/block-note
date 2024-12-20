@@ -23,7 +23,7 @@ export const useEventListener = <TDetail = undefined>(options: UseEventOptions<T
     }, [event, handler]);
 };
 
-export const useEventEmitter = <TDetail = undefined>(event: AppEvent) => {
+export const useEventEmitter = <TDetail = unknown>(event: AppEvent) => {
     const emit = useCallback((detail?: TDetail) => {
         emitter.emit(event, detail);
     }, [event]);

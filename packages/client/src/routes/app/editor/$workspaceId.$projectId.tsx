@@ -77,6 +77,9 @@ function RouteComponent() {
         setPageTitle(currentProject?.name);
     }, [currentProject]);
 
+    useEffect(() => {
+
+    }, [currentProject]);
 
     if (currentProject === undefined) {
         return <LoadingScreen />;

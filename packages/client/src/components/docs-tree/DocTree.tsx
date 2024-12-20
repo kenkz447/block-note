@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import {
     Tree,
@@ -20,7 +20,7 @@ interface DocTreeProps {
     readonly entries?: Entry[];
     readonly showCreateEntryForm: (type: string) => void;
     readonly showUpdateEntryForm: (entry: Entry) => void;
-    readonly updateEntry: (entryId: string, data: Partial<Entry>) => Promise<unknown>;
+    readonly updateEntry: (entryId: string, data: Partial<Entry>) => Promise<Entry>;
     readonly removeEntry: (entryId: string) => Promise<void>;
 }
 
@@ -36,7 +36,7 @@ const rescursiveFindParents = (entry: Entry, entries: Entry[]): Entry[] => {
     return [parentEntry, ...rescursiveFindParents(parentEntry, entries)];
 };
 
-export function DocTree({
+function DocTreeImpl({
     search,
     activeEntry,
     entries,
@@ -44,9 +44,7 @@ export function DocTree({
     updateEntry,
     removeEntry
 }: DocTreeProps) {
-
     const [treeData, setTreeData] = useState<NodeModel<TreeNodeData>[]>();
-
 
     const entriesToTree = useCallback((entries: Entry[] | undefined): NodeModel<TreeNodeData>[] => {
         if (!entries) return [];
@@ -70,7 +68,7 @@ export function DocTree({
                 actived: activeEntry?.id === entry.id,
                 entry,
                 actions: {
-                    rename: async (name: string) => { await updateEntry(entry.id, { name }); },
+                    rename: (name: string) => updateEntry(entry.id, { name }),
                     remove: () => removeEntry(entry.id),
                 },
                 children: entries.filter((e) => e.parent === entry.id)
@@ -152,7 +150,6 @@ export function DocTree({
                 </span>
             </div>
             <Tree
-
                 tree={treeData}
                 rootId={0}
                 render={(node, params) => <DocNode node={node} params={params} />}
@@ -180,3 +177,5 @@ export function DocTree({
         </DndProvider>
     );
 }
+
+export const DocTree = memo(DocTreeImpl);

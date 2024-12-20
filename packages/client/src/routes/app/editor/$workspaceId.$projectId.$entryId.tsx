@@ -1,7 +1,7 @@
-import { createFileRoute, useParams, useSearch } from '@tanstack/react-router';
+import { createFileRoute, useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { EditorContainer } from '@writefy/client-blocksuite';
-import { Entry, useEntries } from '@writefy/client-shared';
-import { useContext, useEffect, useState } from 'react';
+import { Entry, useEntries, useEventListener } from '@writefy/client-shared';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
 import { z } from 'zod';
 import { AppSidebarContext } from '@/components/layout/editor/sidebar/children/AppSidebarContext';
@@ -17,6 +17,7 @@ export const Route = createFileRoute(
 });
 
 function RouteComponent() {
+    const navigate = useNavigate();
     const { setActiveEntry } = useContext(AppSidebarContext)!;
 
     const { entryId, projectId, workspaceId } = useParams({
@@ -61,6 +62,19 @@ function RouteComponent() {
     useEffect(() => {
         setPageTitle(entry?.name);
     }, [entry]);
+
+    useEventListener({
+        event: 'DATA@ENTRY:REMOVED',
+        handler: useCallback(() => {
+            navigate({
+                to: '/app/editor/$workspaceId/$projectId',
+                params: {
+                    workspaceId,
+                    projectId,
+                }
+            });
+        }, [navigate, projectId, workspaceId]),
+    });
 
     if (entry === null) {
         throw new Error('Entry not found');

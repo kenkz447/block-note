@@ -6,4 +6,6 @@ type PopupEvent = 'popup-alert:show' | 'popup-alert:hide' | 'popup-dialog:show' 
 
 type EditorEvent = 'EDITOR:PRESENTATION';
 
-export type AppEvent = TestEvent | AuthEvent | PopupEvent | EditorEvent;
+type DataEvent = 'DATA@ENTRY:REMOVED';
+
+export type AppEvent = TestEvent | AuthEvent | PopupEvent | EditorEvent | DataEvent;

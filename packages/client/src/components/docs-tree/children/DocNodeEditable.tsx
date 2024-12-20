@@ -1,9 +1,10 @@
+import { Entry } from '@writefy/client-shared';
 import { memo, useEffect, useRef, useState } from 'react';
 
 interface DocNodeEditableProps {
     readonly value: string;
     readonly onFinish: () => void;
-    readonly onSubmit: (value: string) => Promise<void>;
+    readonly onSubmit: (value: string) => Promise<Entry>;
 }
 
 export function DocNodeEditableImpl({ value, onFinish, onSubmit }: DocNodeEditableProps) {

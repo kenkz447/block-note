@@ -53,6 +53,10 @@ export function AppSidebarBody() {
         });
     }, [closeDialog, openDialog, updateEntry]);
 
+    const onSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearch(e.currentTarget.value);
+    }, []);
+
     return (
         <div className="grow">
             {
@@ -61,7 +65,7 @@ export function AppSidebarBody() {
                         <Input
                             value={search}
                             placeholder="Search"
-                            onChange={(e) => setSearch(e.currentTarget.value)}
+                            onChange={onSearchChange}
                         />
                     </div>
                 )

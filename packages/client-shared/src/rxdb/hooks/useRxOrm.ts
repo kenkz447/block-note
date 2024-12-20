@@ -13,7 +13,7 @@ export const useRxOrm = <T extends AppRxDocumentBase>(collectionName: keyof AppR
             ...params
         } as T);
 
-        return entry._data;
+        return entry._data as T;
     }, [collection]);
 
     const update = useCallback(async (entryId: string, params: Partial<Omit<T, 'id' | 'createdBy' | 'createdAt'>>) => {
@@ -26,7 +26,7 @@ export const useRxOrm = <T extends AppRxDocumentBase>(collectionName: keyof AppR
             $set: params as Partial<T>
         });
 
-        return doc._data;
+        return doc._data as T;
     }, [collection]);
 
     const remove = useCallback(async (entryId: string) => {
@@ -41,7 +41,7 @@ export const useRxOrm = <T extends AppRxDocumentBase>(collectionName: keyof AppR
     const subscribe = useCallback((query: MangoQuery<T>, callback: (entry: T[]) => void) => {
         const getDocs = async () => {
             const rxDocuments = await collection.find(query).exec();
-            const listOfData = rxDocuments.map((doc) => doc._data);
+            const listOfData = rxDocuments.map((doc) => doc._data as T);
             callback(listOfData);
         };
 
@@ -59,7 +59,7 @@ export const useRxOrm = <T extends AppRxDocumentBase>(collectionName: keyof AppR
                 return;
             }
 
-            callback(doc._data);
+            callback(doc._data as T);
         });
 
         return subscription;
