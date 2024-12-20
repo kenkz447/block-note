@@ -2,11 +2,11 @@ import { AppRxDatabase } from '@writefy/client-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { RxState } from 'rxdb';
 import { z } from 'zod';
-import { EditorSettingsContextType, EditorSettings, EditorSettingValue } from '../editorContext';
+import { EditorSettings, LocalSettingsContextType, EditorSettingValue } from '../LocalSettingsContext';
 
-interface EditorSettingsProviderProps {
+interface LocalSettingsProviderProps {
     readonly db: AppRxDatabase;
-    readonly children: (settings?: EditorSettingsContextType) => React.ReactNode;
+    readonly children: (settings?: LocalSettingsContextType) => React.ReactNode;
 }
 
 const options = {
@@ -26,7 +26,7 @@ const defaultSettings: EditorSettings = {
     pageWidth: '100%',
 };
 
-export function EditorSettingsProvider({ db, children }: EditorSettingsProviderProps) {
+export function LocalSettingsProvider({ db, children }: LocalSettingsProviderProps) {
     const [settings, setSettings] = useState<EditorSettings>();
 
     // Initialize settings from rxdb
@@ -83,7 +83,7 @@ export function EditorSettingsProvider({ db, children }: EditorSettingsProviderP
             options,
             settings,
             setSettings: setSettingByKey,
-        } satisfies EditorSettingsContextType;
+        } satisfies LocalSettingsContextType;
     }, [settings, setSettingByKey]);
 
     return children(contextValue);

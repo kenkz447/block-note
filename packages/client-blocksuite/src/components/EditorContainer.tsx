@@ -2,13 +2,12 @@ import './EditorContainer.css';
 
 import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDocCollection } from '../hooks/useDocCollection';
-import { Entry, useEventListener } from '@writefy/client-shared';
+import { Entry, useEventListener, useLocalSettings } from '@writefy/client-shared';
 import { setupEditor } from '../utils/editorUtils';
 import { ColorScheme, DocMode, EdgelessRootService, RefNodeSlotsProvider } from '@blocksuite/blocks';
 import { useNavigate } from '@tanstack/react-router';
 import { cn, useTheme } from '@writefy/client-shadcn';
 import { editorTheme } from '../editorServices';
-import { usePageSettings } from '../hooks/useEditorSettings';
 
 interface EditorContainerProps {
     readonly entry: Entry;
@@ -17,7 +16,7 @@ interface EditorContainerProps {
 
 function EditorContainerImpl({ entry, mode }: EditorContainerProps) {
     const { theme } = useTheme();
-    const { settings } = usePageSettings();
+    const { settings } = useLocalSettings();
 
     const docCollection = useDocCollection();
 

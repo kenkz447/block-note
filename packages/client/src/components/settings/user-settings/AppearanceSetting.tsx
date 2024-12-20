@@ -2,10 +2,10 @@ import { useTheme, Tabs, TabsList, TabsTrigger, Form, FormControl, FormDescripti
 import { SettingHeader } from '../_shared/SettingHeader';
 import { useForm } from 'react-hook-form';
 import { useEffect, useMemo } from 'react';
-import { usePageSettings } from '@writefy/client-blocksuite';
+import { useLocalSettings } from '@writefy/client-shared';
 
 export function AppearanceSetting() {
-    const { settings, setSettings } = usePageSettings();
+    const { settings, setSettings } = useLocalSettings();
     const { setTheme, theme } = useTheme();
 
     const defaultValues = useMemo(() => {

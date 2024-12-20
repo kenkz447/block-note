@@ -4,7 +4,7 @@ import { LoadingScreen } from '@/components/layout/LoadingScreen';
 import { AuthProvider, RxdbContext, RxdbProvider, useEventListener } from '@writefy/client-shared';
 import { AuthContext } from '@writefy/client-shared';
 import { ThemeProvider } from '@writefy/client-shadcn';
-import { EditorSettingsContext, EditorSettingsProvider } from '@writefy/client-blocksuite';
+import { LocalSettingsContext, LocalSettingsProvider } from '@writefy/client-shared';
 import { CircleAlert } from 'lucide-react';
 
 export const Route = createRootRoute({
@@ -64,7 +64,7 @@ function Initializer() {
                             }
 
                             return (
-                                <EditorSettingsProvider db={rxdbContext.db}>
+                                <LocalSettingsProvider db={rxdbContext.db}>
                                     {(editorSettingsContext) => {
                                         if (!editorSettingsContext) {
                                             return <LoadingScreen />;
@@ -73,17 +73,17 @@ function Initializer() {
                                         return (
                                             <AuthContext.Provider value={authContext}>
                                                 <RxdbContext.Provider value={rxdbContext}>
-                                                    <EditorSettingsContext.Provider value={editorSettingsContext}>
+                                                    <LocalSettingsContext.Provider value={editorSettingsContext}>
                                                         <PopupDialogProvider>
                                                             <App />
                                                         </PopupDialogProvider>
                                                         <PopupAlert />
-                                                    </EditorSettingsContext.Provider>
+                                                    </LocalSettingsContext.Provider>
                                                 </RxdbContext.Provider>
                                             </AuthContext.Provider>
                                         );
                                     }}
-                                </EditorSettingsProvider>
+                                </LocalSettingsProvider>
                             );
                         }}
                     </RxdbProvider>
