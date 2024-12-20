@@ -16,7 +16,7 @@ export function MasterLayoutMobile({ children }: React.PropsWithChildren) {
                     <AppSidebar />
                 </SheetContent>
             </Sheet>
-            <Header isSidebarClose={false} toggleSidebar={toggleSidebar} />
+            <Header />
             {children}
         </div>
     );

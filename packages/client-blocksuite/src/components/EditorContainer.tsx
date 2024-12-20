@@ -1,10 +1,10 @@
 import './EditorContainer.css';
 
-import { memo, useEffect, useMemo, useRef } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDocCollection } from '../hooks/useDocCollection';
-import { Entry } from '@writefy/client-shared';
+import { Entry, useEventListener } from '@writefy/client-shared';
 import { setupEditor } from '../utils/editorUtils';
-import { ColorScheme, DocMode, RefNodeSlotsProvider } from '@blocksuite/blocks';
+import { ColorScheme, DocMode, EdgelessRootService, RefNodeSlotsProvider } from '@blocksuite/blocks';
 import { useNavigate } from '@tanstack/react-router';
 import { cn, useTheme } from '@writefy/client-shadcn';
 import { editorTheme } from '../editorServices';
@@ -21,6 +21,7 @@ function EditorContainerImpl({ entry, mode }: EditorContainerProps) {
 
     const docCollection = useDocCollection();
 
+
     if (!docCollection) {
         throw new Error('docCollection is not defined');
     }
@@ -32,6 +33,18 @@ function EditorContainerImpl({ entry, mode }: EditorContainerProps) {
     const editor = useMemo(() => {
         return setupEditor(docCollection, entry.id);
     }, [docCollection, entry.id]);
+
+    useEventListener({
+        event: 'EDITOR:PRESENTATION',
+        handler: useCallback(() => {
+            const rootService = editor.std.getService('affine:page')!;
+            if (rootService instanceof EdgelessRootService) {
+                rootService.gfx.tool.setTool('frameNavigator', {
+                    mode: 'fit',
+                });
+            }
+        }, [editor.std])
+    });
 
     useEffect(() => {
         if (editorContainerRef.current && editor) {

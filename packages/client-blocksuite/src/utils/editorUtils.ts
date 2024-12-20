@@ -85,6 +85,13 @@ function patchPageRootSpec(editor: AffineEditorContainer, collection: DocCollect
 }
 
 export const setupEditor = (collection: DocCollection, docId: string) => {
+    const blockCollection = collection.docs.values().next()
+        .value as BlockCollection;
+
+    if (!blockCollection) {
+        throw new Error('No block collection found');
+    }
+
     const doc = collection!.getDoc(docId);
     if (!doc) {
         throw new Error('Doc not found: ' + docId);
@@ -92,13 +99,6 @@ export const setupEditor = (collection: DocCollection, docId: string) => {
 
     doc.load();
     doc.resetHistory();
-
-    const blockCollection = collection.docs.values().next()
-        .value as BlockCollection;
-
-    if (!blockCollection) {
-        throw new Error('No block collection found');
-    }
 
     const editor = new AffineEditorContainer();
     const specs = getExampleSpecs();
