@@ -6,6 +6,7 @@ import { LoadingScreen } from '@/components/layout/LoadingScreen';
 import { z } from 'zod';
 import { AppSidebarContext } from '@/components/layout/editor/sidebar/children/AppSidebarContext';
 import { setPageTitle } from '@/utils/pageUtils';
+import { events } from '@/config/events';
 
 export const Route = createFileRoute(
     '/app/editor/$workspaceId/$projectId/$entryId',
@@ -64,7 +65,7 @@ function RouteComponent() {
     }, [entry]);
 
     useEventListener({
-        event: 'DATA@ENTRY:REMOVED',
+        event: events.data.entry.removed,
         handler: useCallback(() => {
             navigate({
                 to: '/app/editor/$workspaceId/$projectId',

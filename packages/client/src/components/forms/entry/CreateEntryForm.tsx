@@ -23,6 +23,9 @@ export function CreateEntryForm({ type, onSubmit }: CreateEntryFormProps) {
         ...form
     } = useForm<CreateEntryValues>({
         resolver: zodResolver(createSchema),
+        defaultValues: {
+            name: ''
+        }
     });
 
     const description = type === 'folder' ? 'Create a folder to organize your documents' : 'Create a new document';

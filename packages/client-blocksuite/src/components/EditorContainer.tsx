@@ -8,6 +8,7 @@ import { ColorScheme, DocMode, EdgelessRootService, RefNodeSlotsProvider } from 
 import { useNavigate } from '@tanstack/react-router';
 import { cn, useTheme } from '@writefy/client-shadcn';
 import { editorTheme } from '../editorServices';
+import { editorEvents } from '../editorEvents';
 
 interface EditorContainerProps {
     readonly entry: Entry;
@@ -34,7 +35,7 @@ function EditorContainerImpl({ entry, mode }: EditorContainerProps) {
     }, [docCollection, entry.id]);
 
     useEventListener({
-        event: 'EDITOR:PRESENTATION',
+        event: editorEvents.editor.presentation.show,
         handler: useCallback(() => {
             const rootService = editor.std.getService('affine:page')!;
             if (rootService instanceof EdgelessRootService) {

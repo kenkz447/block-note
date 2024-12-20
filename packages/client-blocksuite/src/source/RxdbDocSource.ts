@@ -79,6 +79,9 @@ export class RxdbDocSource implements DocSource {
             else {
                 store = this.getEntryStore();
                 doc = await store.findOne(docId).exec();
+                if (!doc) {
+                    return; // Doc deleted
+                }
             }
 
             const updates = doc?._data.updates ?? [];

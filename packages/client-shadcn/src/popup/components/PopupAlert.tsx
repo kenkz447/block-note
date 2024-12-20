@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { AlertDialog } from '../../primitive';
 import { useEventListener } from '@writefy/client-shared';
+import { popupEvents } from '../popupEvents';
 
 export interface ShowAlertOptions {
     content: React.ReactNode;
@@ -18,7 +19,7 @@ export const PopupAlert = () => {
     }, []);
 
     useEventListener({
-        event: 'popup-alert:show',
+        event: popupEvents.alert.show,
         handler: useCallback((options?: ShowAlertOptions) => {
             if (!options) {
                 throw new Error('popup-alert:show event must have options');
@@ -32,10 +33,8 @@ export const PopupAlert = () => {
     });
 
     useEventListener({
-        event: 'popup-alert:hide',
-        handler: useCallback(() => {
-            hide();
-        }, [hide])
+        event: popupEvents.alert.hide,
+        handler: hide
     });
 
     const onOpenChange = (isOpen: boolean) => {

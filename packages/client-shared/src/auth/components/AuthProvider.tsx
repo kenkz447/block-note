@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { getAuth, User } from 'firebase/auth';
 import { AuthContextType } from '../authContext';
-import { useEventEmitter } from '../../hooks';
+import { useEventEmitter } from '../../events';
+import { authEvents } from '../authEvents';
 
 interface AuthProviderProps {
     readonly children: (authContext: AuthContextType) => React.ReactNode;
@@ -9,8 +10,8 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps) {
 
-    const emitLoggedIn = useEventEmitter('AUTH:LOGGED_IN');
-    const emitLogout = useEventEmitter('AUTH:LOGGED_OUT');
+    const emitLoggedIn = useEventEmitter(authEvents.user.loggedIn);
+    const emitLogout = useEventEmitter(authEvents.user.loggedOut);
 
     const [currentUser, setCurrentUser] = useState<User | null>();
 
@@ -19,7 +20,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const unsubscribe = auth.onAuthStateChanged((user) => {
             setCurrentUser(user);
             if (user) {
-                emitLoggedIn();
+                emitLoggedIn(user);
             }
         });
         return () => unsubscribe();
@@ -29,9 +30,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
         return {
             currentUser,
             signOut: async () => {
+                if (!currentUser) {
+                    throw new Error('User is not logged in');
+                }
+
                 const auth = getAuth();
                 await auth.signOut();
-                emitLogout();
+                emitLogout(currentUser);
             }
         };
     }, [currentUser, emitLogout]);

@@ -3,10 +3,11 @@ import { LayoutDashboard, Presentation, TextIcon } from 'lucide-react';
 import { memo } from 'react';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { useEventEmitter } from '@writefy/client-shared';
+import { events } from '@/config/events';
 
 function HeaderImpl() {
     const navigate = useNavigate();
-    const emitPresentation = useEventEmitter('EDITOR:PRESENTATION');
+    const emitPresentation = useEventEmitter(events.editor.presentation.show);
 
     const { mode } = useSearch({
         structuralSharing: true,

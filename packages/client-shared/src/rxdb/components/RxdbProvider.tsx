@@ -11,19 +11,19 @@ interface RxdbProviderProps {
 }
 
 export const RxdbProvider = ({ currentUser, children }: RxdbProviderProps) => {
-    const [activeDbName, setActiveDbName] = useState<string>();
+    const [activebName, setactivebName] = useState<string>();
     const [db, setDb] = useState<AppRxDatabase>();
 
     /**
      * Initialize and sync the database
      */
     useEffect(() => {
-        if (!activeDbName || db) {
+        if (!activebName || db) {
             return;
         }
 
-        initRxdb(activeDbName).then(setDb);
-    }, [activeDbName, db]);
+        initRxdb(activebName).then(setDb);
+    }, [activebName, db]);
 
     /**
      * Destroy the database when the user changes
@@ -43,7 +43,7 @@ export const RxdbProvider = ({ currentUser, children }: RxdbProviderProps) => {
     useEffect(() => {
         const userId = getUserId(currentUser);
         const nextDbName = `user_${userId.toLowerCase()}`;
-        setActiveDbName(nextDbName);
+        setactivebName(nextDbName);
     }, [currentUser]);
 
     const contextValue: RxdbContextType = useMemo(() => {

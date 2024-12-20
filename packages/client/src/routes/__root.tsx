@@ -2,7 +2,7 @@ import { createRootRoute, Outlet, useNavigate } from '@tanstack/react-router';
 import { Alert, AlertDescription, AlertTitle, PopupAlert, PopupDialogProvider, useIsMobile } from '@writefy/client-shadcn';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
 import { AuthProvider, RxdbContext, RxdbProvider, useEventListener } from '@writefy/client-shared';
-import { AuthContext } from '@writefy/client-shared';
+import { AuthContext, authEvents } from '@writefy/client-shared';
 import { ThemeProvider } from '@writefy/client-shadcn';
 import { LocalSettingsContext, LocalSettingsProvider } from '@writefy/client-shared';
 import { CircleAlert } from 'lucide-react';
@@ -19,12 +19,12 @@ function App() {
     const navigate = useNavigate();
 
     useEventListener({
-        event: 'AUTH:LOGGED_IN',
+        event: authEvents.user.loggedIn,
         handler: () => navigate({ to: '/app', replace: true })
     });
 
     useEventListener({
-        event: 'AUTH:LOGGED_OUT',
+        event: authEvents.user.loggedOut,
         handler: () => navigate({ to: '/', replace: true })
     });
 

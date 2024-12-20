@@ -1,17 +1,12 @@
 import { useEventEmitter } from '@writefy/client-shared';
-import { useCallback } from 'react';
-import { ShowAlertOptions } from '../components/PopupAlert';
+import { popupEvents } from '../popupEvents';
 
 export const usePopupAlert = () => {
-    const emitShow = useEventEmitter<ShowAlertOptions>('popup-alert:show');
-    const emitHide = useEventEmitter('popup-alert:hide');
+    const emitShow = useEventEmitter(popupEvents.alert.show);
+    const emitHide = useEventEmitter(popupEvents.alert.hide);
 
     return {
-        openAlert: useCallback(({ content }: ShowAlertOptions) => {
-            emitShow({ content });
-        }, [emitShow]),
-        closeAlert: useCallback(() => {
-            emitHide();
-        }, [emitHide])
+        openAlert: emitShow,
+        closeAlert: emitHide
     };
 };

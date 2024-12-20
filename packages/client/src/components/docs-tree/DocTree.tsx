@@ -26,14 +26,14 @@ interface DocTreeProps {
 
 const ROOT_ID = 0;
 
-const rescursiveFindParents = (entry: Entry, entries: Entry[]): Entry[] => {
+const recursiveFindParents = (entry: Entry, entries: Entry[]): Entry[] => {
     const parent = entry.parent;
     if (!parent) return [];
 
     const parentEntry = entries.find((e) => e.id === parent);
     if (!parentEntry) return [];
 
-    return [parentEntry, ...rescursiveFindParents(parentEntry, entries)];
+    return [parentEntry, ...recursiveFindParents(parentEntry, entries)];
 };
 
 function DocTreeImpl({
@@ -56,7 +56,7 @@ function DocTreeImpl({
             : entries;
 
         if (filteredEntries !== entries) {
-            const parents = filteredEntries.flatMap((entry) => rescursiveFindParents(entry, entries));
+            const parents = filteredEntries.flatMap((entry) => recursiveFindParents(entry, entries));
             treeData = [...new Set([...filteredEntries, ...parents])];
         }
 
@@ -65,7 +65,7 @@ function DocTreeImpl({
             parent: entry.parent ?? ROOT_ID,
             text: entry.name,
             data: {
-                actived: activeEntry?.id === entry.id,
+                active: activeEntry?.id === entry.id,
                 entry,
                 actions: {
                     rename: (name: string) => updateEntry(entry.id, { name }),

@@ -1,11 +1,12 @@
 import { DocTree } from '@/components/docs-tree/DocTree';
 import { CreateEntryForm, CreateEntryValues } from '@/components/forms/entry/CreateEntryForm';
 import { Input, usePopupDialog } from '@writefy/client-shadcn';
-import { Entry, InsertEntryParams, useEntries } from '@writefy/client-shared';
+import { Entry, InsertEntryParams, useEntries, useEventListener } from '@writefy/client-shared';
 import { useCallback, useContext, useState } from 'react';
 import { AppSidebarContext } from './AppSidebarContext';
 import { useParams } from '@tanstack/react-router';
 import { UpdateEntryForm, UpdateEntryValues } from '@/components/forms/entry/UpdateEntryForm';
+import { events } from '@/config/events';
 
 export function AppSidebarBody() {
     const context = useContext(AppSidebarContext)!;
@@ -23,11 +24,11 @@ export function AppSidebarBody() {
 
     const [search, setSearch] = useState<string>('');
 
-    const showCreateEntryForm = useCallback((type: string) => {
+    const showCreateEntryForm = useCallback((type: string, parentId?: string | null) => {
         const createEntry = async (formValues: CreateEntryValues) => {
             await insert({
                 type: type,
-                parent: null,
+                parent: parentId ?? null,
                 name: formValues.name
             } as InsertEntryParams);
 
@@ -56,6 +57,17 @@ export function AppSidebarBody() {
     const onSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(e.currentTarget.value);
     }, []);
+
+    useEventListener({
+        event: events.ui.entryForm.show,
+        handler: useCallback((e?: Partial<Entry>) => {
+            if (!e) {
+                return;
+            }
+
+            showCreateEntryForm(e.type!, e.parent);
+        }, [showCreateEntryForm])
+    });
 
     return (
         <div className="grow">

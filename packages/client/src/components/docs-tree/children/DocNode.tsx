@@ -7,7 +7,7 @@ import { DocNodeContextMenu } from './DocNodeContextMenu';
 import { DocNodeEditable } from './DocNodeEditable';
 
 export interface TreeNodeData {
-    readonly actived: boolean;
+    readonly active: boolean;
     readonly entry: Entry;
     readonly actions: {
         readonly rename: (name: string) => Promise<Entry>;
@@ -41,9 +41,9 @@ function DocNodeImpl({ node, params }: DocNodeProps) {
     const children = (
         <div
             style={{ paddingLeft: depth * 16 }}
-            className="cursor-pointer mb-[2px] group flex items-center gap-2 hover:bg-sidebar-accent px-2 py-2 rounded-lg text-primary/80 data-[state=open]:bg-sidebar-accent data-[rename=true]:bg-sidebar-accent data-[actived=true]:font-bold data-[actived=true]:bg-sidebar-accent"
+            className="cursor-pointer mb-[2px] group flex items-center gap-2 hover:bg-sidebar-accent px-2 py-2 rounded-lg text-primary/80 data-[state=open]:bg-sidebar-accent data-[rename=true]:bg-sidebar-accent data-[active=true]:font-bold data-[active=true]:bg-sidebar-accent"
             data-rename={isRenaming}
-            data-actived={node.data?.actived}
+            data-active={node.data?.active}
             onClick={() => {
                 if (isRenaming) return;
                 navigate({
@@ -85,7 +85,8 @@ function DocNodeImpl({ node, params }: DocNodeProps) {
                         <span className="grow grid whitespace-nowrap overflow-hidden text-ellipsis" >
                             {node.text}
                         </span>
-                    )}
+                    )
+            }
         </div>
     );
 
@@ -95,6 +96,7 @@ function DocNodeImpl({ node, params }: DocNodeProps) {
 
     return (
         <DocNodeContextMenu
+            entry={node.data!.entry}
             onRename={toggleRename}
             onDelete={node.data!.actions.remove}
         >

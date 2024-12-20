@@ -8,4 +8,6 @@ type EditorEvent = 'EDITOR:PRESENTATION';
 
 type DataEvent = 'DATA@ENTRY:REMOVED';
 
-export type AppEvent = TestEvent | AuthEvent | PopupEvent | EditorEvent | DataEvent;
+type UiEvent = 'UI@ENTRY_FROM:SHOW';
+
+export type AppEvent = TestEvent | AuthEvent | PopupEvent | EditorEvent | DataEvent | UiEvent;

@@ -5,3 +5,4 @@ export * from './components/AuthProvider';
 export * from './authContext';
 export * from './authTypes';
 export * from './authUtils';
+export * from './authEvents';

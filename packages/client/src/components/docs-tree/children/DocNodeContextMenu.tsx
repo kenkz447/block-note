@@ -1,3 +1,4 @@
+import { events } from '@/config/events';
 import {
     ContextMenuContent,
     ContextMenuItem,
@@ -13,25 +14,28 @@ import {
     AlertDialogAction,
     usePopupAlert
 } from '@writefy/client-shadcn';
-import { useEventEmitter } from '@writefy/client-shared';
+import { Entry, useEventEmitter } from '@writefy/client-shared';
 import { memo, useCallback } from 'react';
 
 interface DocNodeContextMenuProps {
+    readonly entry: Entry;
     readonly children: React.ReactNode;
     readonly onRename: () => void;
     readonly onDelete: () => Promise<void>;
 }
 
-function DocNodeContextMenuImpl(props: DocNodeContextMenuProps) {
-    const { onRename, onDelete } = props;
+function DocNodeContextMenuImpl({ entry, children, onRename, onDelete }: DocNodeContextMenuProps) {
     const { openAlert } = usePopupAlert();
 
-    const emitEntryRemoved = useEventEmitter('DATA@ENTRY:REMOVED');
+    const emitShowEntryForm = useEventEmitter(events.ui.entryForm.show);
+    const emitEntryRemoved = useEventEmitter(events.data.entry.removed);
 
     const handleDelete = useCallback(async () => {
         await onDelete();
-        emitEntryRemoved();
-    }, [onDelete, emitEntryRemoved]);
+        emitEntryRemoved({
+            id: entry.id
+        });
+    }, [onDelete, emitEntryRemoved, entry.id]);
 
     const showDeleteAlert = () => {
         openAlert({
@@ -52,13 +56,21 @@ function DocNodeContextMenuImpl(props: DocNodeContextMenuProps) {
         });
     };
 
+    const handleAddPageClick = useCallback(() => {
+        emitShowEntryForm({
+            type: 'page',
+            parent: entry.id
+        });
+    }, [emitShowEntryForm, entry.id]);
+
+
     return (
         <ContextMenu>
             <ContextMenuTrigger asChild>
-                {props.children}
+                {children}
             </ContextMenuTrigger>
             <ContextMenuContent className="w-64">
-                <ContextMenuItem inset>
+                <ContextMenuItem inset onClick={handleAddPageClick} >
                     Add page
                 </ContextMenuItem>
                 <ContextMenuSeparator />

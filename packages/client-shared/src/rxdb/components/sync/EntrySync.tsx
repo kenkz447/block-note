@@ -24,7 +24,7 @@ function EntrySyncImpl({ userId, workspaceId, projectId, children }: EntrySyncPr
             userId,
             rxCollection: db.collections.entries,
             remotePath: ['workspaces', workspaceId, 'projects', projectId, 'entries'],
-            pushFilter: (doc) => doc.workspaceId === workspaceId && doc.projectId === projectId,
+            pushFilter: (doc) => doc.workspaceId === workspaceId && doc.projectId === projectId
         });
 
         const initializeReplication = async () => {
