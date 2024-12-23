@@ -54,8 +54,11 @@ interface CreateFirebaseReplication<T> {
     readonly rxCollection: RxCollection;
     readonly remotePath: string[];
     readonly pullFilter?: QueryFieldFilterConstraint | QueryFieldFilterConstraint[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    readonly pullModifier?: (item: any) => MaybePromise<WithDeleted<T>>;
     readonly pushFilter?: (item: WithDeleted<T>) => boolean;
-    readonly pushModifier?: (item: T) => MaybePromise<T>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    readonly pushModifier?: (item: T) => MaybePromise<any>;
 }
 
 export const createFirebaseReplication = <T>({
@@ -63,6 +66,7 @@ export const createFirebaseReplication = <T>({
     rxCollection,
     remotePath,
     pullFilter,
+    pullModifier,
     pushFilter,
     pushModifier
 }: CreateFirebaseReplication<T>) => {
@@ -90,7 +94,7 @@ export const createFirebaseReplication = <T>({
                 database: firestore,
                 collection: remoteCollection as CollectionReference<T>
             },
-            pull: { filter: pullFilter },
+            pull: { filter: pullFilter, modifier: pullModifier },
             push: { filter: pushFilter, modifier: pushModifier },
             live: true,
             serverTimestampField: 'serverTimestamp',

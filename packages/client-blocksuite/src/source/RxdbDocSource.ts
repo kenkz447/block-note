@@ -1,6 +1,6 @@
-import { LocalDoc, Entry, AppRxDatabase } from '@writefy/client-shared';
+import { LocalDoc, Entry, AppRxDatabase, debounce } from '@writefy/client-shared';
 import { DocSource } from '@blocksuite/sync';
-import { RxCollection, RxDocument } from 'rxdb';
+import { RxCollection, RxDocument, RxLocalDocument } from 'rxdb';
 import { diffUpdate, encodeStateVectorFromUpdate, mergeUpdates } from 'yjs';
 
 type UpdateMessage = {
@@ -9,6 +9,9 @@ type UpdateMessage = {
 };
 
 export class RxdbDocSource implements DocSource {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    debouncePushMap = new Map<string, (...args: any) => Promise<void>>();
+
     mergeCount = 1;
 
     name = 'rxdb';
@@ -37,26 +40,19 @@ export class RxdbDocSource implements DocSource {
         docId: string,
         state: Uint8Array
     ): Promise<{ data: Uint8Array; state?: Uint8Array | undefined; } | null> {
+
         try {
             let store: RxCollection | null = null;
-            let doc: RxDocument<Entry> | RxDocument<LocalDoc> | null = null;
+            let doc: RxLocalDocument<Entry, LocalDoc> | null = null;
 
-            if (docId.startsWith('local:')) {
-                store = this.getLocalStore();
-                doc = await store.findOne(docId).exec();
-            }
-            else {
-                store = this.getEntryStore();
-                doc = await store.findOne(docId).exec();
-            }
+            store = this.getEntryStore();
+            doc = await store.getLocal(docId);
 
-            if (!doc || !doc._data.updates) {
+            if (!doc) {
                 return null;
             }
 
-            const { updates } = doc._data;
-            const update = mergeUpdates(updates.map(({ update }) => Uint8Array.from(update)));
-
+            const update = Uint8Array.from(doc._data.data.update);
             const diff = state.length ? diffUpdate(update, state) : update;
 
             return { data: diff, state: encodeStateVectorFromUpdate(update) };
@@ -70,44 +66,44 @@ export class RxdbDocSource implements DocSource {
     async push(docId: string, data: Uint8Array): Promise<void> {
         try {
             let store: RxCollection | null = null;
-            let doc: RxDocument<Entry> | RxDocument<LocalDoc> | null = null;
+            let doc: RxLocalDocument<Entry, LocalDoc> | null = null;
 
-            if (docId.startsWith('local:')) {
-                store = this.getLocalStore();
-                doc = await store.findOne(docId).exec();
-            }
-            else {
-                store = this.getEntryStore();
-                doc = await store.findOne(docId).exec();
-                if (!doc) {
-                    return; // Doc deleted
-                }
-            }
+            store = this.getEntryStore();
+            doc = await store.getLocal(docId);
 
-            const updates = doc?._data.updates ?? [];
+            const merged = mergeUpdates([
+                Uint8Array.from(data),
+                data
+            ]);
 
-            let rows: UpdateMessage[] = [
-                ...updates.map(({ timestamp, update }) => ({
-                    timestamp,
-                    update: Uint8Array.from(update),
-                })),
-                { timestamp: Date.now(), update: data },
-            ];
+            const update = {
+                timestamp: Date.now(),
+                update: Array.from(merged),
+            };
 
-            if (this.mergeCount && rows.length >= this.mergeCount) {
-                const merged = mergeUpdates(rows.map(({ update }) => update));
-                rows = [{ timestamp: Date.now(), update: merged }];
-            }
+            await store.upsertLocal(docId, update);
+
+            return;
 
             if (doc) {
-                await doc.update({
-                    $set: {
-                        updates: rows.map(({ timestamp, update }) => ({
-                            timestamp,
-                            update: Array.from(update),
-                        })),
-                    }
-                });
+                // Use debounce to reduce the number of updates
+                // to the local and remote db
+                let debounceUpdate = this.debouncePushMap.get(docId);
+                if (!debounceUpdate) {
+                    debounceUpdate = debounce(async (doc: RxDocument, rows: UpdateMessage[]) => {
+                        await doc.update({
+                            $set: {
+                                updates: rows.map(({ timestamp, update }) => ({
+                                    timestamp,
+                                    update: Array.from(update),
+                                })),
+                            }
+                        });
+                    }, 1000);
+                    this.debouncePushMap.set(docId, debounceUpdate);
+                }
+
+                await debounceUpdate(doc, rows);
             }
             else {
                 /**

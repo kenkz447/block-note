@@ -21,7 +21,6 @@ function EditorContainerImpl({ entry, mode }: EditorContainerProps) {
 
     const docCollection = useDocCollection();
 
-
     if (!docCollection) {
         throw new Error('docCollection is not defined');
     }

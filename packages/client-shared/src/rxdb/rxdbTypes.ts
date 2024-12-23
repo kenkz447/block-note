@@ -39,10 +39,8 @@ export interface Entry extends AppRxDocumentBase {
 }
 
 export interface LocalDoc extends AppRxDocumentBase {
-    readonly updates: {
-        timestamp: number;
-        update: number[];
-    }[];
+    timestamp: number;
+    update: number[];
 }
 
 export type EntryTreeNode = Entry & { children: EntryTreeNode[]; };

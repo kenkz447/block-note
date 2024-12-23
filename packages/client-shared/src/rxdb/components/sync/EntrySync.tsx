@@ -1,10 +1,11 @@
-import { memo, useEffect, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { RxFirestoreReplicationState } from 'rxdb/plugins/replication-firestore';
-import { shallowEqualByKey } from '../../../utils';
+import { shallowEqualByKey, } from '../../../utils';
 import { useRxdb } from '../../hooks/useRxdb';
 import { createFirebaseReplication } from '../../rxdbHelpers';
 import { Entry } from '../../rxdbTypes';
 import { firstValueFrom, filter } from 'rxjs';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 interface EntrySyncProps {
     readonly userId: string;
@@ -18,13 +19,71 @@ function EntrySyncImpl({ userId, workspaceId, projectId, children }: EntrySyncPr
 
     const [replicaState, setReplicateState] = useState<RxFirestoreReplicationState<Entry>>();
 
+    const timestampMap = useMemo(() => new Map<string, number>(), []);
+
     // Start syncing the workspace when the user is logged in
     useEffect(() => {
         const replicateState = createFirebaseReplication<Entry>({
             userId,
             rxCollection: db.collections.entries,
             remotePath: ['workspaces', workspaceId, 'projects', projectId, 'entries'],
-            pushFilter: (doc) => doc.workspaceId === workspaceId && doc.projectId === projectId
+            // pullModifier: async (doc) => {
+            //     if (!doc?.updates[0] || doc._deleted) {
+            //         return doc;
+            //     }
+
+            //     const storage = getStorage();
+            //     const docRef = ref(storage, doc.updates[0].docRef);
+            //     const downloadUrl = await getDownloadURL(docRef);
+            //     const response = await fetch(downloadUrl);
+            //     const buffer = await response.arrayBuffer();
+            //     const update = [...new Uint8Array(buffer)];
+
+            //     const modifiedDoc = {
+            //         ...doc,
+            //         updates: [{
+            //             timestamp: doc.updates[0].timestamp,
+            //             update
+            //         }]
+            //     };
+
+            //     console.log(`${doc.id} - Pulling doc`, modifiedDoc);
+
+            //     return modifiedDoc;
+            // },
+            pushFilter: (doc) => doc.workspaceId === workspaceId && doc.projectId === projectId,
+            // pushModifier: async (doc) => {
+            //     if (!doc?.updates) {
+            //         return doc;
+            //     }
+
+            //     const latestTimestamp = timestampMap.get(doc.id) ?? 0;
+            //     const docTimestamp = doc.updates[0].timestamp;
+
+            //     if (docTimestamp <= latestTimestamp) {
+            //         return doc;
+            //     }
+
+            //     timestampMap.set(doc.id, docTimestamp);
+
+            //     const storage = getStorage();
+            //     const docRef = ref(storage, `docs/${workspaceId}/${projectId}/${doc.id}`);
+
+            //     const uploadBuffer = new Uint8Array(doc.updates[0].update);
+            //     await uploadBytes(docRef, uploadBuffer);
+
+            //     const modifiedDoc = {
+            //         ...doc,
+            //         updates: [{
+            //             timestamp: doc.updates[0].timestamp,
+            //             docRef: docRef.fullPath
+            //         }]
+            //     };
+
+            //     console.log(`${doc.id} - Pushing doc`, modifiedDoc);
+
+            //     return modifiedDoc;
+            // },
         });
 
         const initializeReplication = async () => {
@@ -59,7 +118,7 @@ function EntrySyncImpl({ userId, workspaceId, projectId, children }: EntrySyncPr
 
             stopReplication();
         };
-    }, [db, userId, workspaceId, projectId]);
+    }, [db, userId, workspaceId, projectId, timestampMap]);
 
     return children(replicaState !== undefined);
 }
