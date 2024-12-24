@@ -116,6 +116,10 @@ function EditorProviderImpl({ workspaceId, projectId, children }: EditorProvider
 
         // Blocksuite events handling
         const docAdded = docCollection.slots.docAdded.on(async (docId) => {
+            if (docId.startsWith('local')) {
+                return;
+            }
+
             const isEntryExists = await checkEntryExists(docId);
             if (isEntryExists) {
                 return;

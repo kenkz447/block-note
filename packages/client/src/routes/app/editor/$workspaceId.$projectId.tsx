@@ -25,7 +25,7 @@ function WithEntrySync() {
     }
 
     return (
-        <EntrySync userId={currentUser.uid} workspaceId={workspaceId} projectId={projectId}>
+        <EntrySync key={projectId} userId={currentUser.uid} workspaceId={workspaceId} projectId={projectId}>
             {(synced) => {
                 if (!synced) {
                     return <LoadingScreen />;

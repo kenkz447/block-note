@@ -6,6 +6,7 @@ import { createFirebaseReplication } from '../../rxdbHelpers';
 import { Entry } from '../../rxdbTypes';
 import { firstValueFrom, filter } from 'rxjs';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { mergeUpdates } from 'yjs';
 
 interface EntrySyncProps {
     readonly userId: string;
@@ -16,6 +17,7 @@ interface EntrySyncProps {
 
 function EntrySyncImpl({ userId, workspaceId, projectId, children }: EntrySyncProps) {
     const db = useRxdb();
+    const entryCollection = db.collections.entries;
 
     const [replicaState, setReplicateState] = useState<RxFirestoreReplicationState<Entry>>();
 
@@ -25,79 +27,80 @@ function EntrySyncImpl({ userId, workspaceId, projectId, children }: EntrySyncPr
     useEffect(() => {
         const replicateState = createFirebaseReplication<Entry>({
             userId,
-            rxCollection: db.collections.entries,
+            rxCollection: entryCollection,
             remotePath: ['workspaces', workspaceId, 'projects', projectId, 'entries'],
-            // pullModifier: async (doc) => {
-            //     if (!doc?.updates[0] || doc._deleted) {
-            //         return doc;
-            //     }
+            pullModifier: async (doc) => {
+                if (doc._deleted) {
+                    return doc;
+                }
 
-            //     const storage = getStorage();
-            //     const docRef = ref(storage, doc.updates[0].docRef);
-            //     const downloadUrl = await getDownloadURL(docRef);
-            //     const response = await fetch(downloadUrl);
-            //     const buffer = await response.arrayBuffer();
-            //     const update = [...new Uint8Array(buffer)];
+                const localDoc = await entryCollection.getLocal(doc.id);
+                if (localDoc && localDoc._data.data.timestamp >= doc.contentTimestamp) {
+                    return doc;
+                }
 
-            //     const modifiedDoc = {
-            //         ...doc,
-            //         updates: [{
-            //             timestamp: doc.updates[0].timestamp,
-            //             update
-            //         }]
-            //     };
+                try {
+                    const storage = getStorage();
+                    const docRef = ref(storage, `docs/${workspaceId}/${projectId}/${doc.id}`);
+                    const downloadUrl = await getDownloadURL(docRef);
+                    const response = await fetch(downloadUrl);
+                    const buffer = await response.arrayBuffer();
+                    const remoteUpdate = new Uint8Array(buffer);
+                    const localUpdate = new Uint8Array(localDoc?._data.data.update ?? [0]);
+                    const mergedUpdate = mergeUpdates([localUpdate, remoteUpdate]);
 
-            //     console.log(`${doc.id} - Pulling doc`, modifiedDoc);
+                    await entryCollection.upsertLocal(doc.id, {
+                        timestamp: doc.contentTimestamp ?? 0,
+                        update: mergedUpdate
+                    });
+                } catch (e) {
+                    console.error('Failed to download doc content', e);
+                }
 
-            //     return modifiedDoc;
-            // },
+                console.debug(`${doc.id} - Pulled doc`, doc);
+
+                return doc;
+            },
             pushFilter: (doc) => doc.workspaceId === workspaceId && doc.projectId === projectId,
-            // pushModifier: async (doc) => {
-            //     if (!doc?.updates) {
-            //         return doc;
-            //     }
+            pushModifier: async (doc) => {
+                const latestTimestamp = timestampMap.get(doc.id) ?? 0;
+                const docTimestamp = doc.contentTimestamp ?? 0;
 
-            //     const latestTimestamp = timestampMap.get(doc.id) ?? 0;
-            //     const docTimestamp = doc.updates[0].timestamp;
+                if (docTimestamp <= latestTimestamp) {
+                    return doc;
+                }
 
-            //     if (docTimestamp <= latestTimestamp) {
-            //         return doc;
-            //     }
+                timestampMap.set(doc.id, docTimestamp);
 
-            //     timestampMap.set(doc.id, docTimestamp);
+                const storage = getStorage();
+                const docRef = ref(storage, `docs/${workspaceId}/${projectId}/${doc.id}`);
 
-            //     const storage = getStorage();
-            //     const docRef = ref(storage, `docs/${workspaceId}/${projectId}/${doc.id}`);
+                const localDoc = await entryCollection.getLocal(doc.id);
+                if (!localDoc) {
+                    return doc;
+                }
 
-            //     const uploadBuffer = new Uint8Array(doc.updates[0].update);
-            //     await uploadBytes(docRef, uploadBuffer);
+                const uploadBuffer = new Uint8Array(localDoc._data.data.update);
+                await uploadBytes(docRef, uploadBuffer);
 
-            //     const modifiedDoc = {
-            //         ...doc,
-            //         updates: [{
-            //             timestamp: doc.updates[0].timestamp,
-            //             docRef: docRef.fullPath
-            //         }]
-            //     };
+                console.log(`${doc.id} - Pushing doc`, doc);
 
-            //     console.log(`${doc.id} - Pushing doc`, modifiedDoc);
-
-            //     return modifiedDoc;
-            // },
+                return doc;
+            },
         });
 
         const initializeReplication = async () => {
-            db.collections.entries.insertLocal('last-in-sync', { time: 0 }).catch(() => void 0);
+            entryCollection.insertLocal('last-in-sync', { time: 0 }).catch(() => void 0);
             replicateState.active$.subscribe(async () => {
                 await replicateState.awaitInSync();
-                await db.collections.entries.upsertLocal('last-in-sync', { time: Date.now() });
+                await entryCollection.upsertLocal('last-in-sync', { time: Date.now() });
             });
 
             // Sync the project data from the last 24 hours
             const oneDay = 1000 * 60 * 60 * 24;
 
             await firstValueFrom(
-                db.collections.entries.getLocal$('last-in-sync').pipe(
+                entryCollection.getLocal$('last-in-sync').pipe(
                     filter((d) => d!.get('time') > (Date.now() - oneDay))
                 )
             );
@@ -118,7 +121,7 @@ function EntrySyncImpl({ userId, workspaceId, projectId, children }: EntrySyncPr
 
             stopReplication();
         };
-    }, [db, userId, workspaceId, projectId, timestampMap]);
+    }, [db, userId, workspaceId, projectId, timestampMap, entryCollection]);
 
     return children(replicaState !== undefined);
 }

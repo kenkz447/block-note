@@ -32,10 +32,7 @@ export interface Entry extends AppRxDocumentBase {
     readonly name: string;
     readonly order: number;
     readonly parent: string | null;
-    readonly updates?: {
-        timestamp: number;
-        update: number[];
-    }[];
+    readonly contentTimestamp?: number;
 }
 
 export interface LocalDoc extends AppRxDocumentBase {

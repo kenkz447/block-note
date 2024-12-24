@@ -143,22 +143,8 @@ const entrySchema = {
         order: {
             type: 'number'
         },
-        updates: {
-            type: 'array',
-            items: {
-                type: 'object',
-                properties: {
-                    timestamp: {
-                        type: 'number'
-                    },
-                    update: {
-                        type: 'array',
-                        items: {
-                            type: 'number'
-                        }
-                    }
-                }
-            }
+        contentTimestamp: {
+            type: 'number'
         },
         workspaceId: {
             type: 'string'
