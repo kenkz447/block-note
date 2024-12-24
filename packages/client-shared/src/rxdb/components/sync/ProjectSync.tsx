@@ -27,17 +27,17 @@ function ProjectSyncImpl({ userId, workspaceId, children }: ProjectSyncProps) {
         });
 
         const initializeReplication = async () => {
-            db.collections.projects.insertLocal('last-in-sync', { time: 0 }).catch(() => void 0);
+            db.collections.projects.insertLocal('local:last-in-sync', { time: 0 }).catch(() => void 0);
             replicateState.active$.subscribe(async () => {
                 await replicateState.awaitInSync();
-                await db.collections.projects.upsertLocal('last-in-sync', { time: Date.now() });
+                await db.collections.projects.upsertLocal('local:last-in-sync', { time: Date.now() });
             });
 
             // Sync the project data from the last 24 hours
             const oneDay = 1000 * 60 * 60 * 24;
 
             await firstValueFrom(
-                db.collections.projects.getLocal$('last-in-sync').pipe(
+                db.collections.projects.getLocal$('local:last-in-sync').pipe(
                     filter((d) => d!.get('time') > (Date.now() - oneDay))
                 )
             );

@@ -20,7 +20,11 @@ interface EditorProviderProps {
     readonly children: (editorContext: EditorContextType) => React.ReactNode;
 }
 
-function EditorProviderImpl({ workspaceId, projectId, children }: EditorProviderProps) {
+function EditorProviderImpl({
+    workspaceId,
+    projectId,
+    children
+}: EditorProviderProps) {
     const db = useRxdb();
 
     const {
@@ -38,7 +42,12 @@ function EditorProviderImpl({ workspaceId, projectId, children }: EditorProvider
             return;
         }
 
-        const collection = await createDefaultDocCollection(db, collectionId);
+        const collection = await createDefaultDocCollection({
+            db,
+            collectionId,
+            enableSync: db.collections.entries.synced
+        });
+
         await initDefaultDocCollection(collection);
 
         const entries = await entryCollection.find().exec();

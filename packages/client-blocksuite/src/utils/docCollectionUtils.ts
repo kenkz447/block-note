@@ -13,10 +13,17 @@ import {
     IndexedDBBlobSource,
 } from '@blocksuite/sync';
 
-import { RxdbDocSource } from '../source/RxdbDocSource';
+import { RxdbRemoteDocSource } from '../source/RxdbRemoteDocSource';
 import { AppRxDatabase } from '@writefy/client-shared';
+import { RxdbLocalDocSource } from '../source/RxdbLocalDocSource';
 
-export async function createDefaultDocCollection(db: AppRxDatabase, collectionId: string) {
+interface CreateDefaultDocCollection {
+    readonly db: AppRxDatabase;
+    readonly collectionId: string;
+    readonly enableSync: boolean;
+}
+
+export async function createDefaultDocCollection({ db, collectionId, enableSync }: CreateDefaultDocCollection) {
     const idGenerator: IdGeneratorType = IdGeneratorType.NanoID;
     const schema = new Schema();
     schema.register(AffineSchemas);
@@ -24,7 +31,7 @@ export async function createDefaultDocCollection(db: AppRxDatabase, collectionId
     const params = new URLSearchParams(location.search);
 
     const docSources: DocCollectionOptions['docSources'] = {
-        main: new RxdbDocSource(db)
+        main: enableSync ? new RxdbRemoteDocSource(db) : new RxdbLocalDocSource(db),
     };
 
     const awarenessSources: AwarenessSource[] = [

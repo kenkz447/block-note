@@ -5,8 +5,6 @@ import { useRxdb } from '../../hooks/useRxdb';
 import { createFirebaseReplication } from '../../rxdbHelpers';
 import { Entry } from '../../rxdbTypes';
 import { firstValueFrom, filter } from 'rxjs';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { mergeUpdates } from 'yjs';
 
 interface EntrySyncProps {
     readonly userId: string;
@@ -29,78 +27,21 @@ function EntrySyncImpl({ userId, workspaceId, projectId, children }: EntrySyncPr
             userId,
             rxCollection: entryCollection,
             remotePath: ['workspaces', workspaceId, 'projects', projectId, 'entries'],
-            pullModifier: async (doc) => {
-                if (doc._deleted) {
-                    return doc;
-                }
-
-                const localDoc = await entryCollection.getLocal(doc.id);
-                if (localDoc && localDoc._data.data.timestamp >= doc.contentTimestamp) {
-                    return doc;
-                }
-
-                try {
-                    const storage = getStorage();
-                    const docRef = ref(storage, `docs/${workspaceId}/${projectId}/${doc.id}`);
-                    const downloadUrl = await getDownloadURL(docRef);
-                    const response = await fetch(downloadUrl);
-                    const buffer = await response.arrayBuffer();
-                    const remoteUpdate = new Uint8Array(buffer);
-                    const localUpdate = new Uint8Array(localDoc?._data.data.update ?? [0]);
-                    const mergedUpdate = mergeUpdates([localUpdate, remoteUpdate]);
-
-                    await entryCollection.upsertLocal(doc.id, {
-                        timestamp: doc.contentTimestamp ?? 0,
-                        update: mergedUpdate
-                    });
-                } catch (e) {
-                    console.error('Failed to download doc content', e);
-                }
-
-                console.debug(`${doc.id} - Pulled doc`, doc);
-
-                return doc;
-            },
             pushFilter: (doc) => doc.workspaceId === workspaceId && doc.projectId === projectId,
-            pushModifier: async (doc) => {
-                const latestTimestamp = timestampMap.get(doc.id) ?? 0;
-                const docTimestamp = doc.contentTimestamp ?? 0;
-
-                if (docTimestamp <= latestTimestamp) {
-                    return doc;
-                }
-
-                timestampMap.set(doc.id, docTimestamp);
-
-                const storage = getStorage();
-                const docRef = ref(storage, `docs/${workspaceId}/${projectId}/${doc.id}`);
-
-                const localDoc = await entryCollection.getLocal(doc.id);
-                if (!localDoc) {
-                    return doc;
-                }
-
-                const uploadBuffer = new Uint8Array(localDoc._data.data.update);
-                await uploadBytes(docRef, uploadBuffer);
-
-                console.log(`${doc.id} - Pushing doc`, doc);
-
-                return doc;
-            },
         });
 
         const initializeReplication = async () => {
-            entryCollection.insertLocal('last-in-sync', { time: 0 }).catch(() => void 0);
+            entryCollection.insertLocal('local:last-in-sync', { time: 0 }).catch(() => void 0);
             replicateState.active$.subscribe(async () => {
                 await replicateState.awaitInSync();
-                await entryCollection.upsertLocal('last-in-sync', { time: Date.now() });
+                await entryCollection.upsertLocal('local:last-in-sync', { time: Date.now() });
             });
 
             // Sync the project data from the last 24 hours
             const oneDay = 1000 * 60 * 60 * 24;
 
             await firstValueFrom(
-                entryCollection.getLocal$('last-in-sync').pipe(
+                entryCollection.getLocal$('local:last-in-sync').pipe(
                     filter((d) => d!.get('time') > (Date.now() - oneDay))
                 )
             );
