@@ -1,6 +1,8 @@
 .editor-container {
     --affine-editor-bottom-padding: 100px;
     --affine-editor-side-padding: 1.5rem;
+
+    height: 100%;
 }
 
 .editor-container.size-full {

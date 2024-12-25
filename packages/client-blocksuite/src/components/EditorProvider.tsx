@@ -37,7 +37,7 @@ function EditorProviderImpl({
         const collection = await createDefaultDocCollection({
             db,
             collectionId: 'local:collection',
-            enableSync: db.name.startsWith('user_'),
+            enableSync: db.name !== 'user_anonymous',
             messageChannel: `/docs/${workspaceId}/${projectId}`
         });
 
@@ -58,7 +58,7 @@ function EditorProviderImpl({
         }
 
         return collection;
-    }, [db, entryCollection]);
+    }, [db, entryCollection, projectId, workspaceId]);
 
     useEffect(() => {
         let closeCollection: () => void;
