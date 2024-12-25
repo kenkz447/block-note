@@ -67,14 +67,15 @@ export class RxdbRemoteDocSource implements DocSource {
                 }
 
                 const doc = await store.findOne(docId).exec();
-                update = Array.from(await this._downLoadContent(doc));
+                try {
+                    update = Array.from(await this._downLoadContent(doc));
+                } catch (error) {
+                    console.error('Failed to download doc', error);
+                    return null;
+                }
             }
 
-            if (!update) {
-                return null;
-            }
-
-            const merged = mergeUpdates([Uint8Array.from(update)]);
+            const merged = mergeUpdates([Uint8Array.from(update!)]);
             const diff = state.length ? diffUpdate(merged, state) : merged;
 
             return { data: diff, state: encodeStateVectorFromUpdate(merged) };
