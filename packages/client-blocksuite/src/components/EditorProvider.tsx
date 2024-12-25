@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { EditorContextType } from '../editorContext';
 import { createDefaultDocCollection, initDefaultDocCollection } from '../utils/docCollectionUtils';
 import { DocCollection } from '@blocksuite/store';
@@ -12,11 +12,10 @@ import { shallowEqualByKey } from '@writefy/client-shared/src/utils';
 blocksEffects();
 presetsEffects();
 
-const ANONYMOUS_COLLECTION_NAME = 'blocksuite-anonymous';
-
 interface EditorProviderProps {
     readonly workspaceId: string;
     readonly projectId: string;
+    readonly defaultDocId: string;
     readonly children: (editorContext: EditorContextType) => React.ReactNode;
 }
 
@@ -33,22 +32,16 @@ function EditorProviderImpl({
         collection: entryCollection
     } = useEntries({ workspaceId, projectId });
 
-    const docCollections = useRef<DocCollection[]>([]);
-    const [activeCollectionId, setActiveCollectionId] = useState<string>(ANONYMOUS_COLLECTION_NAME);
     const [docCollection, setDocCollection] = useState<DocCollection>();
 
-    const setupCollection = useCallback(async (collectionId: string) => {
-        if (!db) {
-            return;
-        }
-
+    const setupCollection = useCallback(async () => {
         const collection = await createDefaultDocCollection({
             db,
-            collectionId,
+            collectionId: 'local:collection',
             enableSync: db.collections.entries.synced
         });
 
-        await initDefaultDocCollection(collection);
+        await initDefaultDocCollection(collection, 'local:home');
 
         const entries = await entryCollection.find().exec();
 
@@ -58,37 +51,32 @@ function EditorProviderImpl({
                 continue;
             }
 
-            createDefaultDoc(collection, { id: entry.id });
+            createDefaultDoc(
+                collection,
+                { id: entry.id, title: entry.name }
+            );
         }
 
-        setDocCollection(collection);
-        setActiveCollectionId(collection.id);
+        return collection;
     }, [db, entryCollection]);
 
     useEffect(() => {
-        if (activeCollectionId !== docCollection?.id) {
-            docCollection?.waitForGracefulStop().then(() => {
-                docCollection?.forceStop();
-                setDocCollection(undefined);
+        let closeCollection: () => void;
+        setupCollection()
+            .then(async (collection) => {
+
+                setDocCollection(collection);
+                closeCollection = async () => {
+                    await collection.waitForGracefulStop();
+                    collection.forceStop();
+                };
             });
-        }
-    }, [activeCollectionId, docCollection]);
 
-    useEffect(() => {
-        const skipCreateCollection = !activeCollectionId || docCollection;
-        if (skipCreateCollection) {
-            return;
-        }
-
-        const existingCollection = docCollections.current.find((collection) => collection.id === activeCollectionId);
-
-        if (existingCollection) {
-            setDocCollection(existingCollection);
-        }
-        else {
-            setupCollection(activeCollectionId);
-        }
-    }, [activeCollectionId, docCollection, setupCollection]);
+        return () => {
+            closeCollection();
+            setDocCollection(undefined);
+        };
+    }, [setupCollection]);
 
     /**
      * Subscribe events

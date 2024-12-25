@@ -72,15 +72,14 @@ export async function createDefaultDocCollection({ db, collectionId, enableSync 
     return collection;
 }
 
-export async function initDefaultDocCollection(collection: DocCollection) {
+export async function initDefaultDocCollection(collection: DocCollection, defaultDocId: string) {
     await collection.waitForSynced();
 
     const shouldInit = collection.docs.size === 0;
     if (shouldInit) {
         collection.meta.initialize();
         createDefaultDoc(collection, {
-            id: 'local:default'
+            id: defaultDocId
         });
-
     }
 }

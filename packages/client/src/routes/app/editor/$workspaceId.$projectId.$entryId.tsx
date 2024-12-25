@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate, useParams, useSearch } from '@tanstack/react-router';
-import { EditorContainer } from '@writefy/client-blocksuite';
+import { EditorContainer, EditorContext, EditorProvider } from '@writefy/client-blocksuite';
 import { Entry, useEntries, useEventListener } from '@writefy/client-shared';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
@@ -11,11 +11,37 @@ import { events } from '@/config/events';
 export const Route = createFileRoute(
     '/app/editor/$workspaceId/$projectId/$entryId',
 )({
-    component: RouteComponent,
+    component: WithEditor,
     validateSearch: z.object({
         mode: z.string().optional()
     }),
 });
+
+function WithEditor() {
+    const { projectId, workspaceId, entryId } = useParams({
+        from: '/app/editor/$workspaceId/$projectId/$entryId',
+    });
+
+    return (
+        <EditorProvider
+            workspaceId={workspaceId}
+            projectId={projectId}
+            defaultDocId={entryId}
+        >
+            {(editorContext) => {
+                if (!editorContext.collection) {
+                    return <LoadingScreen />;
+                }
+
+                return (
+                    <EditorContext.Provider value={editorContext}>
+                        <RouteComponent />
+                    </EditorContext.Provider>
+                );
+            }}
+        </EditorProvider>
+    );
+}
 
 function RouteComponent() {
     const navigate = useNavigate();

@@ -3,18 +3,14 @@ import { DocSource } from '@blocksuite/sync';
 import { RxCollection, RxLocalDocument } from 'rxdb';
 import { diffUpdate, encodeStateVectorFromUpdate, mergeUpdates } from 'yjs';
 
-type UpdateMessage = {
-    timestamp: number;
-    update: Uint8Array;
-};
-
 export class RxdbLocalDocSource implements DocSource {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     debouncePushMap = new Map<string, (...args: any) => Promise<void>>();
 
     name = 'rxdb-local';
     mergeCount = 1;
-    constructor(readonly db: AppRxDatabase) { }
+    constructor(readonly db: AppRxDatabase) {
+    }
 
     private _getEntryStore() {
         const docStore = this.db.collections.entries as RxCollection<Entry>;
@@ -30,7 +26,6 @@ export class RxdbLocalDocSource implements DocSource {
         state: Uint8Array
     ): Promise<{ data: Uint8Array; state?: Uint8Array | undefined; } | null> {
         try {
-
             let store: RxCollection | null = null;
             let localDoc: RxLocalDocument<Entry, LocalDoc> | null = null;
 
@@ -63,23 +58,20 @@ export class RxdbLocalDocSource implements DocSource {
             store = this._getEntryStore();
             localDoc = await store.getLocal(docId);
 
-            let rows: UpdateMessage[] = [];
-            if (localDoc) {
-                rows.push({
-                    timestamp: localDoc._data.data.timestamp,
-                    update: Uint8Array.from(localDoc._data.data.update)
-                });
+            if (!localDoc) {
+                return void await store.upsertLocal(docId, { update: Array.from(data), timestamp: Date.now() });
             }
-            rows.push({
-                timestamp: Date.now(),
-                update: data
-            });
 
-            if (this.mergeCount && rows.length >= this.mergeCount) {
-                const merged = mergeUpdates(rows.map(({ update }) => update));
-                rows = [{ timestamp: Date.now(), update: [...merged] }];
-            }
-            const update = rows[0];
+            const merged = mergeUpdates([
+                Uint8Array.from(localDoc?._data.data.update ?? [0]),
+                data
+            ]);
+
+            const update = {
+                timestamp: Date.now(),
+                update: Array.from(merged),
+            };
+
             await store.upsertLocal(docId, update);
         } catch (error) {
             console.error('Failed to push doc', error);
