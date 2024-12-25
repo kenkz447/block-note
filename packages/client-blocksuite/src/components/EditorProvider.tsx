@@ -15,7 +15,6 @@ presetsEffects();
 interface EditorProviderProps {
     readonly workspaceId: string;
     readonly projectId: string;
-    readonly defaultDocId: string;
     readonly children: (editorContext: EditorContextType) => React.ReactNode;
 }
 
@@ -38,7 +37,8 @@ function EditorProviderImpl({
         const collection = await createDefaultDocCollection({
             db,
             collectionId: 'local:collection',
-            enableSync: db.collections.entries.synced
+            enableSync: db.name.startsWith('user_'),
+            messageChannel: `/docs/${workspaceId}/${projectId}`
         });
 
         await initDefaultDocCollection(collection, 'local:home');
@@ -64,7 +64,6 @@ function EditorProviderImpl({
         let closeCollection: () => void;
         setupCollection()
             .then(async (collection) => {
-
                 setDocCollection(collection);
                 closeCollection = async () => {
                     await collection.waitForGracefulStop();

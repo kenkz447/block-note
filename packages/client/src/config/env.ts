@@ -8,6 +8,7 @@ const envSchema = z.object({
         storageBucket: z.string(),
         messagingSenderId: z.string(),
         appId: z.string(),
+        databaseURL: z.string(),
     })
 });
 
@@ -19,6 +20,7 @@ const env = {
         storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET!,
         messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID!,
         appId: import.meta.env.VITE_FIREBASE_APP_ID!,
+        databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL!,
     }
 };
 

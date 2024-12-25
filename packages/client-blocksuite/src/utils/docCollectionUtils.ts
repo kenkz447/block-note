@@ -21,9 +21,10 @@ interface CreateDefaultDocCollection {
     readonly db: AppRxDatabase;
     readonly collectionId: string;
     readonly enableSync: boolean;
+    readonly messageChannel: string;
 }
 
-export async function createDefaultDocCollection({ db, collectionId, enableSync }: CreateDefaultDocCollection) {
+export async function createDefaultDocCollection({ db, collectionId, enableSync, messageChannel }: CreateDefaultDocCollection) {
     const idGenerator: IdGeneratorType = IdGeneratorType.NanoID;
     const schema = new Schema();
     schema.register(AffineSchemas);
@@ -31,7 +32,7 @@ export async function createDefaultDocCollection({ db, collectionId, enableSync 
     const params = new URLSearchParams(location.search);
 
     const docSources: DocCollectionOptions['docSources'] = {
-        main: enableSync ? new RxdbRemoteDocSource(db) : new RxdbLocalDocSource(db),
+        main: enableSync ? new RxdbRemoteDocSource(db, messageChannel) : new RxdbLocalDocSource(db),
     };
 
     const awarenessSources: AwarenessSource[] = [

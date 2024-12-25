@@ -18,7 +18,7 @@ export const Route = createFileRoute(
 });
 
 function WithEditor() {
-    const { projectId, workspaceId, entryId } = useParams({
+    const { projectId, workspaceId } = useParams({
         from: '/app/editor/$workspaceId/$projectId/$entryId',
     });
 
@@ -26,7 +26,6 @@ function WithEditor() {
         <EditorProvider
             workspaceId={workspaceId}
             projectId={projectId}
-            defaultDocId={entryId}
         >
             {(editorContext) => {
                 if (!editorContext.collection) {
