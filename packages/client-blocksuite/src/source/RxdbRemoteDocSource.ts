@@ -71,7 +71,7 @@ export class RxdbRemoteDocSource implements DocSource {
             }
 
             if (!update) {
-                throw new Error('Failed to pull doc');
+                return null;
             }
 
             const merged = mergeUpdates([Uint8Array.from(update)]);
