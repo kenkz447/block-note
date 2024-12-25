@@ -16,6 +16,7 @@ import {
 import { RxdbRemoteDocSource } from '../source/RxdbRemoteDocSource';
 import { AppRxDatabase } from '@writefy/client-shared';
 import { RxdbLocalDocSource } from '../source/RxdbLocalDocSource';
+import { RxdbShadowDocSource } from '../source/RxdbShadowDocSource';
 
 interface CreateDefaultDocCollection {
     readonly db: AppRxDatabase;
@@ -32,7 +33,8 @@ export async function createDefaultDocCollection({ db, collectionId, enableSync,
     const params = new URLSearchParams(location.search);
 
     const docSources: DocCollectionOptions['docSources'] = {
-        main: enableSync ? new RxdbRemoteDocSource(db, messageChannel) : new RxdbLocalDocSource(db),
+        main: enableSync ? new RxdbRemoteDocSource(db) : new RxdbLocalDocSource(db),
+        shadows: enableSync ? [new RxdbShadowDocSource(db, messageChannel)] : undefined,
     };
 
     const awarenessSources: AwarenessSource[] = [
