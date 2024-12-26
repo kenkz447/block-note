@@ -16,6 +16,7 @@ import {
 import { AppRxDatabase } from '@writefy/client-shared';
 import { LocalDocSource } from '../source/LocalDocSource';
 import { StorageDocSource } from '../source/StorageDocSource';
+import { RemoteDocSource } from '../source/RemoteDocSource';
 
 interface CreateDefaultDocCollection {
     readonly db: AppRxDatabase;
@@ -32,7 +33,7 @@ export async function createDefaultDocCollection({ db, collectionId, enableSync 
     const params = new URLSearchParams(location.search);
 
     const docSources: DocCollectionOptions['docSources'] = {
-        main: new LocalDocSource(db),
+        main: enableSync ? new RemoteDocSource(db) : new LocalDocSource(db),
         shadows: enableSync ? [new StorageDocSource(db)] : undefined,
     };
 
