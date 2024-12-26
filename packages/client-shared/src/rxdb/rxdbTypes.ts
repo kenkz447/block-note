@@ -35,8 +35,9 @@ export interface Entry extends AppRxDocumentBase {
     readonly contentTimestamp?: number;
 }
 
-export interface LocalDoc extends AppRxDocumentBase {
+export interface LocalDoc {
     timestamp: number;
+    latest: number[];
     update: number[];
 }
 

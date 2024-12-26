@@ -21,10 +21,7 @@ export class RxdbLocalDocSource implements DocSource {
         return docStore;
     }
 
-    async pull(
-        docId: string,
-        state: Uint8Array
-    ): Promise<{ data: Uint8Array; state?: Uint8Array | undefined; } | null> {
+    async pull(docId: string, state: Uint8Array): Promise<{ data: Uint8Array; state?: Uint8Array | undefined; } | null> {
         try {
             let store: RxCollection | null = null;
             let localDoc: RxLocalDocument<Entry, LocalDoc> | null = null;
@@ -35,7 +32,7 @@ export class RxdbLocalDocSource implements DocSource {
                 return null;
             }
 
-            const update = mergeUpdates([Uint8Array.from(localDoc._data.data.update)]);
+            const update = mergeUpdates([Uint8Array.from(localDoc._data.data.latest)]);
             const diff = state.length ? diffUpdate(update, state) : update;
 
             return { data: diff, state: encodeStateVectorFromUpdate(update) };
@@ -45,13 +42,8 @@ export class RxdbLocalDocSource implements DocSource {
         }
     }
 
-    async push(docId: string, data: Uint8Array): Promise<void> {
+    async push(docId: string, currentUpdate: Uint8Array): Promise<void> {
         try {
-            const isEmpty = data.length === 0 || data.length === 1 && data[0] === 0;
-            if (isEmpty) {
-                return;
-            }
-
             let store: RxCollection | null = null;
             let localDoc: RxLocalDocument<Entry, LocalDoc> | null = null;
 
@@ -59,17 +51,22 @@ export class RxdbLocalDocSource implements DocSource {
             localDoc = await store.getLocal(docId);
 
             if (!localDoc) {
-                return void await store.upsertLocal(docId, { update: Array.from(data), timestamp: Date.now() });
+                await store.upsertLocal(
+                    docId,
+                    { latest: Array.from(currentUpdate), timestamp: Date.now() } as LocalDoc
+                );
+                return;
             }
 
             const merged = mergeUpdates([
-                Uint8Array.from(localDoc?._data.data.update ?? [0]),
-                data
+                Uint8Array.from(localDoc?._data.data.latest ?? [0]),
+                currentUpdate
             ]);
 
-            const update = {
+            const update: LocalDoc = {
                 timestamp: Date.now(),
-                update: Array.from(merged),
+                latest: Array.from(merged),
+                update: Array.from(currentUpdate)
             };
 
             await store.upsertLocal(docId, update);
@@ -79,7 +76,6 @@ export class RxdbLocalDocSource implements DocSource {
     }
 
     subscribe() {
-        return () => {
-        };
+        return () => { };
     }
 }
