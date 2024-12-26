@@ -76,6 +76,10 @@ export class LocalDocSource implements DocSource {
             }
 
             const doc = await store.findOne(docId).exec();
+            if (!doc) {
+                return;
+            }
+
             await doc.update({
                 $set: {
                     contentTimestamp: update.timestamp,

@@ -83,8 +83,9 @@ export class StorageDocSource implements DocSource {
         try {
             const store = this._getEntryStore();
             const localDoc = await store.getLocal(docId);
+            const doc = await store.findOne(docId).exec();
 
-            if (!localDoc) {
+            if (!localDoc || !doc) {
                 return;
             }
 
@@ -93,8 +94,7 @@ export class StorageDocSource implements DocSource {
                 currentUpdate
             ]);
 
-            const doc = await store.findOne(docId).exec();
-            this._uploadContent(doc!, Uint8Array.from(merged));
+            this._uploadContent(doc, Uint8Array.from(merged));
         } catch (error) {
             console.error('Failed to push doc', error);
         }

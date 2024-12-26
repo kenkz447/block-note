@@ -57,6 +57,13 @@ function EditorProviderImpl({
             );
         }
 
+        collection.docs.forEach((doc) => {
+            const isEntryExists = entries.find((e) => e.id === doc.id);
+            if (!isEntryExists) {
+                collection.removeDoc(doc.id);
+            }
+        });
+
         return collection;
     }, [db, entryCollection, projectId, workspaceId]);
 
