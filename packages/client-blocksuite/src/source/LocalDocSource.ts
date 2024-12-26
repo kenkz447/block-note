@@ -3,7 +3,7 @@ import { DocSource } from '@blocksuite/sync';
 import { RxCollection, RxLocalDocument } from 'rxdb';
 import { diffUpdate, encodeStateVectorFromUpdate, mergeUpdates } from 'yjs';
 
-export class RxdbLocalDocSource implements DocSource {
+export class LocalDocSource implements DocSource {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     debouncePushMap = new Map<string, (...args: any) => Promise<void>>();
 
@@ -70,6 +70,17 @@ export class RxdbLocalDocSource implements DocSource {
             };
 
             await store.upsertLocal(docId, update);
+
+            if (docId.startsWith('local:')) {
+                return;
+            }
+
+            const doc = await store.findOne(docId).exec();
+            await doc.update({
+                $set: {
+                    contentTimestamp: update.timestamp,
+                }
+            });
         } catch (error) {
             console.error('Failed to push doc', error);
         }
