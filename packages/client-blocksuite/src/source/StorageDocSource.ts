@@ -114,7 +114,7 @@ export class StorageDocSource implements DocSource {
                 return;
             }
 
-            const localDoc = await store.getLocal(documentId);
+            let localDoc = await store.getLocal(documentId);
             if (!localDoc) {
                 return;
             }
@@ -125,7 +125,14 @@ export class StorageDocSource implements DocSource {
 
             try {
                 const latest = await this._downLoadContent(doc._data);
-                cb(documentId, Uint8Array.from(latest));
+                localDoc = await store.getLocal(documentId);
+
+                const merge = mergeUpdates([
+                    Uint8Array.from(localDoc?._data.data.latest ?? [0]),
+                    Uint8Array.from(latest)
+                ]);
+
+                cb(documentId, merge);
             } catch (error) {
                 console.error('Failed to upload doc to storage', error);
             }
