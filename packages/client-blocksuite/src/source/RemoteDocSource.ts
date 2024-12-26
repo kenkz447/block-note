@@ -1,8 +1,8 @@
-import { LocalDoc, Entry, AppRxDatabase } from '@writefy/client-shared';
+import { LocalDoc, Entry, AppRxDatabase, debounce } from '@writefy/client-shared';
 import { DocSource } from '@blocksuite/sync';
-import { RxCollection, RxDocumentData, RxLocalDocument } from 'rxdb';
+import { RxCollection, RxDocument, RxDocumentData, RxLocalDocument } from 'rxdb';
 import { diffUpdate, encodeStateVectorFromUpdate, mergeUpdates } from 'yjs';
-import { getDownloadURL, getStorage, ref } from '@firebase/storage';
+import { getDownloadURL, getStorage, ref, uploadBytes } from '@firebase/storage';
 
 export class RemoteDocSource implements DocSource {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -22,14 +22,20 @@ export class RemoteDocSource implements DocSource {
         return new Uint8Array(buffer);
     };
 
-    private _getEntryStore() {
+    private _getEntryStore = () => {
         const docStore = this.db.collections.entries as RxCollection<Entry>;
         if (!docStore) {
             throw new Error('Entries collection not found in database');
         }
 
         return docStore;
-    }
+    };
+
+    private _uploadContent = async (doc: RxDocument<Entry>, update: Uint8Array) => {
+        const storage = getStorage();
+        const docRef = ref(storage, `docs/${doc.workspaceId}/${doc.projectId}/${doc.id}`);
+        await uploadBytes(docRef, update);
+    };
 
     async pull(docId: string, state: Uint8Array): Promise<{ data: Uint8Array; state?: Uint8Array | undefined; } | null> {
         try {
@@ -92,11 +98,21 @@ export class RemoteDocSource implements DocSource {
                 return;
             }
 
-            await doc.update({
-                $set: {
-                    contentTimestamp: update.timestamp,
-                }
-            });
+            let debounceUpdate = this.debouncePushMap.get(docId);
+            if (!debounceUpdate) {
+                debounceUpdate = debounce(async (doc: RxDocument<Entry>, localDoc: LocalDoc) => {
+                    await this._uploadContent(doc, Uint8Array.from(merged));
+                    await doc.update({
+                        $set: {
+                            contentTimestamp: localDoc.timestamp,
+                        }
+                    });
+                }, 100);
+                this.debouncePushMap.set(docId, debounceUpdate);
+            }
+
+            await debounceUpdate(doc, localDoc);
+
         } catch (error) {
             console.error('Failed to push doc', error);
         }

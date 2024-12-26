@@ -48,7 +48,7 @@ export async function createDefaultDocCollection({ db, collectionId, enableSync 
     );
 
     const options: DocCollectionOptions = {
-        id: `local:${collectionId}`,
+        id: collectionId,
         schema,
         idGenerator,
         blobSources: {

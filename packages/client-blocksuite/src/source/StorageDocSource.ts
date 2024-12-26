@@ -1,11 +1,11 @@
 import { Entry, AppRxDatabase } from '@writefy/client-shared';
 import { DocSource } from '@blocksuite/sync';
-import { RxCollection, RxDocument, RxDocumentData } from 'rxdb';
-import { mergeUpdates } from 'yjs';
-import { getDownloadURL, getStorage, ref, uploadBytes } from '@firebase/storage';
+import { RxCollection, RxDocumentData } from 'rxdb';
+import { getDownloadURL, getStorage, ref } from '@firebase/storage';
 
 export class StorageDocSource implements DocSource {
     name = StorageDocSource.name;
+    urlMap = new Map<string, string>();
 
     constructor(readonly db: AppRxDatabase) { }
 
@@ -21,48 +21,19 @@ export class StorageDocSource implements DocSource {
     private _downLoadContent = async (doc: RxDocumentData<Entry>) => {
         const storage = getStorage();
         const docRef = ref(storage, `docs/${doc.workspaceId}/${doc.projectId}/${doc.id}`);
-        const downloadUrl = await getDownloadURL(docRef);
+        const downloadUrl = this.urlMap.get(doc.id) ?? await getDownloadURL(docRef);
+        this.urlMap.set(doc.id, downloadUrl);
+
         const response = await fetch(downloadUrl);
         const buffer = await response.arrayBuffer();
         return new Uint8Array(buffer);
-    };
-
-    private _uploadContent = async (doc: RxDocument<Entry>, update: Uint8Array) => {
-        const storage = getStorage();
-        const docRef = ref(storage, `docs/${doc.workspaceId}/${doc.projectId}/${doc.id}`);
-        await uploadBytes(docRef, update);
     };
 
     async pull() {
         return null;
     }
 
-    async push(docId: string, currentUpdate: Uint8Array): Promise<void> {
-        if (docId.startsWith('local:')) {
-            return;
-        }
-
-        try {
-            const store = this._getEntryStore();
-            const localDoc = await store.getLocal(docId);
-            const doc = await store.findOne(docId).exec();
-
-            if (!localDoc || !doc) {
-                return;
-            }
-
-            const rows = [];
-            if (localDoc?._data.data.latest) {
-                rows.push(localDoc._data.data.latest);
-            }
-            rows.push(currentUpdate);
-
-            const merged = mergeUpdates(rows.map((row) => Uint8Array.from(row)));
-
-            this._uploadContent(doc, Uint8Array.from(merged));
-        } catch (error) {
-            console.error('Failed to push doc', error);
-        }
+    async push(): Promise<void> {
     }
 
     subscribe(cb: (docId: string, data: Uint8Array) => void) {
