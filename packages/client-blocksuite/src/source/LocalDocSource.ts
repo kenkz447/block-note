@@ -50,18 +50,13 @@ export class LocalDocSource implements DocSource {
             store = this._getEntryStore();
             localDoc = await store.getLocal(docId);
 
-            if (!localDoc) {
-                await store.upsertLocal(
-                    docId,
-                    { latest: Array.from(currentUpdate), timestamp: Date.now() } as LocalDoc
-                );
-                return;
+            const rows = [];
+            if (localDoc?._data.data.latest) {
+                rows.push(localDoc._data.data.latest);
             }
+            rows.push(currentUpdate);
 
-            const merged = mergeUpdates([
-                Uint8Array.from(localDoc?._data.data.latest ?? [0]),
-                currentUpdate
-            ]);
+            const merged = mergeUpdates(rows.map((row) => Uint8Array.from(row)));
 
             const update: LocalDoc = {
                 timestamp: Date.now(),

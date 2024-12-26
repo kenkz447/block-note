@@ -89,10 +89,13 @@ export class StorageDocSource implements DocSource {
                 return;
             }
 
-            const merged = mergeUpdates([
-                Uint8Array.from(localDoc?._data.data.latest ?? [0]),
-                currentUpdate
-            ]);
+            const rows = [];
+            if (localDoc?._data.data.latest) {
+                rows.push(localDoc._data.data.latest);
+            }
+            rows.push(currentUpdate);
+
+            const merged = mergeUpdates(rows.map((row) => Uint8Array.from(row)));
 
             this._uploadContent(doc, Uint8Array.from(merged));
         } catch (error) {
