@@ -7,7 +7,6 @@ import { createDefaultDoc } from '@blocksuite/blocks';
 
 import { effects as blocksEffects } from '@blocksuite/blocks/effects';
 import { effects as presetsEffects } from '@blocksuite/presets/effects';
-import { shallowEqualByKey } from '@writefy/client-shared/src/utils';
 
 blocksEffects();
 presetsEffects();
@@ -18,7 +17,7 @@ interface EditorProviderProps {
     readonly children: (editorContext: EditorContextType) => React.ReactNode;
 }
 
-function EditorProviderImpl({
+export function EditorProvider({
     workspaceId,
     projectId,
     children
@@ -155,5 +154,3 @@ function EditorProviderImpl({
 
     return children(contextValue);
 }
-
-export const EditorProvider = React.memo(EditorProviderImpl, shallowEqualByKey('workspaceId', 'projectId'));

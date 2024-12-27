@@ -1,4 +1,4 @@
-import { Entry, AppRxDatabase } from '@writefy/client-shared';
+import { Entry, AppRxDatabase, LocalDocData } from '@writefy/client-shared';
 import { DocSource } from '@blocksuite/sync';
 import { RxCollection, RxDocumentData } from 'rxdb';
 import { getDownloadURL, getStorage, ref } from '@firebase/storage';
@@ -59,6 +59,12 @@ export class StorageDocSource implements DocSource {
 
             try {
                 const latest = await this._downLoadContent(documentData);
+                await store.upsertLocal(documentId, {
+                    timestamp: documentData.contentTimestamp,
+                    latest: Array.from(latest),
+                    update: [],
+                } as LocalDocData);
+
                 cb(documentId, latest);
             } catch (error) {
                 console.error('Failed to upload doc to storage', error);
