@@ -91,7 +91,7 @@ function RouteComponent() {
 
     useEventListener({
         event: events.data.entry.removed,
-        handler: useCallback(() => {
+        handler: useCallback(async () => {
             navigate({
                 to: '/app/editor/$workspaceId/$projectId',
                 params: {

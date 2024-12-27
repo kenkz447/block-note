@@ -1,4 +1,4 @@
-import { LocalDoc, Entry, AppRxDatabase } from '@writefy/client-shared';
+import { LocalDocData, Entry, AppRxDatabase } from '@writefy/client-shared';
 import { DocSource } from '@blocksuite/sync';
 import { RxCollection, RxLocalDocument } from 'rxdb';
 import { diffUpdate, encodeStateVectorFromUpdate, mergeUpdates } from 'yjs';
@@ -24,7 +24,7 @@ export class LocalDocSource implements DocSource {
     async pull(docId: string, state: Uint8Array): Promise<{ data: Uint8Array; state?: Uint8Array | undefined; } | null> {
         try {
             let store: RxCollection | null = null;
-            let localDoc: RxLocalDocument<Entry, LocalDoc> | null = null;
+            let localDoc: RxLocalDocument<Entry, LocalDocData> | null = null;
 
             store = this._getEntryStore();
             localDoc = await store.getLocal(docId);
@@ -45,7 +45,7 @@ export class LocalDocSource implements DocSource {
     async push(docId: string, currentUpdate: Uint8Array): Promise<void> {
         try {
             let store: RxCollection | null = null;
-            let localDoc: RxLocalDocument<Entry, LocalDoc> | null = null;
+            let localDoc: RxLocalDocument<Entry, LocalDocData> | null = null;
 
             store = this._getEntryStore();
             localDoc = await store.getLocal(docId);
@@ -58,7 +58,7 @@ export class LocalDocSource implements DocSource {
 
             const merged = mergeUpdates(rows.map((row) => Uint8Array.from(row)));
 
-            const update: LocalDoc = {
+            const update: LocalDocData = {
                 timestamp: Date.now(),
                 latest: Array.from(merged),
                 update: Array.from(currentUpdate)

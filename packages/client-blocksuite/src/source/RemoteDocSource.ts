@@ -1,26 +1,17 @@
-import { LocalDoc, Entry, AppRxDatabase, debounce } from '@writefy/client-shared';
+import { LocalDocData, Entry, AppRxDatabase, debounce } from '@writefy/client-shared';
 import { DocSource } from '@blocksuite/sync';
 import { RxCollection, RxDocument, RxDocumentData, RxLocalDocument } from 'rxdb';
 import { diffUpdate, encodeStateVectorFromUpdate, mergeUpdates } from 'yjs';
 import { getDownloadURL, getStorage, ref, uploadBytes } from '@firebase/storage';
 
 export class RemoteDocSource implements DocSource {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    debouncePushMap = new Map<string, (...args: any) => Promise<void>>();
+
+    debouncePushMap = new Map<string, (doc: RxDocument<Entry>, localDocData: LocalDocData) => Promise<void>>();
 
     name = 'rxdb-local';
     mergeCount = 1;
     constructor(readonly db: AppRxDatabase) {
     }
-
-    private _downLoadContent = async (doc: RxDocumentData<Entry>) => {
-        const storage = getStorage();
-        const docRef = ref(storage, `docs/${doc.workspaceId}/${doc.projectId}/${doc.id}`);
-        const downloadUrl = await getDownloadURL(docRef);
-        const response = await fetch(downloadUrl);
-        const buffer = await response.arrayBuffer();
-        return new Uint8Array(buffer);
-    };
 
     private _getEntryStore = () => {
         const docStore = this.db.collections.entries as RxCollection<Entry>;
@@ -31,10 +22,23 @@ export class RemoteDocSource implements DocSource {
         return docStore;
     };
 
+    private _downLoadContent = async (doc: RxDocumentData<Entry>) => {
+        console.debug('Downloading content', doc.id);
+        const storage = getStorage();
+        const docRef = ref(storage, `docs/${doc.workspaceId}/${doc.projectId}/${doc.id}`);
+        const downloadUrl = await getDownloadURL(docRef);
+        const response = await fetch(downloadUrl);
+        const buffer = await response.arrayBuffer();
+        console.debug('Downloaded content', doc.id);
+        return new Uint8Array(buffer);
+    };
+
     private _uploadContent = async (doc: RxDocument<Entry>, update: Uint8Array) => {
+        console.debug('Uploading content', doc.id);
         const storage = getStorage();
         const docRef = ref(storage, `docs/${doc.workspaceId}/${doc.projectId}/${doc.id}`);
         await uploadBytes(docRef, update);
+        console.debug('Uploaded content', doc.id);
     };
 
     async pull(docId: string, state: Uint8Array): Promise<{ data: Uint8Array; state?: Uint8Array | undefined; } | null> {
@@ -68,7 +72,7 @@ export class RemoteDocSource implements DocSource {
     async push(docId: string, currentUpdate: Uint8Array): Promise<void> {
         try {
             let store: RxCollection | null = null;
-            let localDoc: RxLocalDocument<Entry, LocalDoc> | null = null;
+            let localDoc: RxLocalDocument<Entry, LocalDocData> | null = null;
 
             store = this._getEntryStore();
             localDoc = await store.getLocal(docId);
@@ -81,16 +85,14 @@ export class RemoteDocSource implements DocSource {
 
             const merged = mergeUpdates(rows.map((row) => Uint8Array.from(row)));
 
-            const update: LocalDoc = {
+            const update: LocalDocData = {
                 timestamp: Date.now(),
                 latest: Array.from(merged),
                 update: Array.from(currentUpdate)
             };
 
-            await store.upsertLocal(docId, update);
-
             if (docId.startsWith('local:')) {
-                return;
+                await store.upsertLocal(docId, update);
             }
 
             const doc = await store.findOne(docId).exec();
@@ -100,18 +102,23 @@ export class RemoteDocSource implements DocSource {
 
             let debounceUpdate = this.debouncePushMap.get(docId);
             if (!debounceUpdate) {
-                debounceUpdate = debounce(async (doc: RxDocument<Entry>, localDoc: LocalDoc) => {
+                debounceUpdate = debounce(async (doc: RxDocument<Entry>, localDocData: LocalDocData) => {
+                    await store.upsertLocal(docId, localDocData);
+
                     await this._uploadContent(doc, Uint8Array.from(merged));
-                    await doc.update({
+
+                    const latestDoc = await store.findOne(docId).exec();
+                    await latestDoc.update({
                         $set: {
-                            contentTimestamp: localDoc.timestamp,
+                            contentTimestamp: localDocData.timestamp
                         }
                     });
-                }, 100);
+                    console.debug('Entry updated', docId);
+                }, 1000);
                 this.debouncePushMap.set(docId, debounceUpdate);
             }
 
-            await debounceUpdate(doc, localDoc);
+            await debounceUpdate(doc, update);
 
         } catch (error) {
             console.error('Failed to push doc', error);

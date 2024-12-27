@@ -39,9 +39,17 @@ export const initRxdb = async (dbName: string) => {
         entries: {
             schema: rxdbSchema.entry,
             localDocuments: true
-        },
-        local_docs: {
-            schema: rxdbSchema.localDoc
+        }
+    });
+
+    db.collections.entries.remove$.subscribe(async (doc) => {
+        if (doc.isLocal) {
+            return;
+        }
+
+        const localDoc = await db.collections.entries.findOne(doc.documentId).exec();
+        if (localDoc) {
+            await localDoc.remove();
         }
     });
 

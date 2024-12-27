@@ -72,15 +72,19 @@ function EditorProviderImpl({
         setupCollection()
             .then(async (collection) => {
                 setDocCollection(collection);
+
                 closeCollection = async () => {
-                    await collection.waitForGracefulStop();
+                    if (!collection.docSync.canGracefulStop()) {
+                        await collection.waitForGracefulStop();
+                    }
+
                     collection.forceStop();
                 };
             });
 
         return () => {
-            closeCollection();
             setDocCollection(undefined);
+            closeCollection();
         };
     }, [setupCollection]);
 

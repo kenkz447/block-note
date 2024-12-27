@@ -19,6 +19,7 @@ export class StorageDocSource implements DocSource {
     }
 
     private _downLoadContent = async (doc: RxDocumentData<Entry>) => {
+        console.debug('Downloading content', doc.id);
         const storage = getStorage();
         const docRef = ref(storage, `docs/${doc.workspaceId}/${doc.projectId}/${doc.id}`);
         const downloadUrl = this.urlMap.get(doc.id) ?? await getDownloadURL(docRef);
@@ -26,6 +27,7 @@ export class StorageDocSource implements DocSource {
 
         const response = await fetch(downloadUrl);
         const buffer = await response.arrayBuffer();
+        console.debug('Downloaded content', doc.id);
         return new Uint8Array(buffer);
     };
 
@@ -40,27 +42,23 @@ export class StorageDocSource implements DocSource {
         const store = this._getEntryStore();
 
         const storeUpdateSub = store.update$.subscribe(async (changeEvent) => {
-            const { documentId, isLocal } = changeEvent;
+            const { documentData, documentId, isLocal, } = changeEvent;
             if (isLocal) {
                 return;
             }
-
-            const doc = await store.findOne(documentId).exec();
-            if (!doc || !doc.contentTimestamp) {
-                return;
-            }
-
             const localDoc = await store.getLocal(documentId);
             if (!localDoc) {
                 return;
             }
 
-            if (localDoc._data.data.timestamp === doc.contentTimestamp) {
+            if (localDoc._data.data.timestamp === documentData.contentTimestamp) {
                 return;
             }
 
+            console.debug('Content update detected', documentId);
+
             try {
-                const latest = await this._downLoadContent(doc._data);
+                const latest = await this._downLoadContent(documentData);
                 cb(documentId, latest);
             } catch (error) {
                 console.error('Failed to upload doc to storage', error);

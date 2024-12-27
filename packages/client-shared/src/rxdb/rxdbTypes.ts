@@ -35,7 +35,7 @@ export interface Entry extends AppRxDocumentBase {
     readonly contentTimestamp?: number;
 }
 
-export interface LocalDoc {
+export interface LocalDocData {
     timestamp: number;
     latest: number[];
     update: number[];
@@ -47,9 +47,8 @@ export interface AppRxCollections {
     readonly workspaces: RxCollection<Workspace>;
     readonly projects: RxCollection<Project>;
     readonly entries: RxCollection<Entry>;
-    readonly local_docs: RxCollection<LocalDoc>;
 }
 
-export type AppRxSchema = AppRxDocumentBase | Workspace | Project | Entry | LocalDoc;
+export type AppRxSchema = AppRxDocumentBase | Workspace | Project | Entry | LocalDocData;
 
 export type AppRxDatabase = RxDatabase<AppRxCollections>;
