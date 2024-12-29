@@ -1,12 +1,12 @@
-import { AppRxCollections, AppRxDatabase } from './rxdbTypes';
+import { RxDatabase } from 'rxdb';
 
-export const ensureDbExist = (db: AppRxDatabase | undefined) => {
+export const ensureDbExist = (db: RxDatabase | undefined) => {
     if (!db) {
         throw new Error('Database not initialized');
     }
 };
 
-export const ensureCollectionExist = (db: AppRxDatabase | undefined, collectionName: keyof AppRxCollections) => {
+export const ensureCollectionExist = (db: RxDatabase | undefined, collectionName: string) => {
     ensureDbExist(db);
 
     if (!db![collectionName]) {

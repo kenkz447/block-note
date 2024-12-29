@@ -1,29 +1,34 @@
-import { ReactNode, useEffect, useMemo, useState } from 'react';
-import { RxdbContextType } from '../rxdbContexts';
-import { initRxdb } from '../rxdbHelpers';
-import { User } from 'firebase/auth';
-import { AppRxDatabase } from '../rxdbTypes';
-import { getUserId } from '../../auth';
+import { useEffect, useState, type ReactNode } from 'react';
+import { initRxdb, RxdbContext } from '@writefy/client-shared';
+import { RxDatabase, RxJsonSchema } from 'rxdb';
 
 interface RxdbProviderProps {
-    readonly currentUser: User | null;
-    readonly children: (rxdbContext: RxdbContextType) => ReactNode;
+    readonly dbName: string;
+    readonly schemas: Record<string, RxJsonSchema<any>>;
+    readonly children: ReactNode;
 }
 
-export const RxdbProvider = ({ currentUser, children }: RxdbProviderProps) => {
-    const [activeName, setActiveName] = useState<string>();
-    const [db, setDb] = useState<AppRxDatabase>();
+export const RxdbProvider = ({ dbName, schemas, children }: RxdbProviderProps) => {
+    const [db, setDb] = useState<RxDatabase>();
 
     /**
      * Initialize and sync the database
      */
     useEffect(() => {
-        if (!activeName || db) {
+        if (!dbName || db) {
             return;
         }
 
-        initRxdb(activeName).then(setDb);
-    }, [activeName, db]);
+        const collections = Object.entries(schemas).reduce((acc: Record<string, any>, [name, schema]) => {
+            acc[name] = {
+                schema,
+                localDocuments: true
+            };
+            return acc;
+        }, {});
+
+        initRxdb(dbName, collections).then(setDb);
+    }, [dbName, db, schemas]);
 
     /**
      * Destroy the database when the user changes
@@ -37,20 +42,12 @@ export const RxdbProvider = ({ currentUser, children }: RxdbProviderProps) => {
         };
     }, [db]);
 
-    /**
-     * Set the active database name based on the current user
-     */
-    useEffect(() => {
-        const userId = getUserId(currentUser);
-        const nextDbName = `user_${userId.toLowerCase()}`;
-        setActiveName(nextDbName);
-    }, [currentUser]);
 
-    const contextValue: RxdbContextType = useMemo(() => {
-        return {
-            db
-        };
-    }, [db]);
-
-    return children(contextValue);
+    return (
+        <RxdbContext.Provider
+            value={{ db }}
+        >
+            {children}
+        </RxdbContext.Provider>
+    );
 };

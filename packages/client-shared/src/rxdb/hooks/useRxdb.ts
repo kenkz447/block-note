@@ -1,7 +1,8 @@
 import { useContext } from 'react';
 import { RxdbContext } from '../rxdbContexts';
+import { RxDatabase } from 'rxdb';
 
-export const useRxdb = () => {
+export const useRxdb = <TCollections>() => {
     const context = useContext(RxdbContext);
     if (!context) {
         throw new Error('useRxdb must be used within a RxdbContextProvider');
@@ -12,5 +13,5 @@ export const useRxdb = () => {
         throw new Error('Db missing from RxdbContext');
     }
 
-    return db;
+    return db as RxDatabase<TCollections>;
 };

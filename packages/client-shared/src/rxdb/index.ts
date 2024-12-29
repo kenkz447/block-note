@@ -1,15 +1,12 @@
-export * from './rxdbTypes';
-
-export * from './hooks/orm/useEntries';
-export * from './hooks/orm/useProjects';
-export * from './hooks/orm/useWorkspaces';
-
 export * from './hooks/useRxdb';
+export * from './hooks/useRxdbOrm';
+export * from './hooks/useRxdbCollection';
+export * from './hooks/useRxdbReplication';
+
+export * from './helpers/initRxdb';
+export * from './helpers/replicateCollection';
 
 export * from './components/RxdbProvider';
-export * from './components/sync/EntrySync';
-export * from './components/sync/ProjectSync';
-export * from './components/sync/WorkspaceSync';
 
 import { generateRxId } from './rxdbUtils';
 import { RxdbContext } from './rxdbContexts';
