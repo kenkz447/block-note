@@ -1,4 +1,5 @@
 import { events } from '@/config/events';
+import { Entry } from '@writefy/client-business';
 import {
     ContextMenuContent,
     ContextMenuItem,
@@ -14,7 +15,7 @@ import {
     AlertDialogAction,
     usePopupAlert
 } from '@writefy/client-shadcn';
-import { Entry, useEventEmitter } from '@writefy/client-shared';
+import { useEventEmitter } from '@writefy/client-shared';
 import { memo, useCallback } from 'react';
 
 interface DocNodeContextMenuProps {

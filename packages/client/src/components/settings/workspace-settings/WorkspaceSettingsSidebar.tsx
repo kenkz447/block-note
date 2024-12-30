@@ -1,5 +1,5 @@
 import { Button, DialogHeader, DialogTitle, Separator } from '@writefy/client-shadcn';
-import { Project, Workspace } from '@writefy/client-shared';
+import { Project, Workspace } from '@writefy/client-business';
 import { Dot, Settings } from 'lucide-react';
 
 export type UserSettingsSidebarTab = string;

@@ -1,11 +1,11 @@
 import { createRootRoute, Outlet, useNavigate } from '@tanstack/react-router';
-import { Alert, AlertDescription, AlertTitle, PopupAlert, PopupDialogProvider, useIsMobile } from '@writefy/client-shadcn';
+import { Alert, AlertDescription, AlertTitle, PopupAlert, PopupDialog, useIsMobile } from '@writefy/client-shadcn';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
-import { AuthProvider, RxdbContext, RxdbProvider, useEventListener } from '@writefy/client-shared';
-import { AuthContext, authEvents } from '@writefy/client-shared';
+import { AuthProvider, RxdbProvider, useEventListener, authEvents, LocalSettingsProvider } from '@writefy/client-shared';
 import { ThemeProvider } from '@writefy/client-shadcn';
-import { LocalSettingsContext, LocalSettingsProvider } from '@writefy/client-shared';
 import { CircleAlert } from 'lucide-react';
+import { rxdbSchema } from '@writefy/client-business';
+import { defaultLocalSettings, localSettingSchema } from '@/config/localSettings';
 
 export const Route = createRootRoute({
     component: () => (
@@ -15,7 +15,7 @@ export const Route = createRootRoute({
     ),
 });
 
-function App() {
+function App({ children }: { children: React.ReactNode; }) {
     const navigate = useNavigate();
 
     useEventListener({
@@ -28,7 +28,7 @@ function App() {
         handler: () => navigate({ to: '/', replace: true })
     });
 
-    return <Outlet />;
+    return children;
 }
 
 function Initializer() {
@@ -42,7 +42,7 @@ function Initializer() {
                     <CircleAlert />
                     <AlertTitle className="!pl-10">Sorry</AlertTitle>
                     <AlertDescription className="!pl-10 text-muted-foreground">
-                        the app not supported on mobile devices yet
+                        The app not supported on mobile devices yet
                     </AlertDescription>
                 </Alert>
             </div>
@@ -56,31 +56,35 @@ function Initializer() {
                     return <LoadingScreen />;
                 }
 
+                const userId = authContext.currentUser?.uid ?? 'anonymous';
+
                 return (
-                    <RxdbProvider key={authContext.currentUser?.uid ?? 'anonymous'} currentUser={authContext.currentUser}>
+                    <RxdbProvider
+                        key={userId}
+                        dbName={`user-${userId.toLowerCase()}`}
+                        schema={rxdbSchema}
+                    >
                         {(rxdbContext) => {
                             if (!rxdbContext.db) {
                                 return <LoadingScreen />;
                             }
 
                             return (
-                                <LocalSettingsProvider db={rxdbContext.db}>
-                                    {(editorSettingsContext) => {
-                                        if (!editorSettingsContext) {
+                                <LocalSettingsProvider
+                                    validationSchema={localSettingSchema}
+                                    defaultSettings={defaultLocalSettings}
+                                >
+                                    {(localSettingsContext) => {
+                                        if (!localSettingsContext) {
                                             return <LoadingScreen />;
                                         }
 
                                         return (
-                                            <AuthContext.Provider value={authContext}>
-                                                <RxdbContext.Provider value={rxdbContext}>
-                                                    <LocalSettingsContext.Provider value={editorSettingsContext}>
-                                                        <PopupDialogProvider>
-                                                            <App />
-                                                        </PopupDialogProvider>
-                                                        <PopupAlert />
-                                                    </LocalSettingsContext.Provider>
-                                                </RxdbContext.Provider>
-                                            </AuthContext.Provider>
+                                            <App>
+                                                <Outlet />
+                                                <PopupAlert />
+                                                <PopupDialog />
+                                            </App>
                                         );
                                     }}
                                 </LocalSettingsProvider>

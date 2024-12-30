@@ -1,3 +1,5 @@
+import { RxCollectionCreator } from 'rxdb';
+
 const sharedSchema = {
     properties: {
         id: {
@@ -164,7 +166,16 @@ const entrySchema = {
 };
 
 export const rxdbSchema = {
-    entry: entrySchema,
-    project: projectSchema,
-    workspace: workspaceSchema
+    entry: {
+        schema: entrySchema,
+        localDocuments: true
+    } satisfies RxCollectionCreator,
+    project: {
+        schema: projectSchema,
+        localDocuments: true
+    } satisfies RxCollectionCreator,
+    workspace: {
+        schema: workspaceSchema,
+        localDocuments: true
+    } satisfies RxCollectionCreator
 };

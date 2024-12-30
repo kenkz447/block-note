@@ -1,12 +1,13 @@
 import { DocTree } from '@/components/docs-tree/DocTree';
 import { CreateEntryForm, CreateEntryValues } from '@/components/forms/entry/CreateEntryForm';
 import { Input, usePopupDialog } from '@writefy/client-shadcn';
-import { Entry, InsertEntryParams, useEntries, useEventListener } from '@writefy/client-shared';
+import { useEventListener } from '@writefy/client-shared';
 import { useCallback, useContext, useState } from 'react';
 import { AppSidebarContext } from './AppSidebarContext';
 import { useParams } from '@tanstack/react-router';
 import { UpdateEntryForm, UpdateEntryValues } from '@/components/forms/entry/UpdateEntryForm';
 import { events } from '@/config/events';
+import { Entry, InsertEntryParams, useEntries } from '@writefy/client-business';
 
 export function AppSidebarBody() {
     const context = useContext(AppSidebarContext)!;

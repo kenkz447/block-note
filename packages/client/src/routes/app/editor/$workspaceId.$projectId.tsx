@@ -2,11 +2,10 @@ import { createFileRoute, Outlet, useParams } from '@tanstack/react-router';
 import { useProject } from '@/hooks/helpers/useProject';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
 import { useContext, useEffect } from 'react';
-import { AppSidebarContext } from '@/components/layout/editor/sidebar/children/AppSidebarContext';
-import { useEntries } from '@writefy/client-shared';
 import { useCurrentUser } from '@writefy/client-shared';
-import { EntrySync } from '@writefy/client-shared';
+import { EntrySync, useEntries } from '@writefy/client-business';
 import { setPageTitle } from '@/utils/pageUtils';
+import { AppSidebarContext } from '@/components/layout/editor/sidebar/children/AppSidebarContext';
 
 export const Route = createFileRoute('/app/editor/$workspaceId/$projectId')({
     component: WithEntrySync,

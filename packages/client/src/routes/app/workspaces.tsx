@@ -7,9 +7,8 @@ import {
     UserRound,
     UserRoundCog,
 } from 'lucide-react';
-import { useWorkspaces } from '@writefy/client-shared';
+import { useWorkspaces, Workspace } from '@writefy/client-business';
 import { useEffect, useState } from 'react';
-import { Workspace, } from '@writefy/client-shared';
 import {
     usePopupDialog,
     Carousel,

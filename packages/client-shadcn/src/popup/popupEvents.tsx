@@ -1,5 +1,12 @@
 import { CustomEvent } from '@writefy/client-shared';
-import { OpenPopupPayload } from './popupContexts';
+
+export interface PopupProps {
+    visible: boolean;
+    content: React.ReactNode;
+}
+
+export type OpenPopupPayload = Omit<PopupProps, 'visible'>;
+
 
 export const popupEvents = {
     dialog: {

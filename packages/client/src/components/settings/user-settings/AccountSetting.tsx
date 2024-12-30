@@ -1,4 +1,4 @@
-import { SettingHeader } from '../_shared/SettingHeader';
+import { SettingHeader } from '../@shared/SettingHeader';
 import { useForm } from 'react-hook-form';
 import { Input, Button, Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@writefy/client-shadcn';
 import { updateProfile } from 'firebase/auth';

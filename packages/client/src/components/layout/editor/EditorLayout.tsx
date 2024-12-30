@@ -1,5 +1,5 @@
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@writefy/client-shadcn';
-import { Header } from './topbar/Header';
+import { Header } from './top-bar/Header';
 import React, { useMemo } from 'react';
 import { AppSidebar } from './sidebar/AppSidebar';
 import { ImperativePanelHandle } from 'react-resizable-panels';

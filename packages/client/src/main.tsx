@@ -1,5 +1,3 @@
-import '@toeverything/theme/style.css';
-
 import './styles/index.css';
 import './styles/tree.css';
 

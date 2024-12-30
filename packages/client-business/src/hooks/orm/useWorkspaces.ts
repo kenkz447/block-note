@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Workspace } from '../../Types';
+import { Workspace } from '../../Models';
 import { getUserDisplayName, getUserId, useCurrentUser, useRxdbOrm } from '@writefy/client-shared';
 
 interface WorkspaceInsertValues {

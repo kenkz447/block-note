@@ -1,7 +1,7 @@
 import { memo, useMemo } from 'react';
 import { useRxdb, useRxdbReplication, shallowEqualByKey } from '@writefy/client-shared';
 import { where } from 'firebase/firestore';
-import type { AppRxCollections, Workspace } from '../Types';
+import type { AppRxCollections, Workspace } from '../Models';
 
 interface WorkspaceSyncProps {
     readonly userId: string;

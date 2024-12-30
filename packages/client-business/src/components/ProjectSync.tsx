@@ -1,6 +1,6 @@
 import { memo, useMemo } from 'react';
 import { useRxdb, shallowEqualByKey, useRxdbReplication } from '@writefy/client-shared';
-import type { AppRxCollections, Project } from '../Types';
+import type { AppRxCollections, Project } from '../Models';
 
 interface ProjectSyncProps {
     readonly userId: string;

@@ -1,5 +1,4 @@
-import { Project } from '@writefy/client-shared';
-import { useProjects } from '@writefy/client-shared';
+import { useProjects, Project } from '@writefy/client-business';
 import { useEffect, useState } from 'react';
 
 interface UserProjectOptions {

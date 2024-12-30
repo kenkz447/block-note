@@ -1,4 +1,4 @@
-import { Entry } from '@writefy/client-shared';
+import { Entry } from '@writefy/client-business';
 import { Button, Input, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogContent, Form, FormControl, FormField, FormItem, FormMessage } from '@writefy/client-shadcn';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useMemo } from 'react';

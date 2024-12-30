@@ -1,9 +1,10 @@
 import { DialogContent } from '@writefy/client-shadcn';
+import { Project, useProjects, Workspace } from '@writefy/client-business';
+
 import { memo, useEffect, useState } from 'react';
 import { WorkspaceSettingsSidebar } from './workspace-settings/WorkspaceSettingsSidebar';
 import { WorkspaceGeneralSettings } from './workspace-settings/WorkspaceGeneralSettings';
-import { Project, useProjects, Workspace } from '@writefy/client-shared';
-import { WorkpsaceProjectSettings } from './workspace-settings/WorkpsaceProjectSettings';
+import { WorkspaceProjectSettings } from './workspace-settings/WorkspaceProjectSettings';
 
 interface WorkspaceSettingsProps {
     readonly workspace: Workspace;
@@ -44,7 +45,7 @@ export function WorkspaceSettingsImpl({ workspace }: WorkspaceSettingsProps) {
                         }
                         {
                             selectedProject && (
-                                <WorkpsaceProjectSettings project={selectedProject} />
+                                <WorkspaceProjectSettings project={selectedProject} />
                             )
                         }
                     </div>

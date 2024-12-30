@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { useForm } from 'react-hook-form';
-import { SettingHeader } from '../_shared/SettingHeader';
-import { useWorkspaces, Workspace } from '@writefy/client-shared';
+import { SettingHeader } from '../@shared/SettingHeader';
+import { useWorkspaces, Workspace } from '@writefy/client-business';
 import { Alert, AlertDescription, AlertTitle, Button, Form, FormControl, FormField, FormItem, FormLabel, FormMessage, Input, Separator, usePopupAlert, usePopupDialog } from '@writefy/client-shadcn';
 import { DeleteConfirm } from './DeleteConfirm';
 

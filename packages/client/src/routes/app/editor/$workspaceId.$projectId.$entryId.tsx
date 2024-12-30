@@ -1,56 +1,22 @@
-import { createFileRoute, useNavigate, useParams, useSearch } from '@tanstack/react-router';
-import { EditorContainer, EditorContext, EditorProvider } from '@writefy/client-blocksuite';
-import { Entry, useEntries, useEventListener } from '@writefy/client-shared';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { createFileRoute, useNavigate, useParams } from '@tanstack/react-router';
+import { useEventListener } from '@writefy/client-shared';
+import { useCallback, useEffect, useState } from 'react';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
 import { z } from 'zod';
-import { AppSidebarContext } from '@/components/layout/editor/sidebar/children/AppSidebarContext';
 import { setPageTitle } from '@/utils/pageUtils';
 import { events } from '@/config/events';
+import { Entry, useEntries } from '@writefy/client-business';
 
 export const Route = createFileRoute(
     '/app/editor/$workspaceId/$projectId/$entryId',
 )({
-    component: WithEditor,
-    validateSearch: z.object({
-        mode: z.string().optional()
-    }),
+    component: RouteComponent,
+    validateSearch: z.object({}),
 });
-
-function WithEditor() {
-    const { projectId, workspaceId } = useParams({
-        from: '/app/editor/$workspaceId/$projectId/$entryId',
-    });
-
-    return (
-        <EditorProvider
-            workspaceId={workspaceId}
-            projectId={projectId}
-        >
-            {(editorContext) => {
-                if (!editorContext.collection) {
-                    return <LoadingScreen />;
-                }
-
-                return (
-                    <EditorContext.Provider value={editorContext}>
-                        <RouteComponent />
-                    </EditorContext.Provider>
-                );
-            }}
-        </EditorProvider>
-    );
-}
 
 function RouteComponent() {
     const navigate = useNavigate();
-    const { setActiveEntry } = useContext(AppSidebarContext)!;
-
     const { entryId, projectId, workspaceId } = useParams({
-        from: '/app/editor/$workspaceId/$projectId/$entryId',
-    });
-
-    const { mode } = useSearch({
         from: '/app/editor/$workspaceId/$projectId/$entryId',
     });
 
@@ -72,17 +38,6 @@ function RouteComponent() {
             sub.unsubscribe();
         };
     }, [subscribeSingle, entryId]);
-
-    useEffect(() => {
-        if (!entry) {
-            return;
-        }
-
-        setActiveEntry(entry);
-        return () => {
-            setActiveEntry(undefined);
-        };
-    }, [entry, setActiveEntry]);
 
     // Set page title
     useEffect(() => {
@@ -110,7 +65,5 @@ function RouteComponent() {
         return <LoadingScreen />;
     }
 
-    return (
-        <EditorContainer entry={entry} mode={mode ?? 'page'} />
-    );
+    return null;
 }

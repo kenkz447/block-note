@@ -1,4 +1,4 @@
-import { Entry } from '@writefy/client-shared';
+import { Entry } from '@writefy/client-business';
 import { memo, useEffect, useRef, useState } from 'react';
 
 interface DocNodeEditableProps {

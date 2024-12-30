@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Header } from './topbar/Header';
+import { Header } from './top-bar/Header';
 import { Sheet, SheetContent } from '@writefy/client-shadcn';
 import { AppSidebar } from './sidebar/AppSidebar';
 

@@ -1,14 +1,15 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { initRxdb, RxdbContext } from '@writefy/client-shared';
-import { RxDatabase, RxJsonSchema } from 'rxdb';
+import { RxCollectionCreator, RxDatabase } from 'rxdb';
+import { RxdbContextType } from '../rxdbContexts';
 
 interface RxdbProviderProps {
     readonly dbName: string;
-    readonly schemas: Record<string, RxJsonSchema<any>>;
-    readonly children: ReactNode;
+    readonly schema: Record<string, RxCollectionCreator>;
+    readonly children: (contextValue: RxdbContextType) => ReactNode;
 }
 
-export const RxdbProvider = ({ dbName, schemas, children }: RxdbProviderProps) => {
+export const RxdbProvider = ({ dbName, schema, children }: RxdbProviderProps) => {
     const [db, setDb] = useState<RxDatabase>();
 
     /**
@@ -19,16 +20,8 @@ export const RxdbProvider = ({ dbName, schemas, children }: RxdbProviderProps) =
             return;
         }
 
-        const collections = Object.entries(schemas).reduce((acc: Record<string, any>, [name, schema]) => {
-            acc[name] = {
-                schema,
-                localDocuments: true
-            };
-            return acc;
-        }, {});
-
-        initRxdb(dbName, collections).then(setDb);
-    }, [dbName, db, schemas]);
+        initRxdb(dbName, schema).then(setDb);
+    }, [dbName, db, schema]);
 
     /**
      * Destroy the database when the user changes
@@ -42,12 +35,11 @@ export const RxdbProvider = ({ dbName, schemas, children }: RxdbProviderProps) =
         };
     }, [db]);
 
+    const contextValue = useMemo(() => ({ db }), [db]);
 
     return (
-        <RxdbContext.Provider
-            value={{ db }}
-        >
-            {children}
+        <RxdbContext.Provider value={contextValue}>
+            {children(contextValue)}
         </RxdbContext.Provider>
     );
 };

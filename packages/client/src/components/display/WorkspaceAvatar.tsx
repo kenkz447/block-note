@@ -1,4 +1,4 @@
-import { Workspace } from '@writefy/client-shared';
+import { Workspace } from '@writefy/client-business';
 import { memo } from 'react';
 
 interface WorkspaceAvatarProps {

@@ -11,11 +11,11 @@
         "test": "bun run vitest"
     },
     "dependencies": {
-        "@hookform/resolvers": "^3.9.1",
-        "@minoru/react-dnd-treeview": "^3.4.4",
-        "@writefy/client-blocksuite": "*",
         "@writefy/client-shadcn": "*",
         "@writefy/client-shared": "*",
+        "@writefy/client-business": "*",
+        "@hookform/resolvers": "^3.9.1",
+        "@minoru/react-dnd-treeview": "^3.4.4",
         "firebase": "~11",
         "lucide-react": "^0.454.0",
         "performant-array-to-tree": "^1.11.0",

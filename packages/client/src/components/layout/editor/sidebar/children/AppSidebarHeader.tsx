@@ -1,7 +1,7 @@
 import { Button } from '@writefy/client-shadcn';
 import { usePopupDialog, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@writefy/client-shadcn';
 import { ArrowLeftRight, ChevronsUpDown, Layers, Plus } from 'lucide-react';
-import { Project, Workspace, useProjects } from '@writefy/client-shared';
+import { Project, Workspace, useProjects } from '@writefy/client-business';
 import { CreateProjectForm } from '@/components/forms/project/CreateProjectForm';
 import { useNavigate } from '@tanstack/react-router';
 import { useCallback } from 'react';

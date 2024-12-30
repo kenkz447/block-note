@@ -8,7 +8,7 @@ import {
     TreeProps
 } from '@minoru/react-dnd-treeview';
 import { DocNode, TreeNodeData } from './children/DocNode';
-import { Entry } from '@writefy/client-shared';
+import { Entry } from '@writefy/client-business';
 import { Button } from '@writefy/client-shadcn';
 import { Plus } from 'lucide-react';
 import { DocNodePreview } from './children/DocNodePreview';

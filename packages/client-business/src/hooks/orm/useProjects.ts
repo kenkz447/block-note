@@ -1,7 +1,7 @@
 import { getUserId, useCurrentUser, useRxdbOrm } from '@writefy/client-shared';
 import { useCallback } from 'react';
 import { MangoQuery } from 'rxdb';
-import { Project } from '../../Types';
+import { Project } from '../../Models';
 
 interface ProjectInsertParams {
     readonly name: string;

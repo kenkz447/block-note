@@ -1,6 +1,6 @@
 {
     "name": "@writefy/client-business",
-    "module": "src/index.ts",
+    "module": "index.ts",
     "type": "module",
     "dependencies": {
         "@writefy/client-shared": "*"

@@ -1,4 +1,4 @@
-import { Entry, Project, Workspace } from '@writefy/client-shared';
+import { Entry, Project, Workspace } from '@writefy/client-business';
 import { createContext } from 'react';
 
 interface AppSidebarContextType {

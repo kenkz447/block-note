@@ -1,4 +1,5 @@
-import { CustomEvent, Entry } from '@writefy/client-shared';
+import { Entry } from '@writefy/client-business';
+import { CustomEvent } from '@writefy/client-shared';
 
 export const events = {
     ui: {

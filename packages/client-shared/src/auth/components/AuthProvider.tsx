@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { getAuth, User } from 'firebase/auth';
-import { AuthContextType } from '../authContext';
+import { AuthContext, AuthContextType } from '../authContext';
 import { useEventEmitter } from '../../events';
 import { authEvents } from '../authEvents';
 
@@ -9,7 +9,6 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-
     const emitLoggedIn = useEventEmitter(authEvents.user.loggedIn);
     const emitLogout = useEventEmitter(authEvents.user.loggedOut);
 
@@ -41,5 +40,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
         };
     }, [currentUser, emitLogout]);
 
-    return children(contextValue);
+    return (
+        <AuthContext.Provider value={contextValue}>
+            {children(contextValue)}
+        </AuthContext.Provider>
+    );
 }

@@ -1,15 +1,15 @@
 import { memo } from 'react';
 import { useForm } from 'react-hook-form';
-import { SettingHeader } from '../_shared/SettingHeader';
-import { Project, useProjects } from '@writefy/client-shared';
+import { SettingHeader } from '../@shared/SettingHeader';
+import { Project, useProjects } from '@writefy/client-business';
 import { Alert, AlertDescription, AlertTitle, Button, Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, Input, Separator, usePopupAlert } from '@writefy/client-shadcn';
 import { DeleteConfirm } from './DeleteConfirm';
 
-interface WorkpsaceProjectSettingsProps {
+interface WorkspaceProjectSettingsProps {
     readonly project: Project;
 }
 
-export function WorkpsaceProjectSettingsImpl({ project }: WorkpsaceProjectSettingsProps) {
+export function WorkspaceProjectSettingsImpl({ project }: WorkspaceProjectSettingsProps) {
     const { update, remove } = useProjects({
         workspaceId: project.workspaceId
     });
@@ -95,4 +95,4 @@ export function WorkpsaceProjectSettingsImpl({ project }: WorkpsaceProjectSettin
     );
 };
 
-export const WorkpsaceProjectSettings = memo(WorkpsaceProjectSettingsImpl);
+export const WorkspaceProjectSettings = memo(WorkspaceProjectSettingsImpl);

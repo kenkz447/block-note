@@ -1,7 +1,7 @@
 import { firstBy } from 'thenby';
 import { useCallback } from 'react';
 import { getUserId, useCurrentUser, useRxdbOrm } from '@writefy/client-shared';
-import type { Entry } from '../../Types';
+import type { Entry } from '../../Models';
 
 export interface InsertEntryParams {
     readonly id?: string;

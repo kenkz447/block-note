@@ -1,7 +1,7 @@
 import { NodeModel, RenderParams } from '@minoru/react-dnd-treeview';
 import { ChevronDown, ChevronRight, FileText, Folder } from 'lucide-react';
 import { useNavigate, useParams } from '@tanstack/react-router';
-import { Entry } from '@writefy/client-shared';
+import { Entry } from '@writefy/client-business';
 import { memo, useCallback, useState } from 'react';
 import { DocNodeContextMenu } from './DocNodeContextMenu';
 import { DocNodeEditable } from './DocNodeEditable';

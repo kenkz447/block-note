@@ -1,44 +1,27 @@
-import { AppRxDatabase } from '@writefy/client-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { RxState } from 'rxdb';
 import { z } from 'zod';
-import { EditorSettings, LocalSettingsContextType, EditorSettingValue } from '../LocalSettingsContext';
+import { LocalSettingsContextType, LocalSettingsContext } from '../LocalSettingsContext';
+import { useRxdb } from '../../rxdb';
 
-interface LocalSettingsProviderProps {
-    readonly db: AppRxDatabase;
-    readonly children: (settings?: LocalSettingsContextType) => React.ReactNode;
+interface LocalSettingsProviderProps<TSettings> {
+    readonly defaultSettings: TSettings;
+    readonly validationSchema: z.ZodSchema<TSettings>;
+    readonly children: (contextValue: LocalSettingsContextType<TSettings> | undefined) => React.ReactNode;
 }
 
-const options = {
-    pageWidth: [
-        { value: '100%', label: '100%' },
-        { value: '75%', label: '75%' },
-        { value: '50%', label: '50%' }
-    ],
-};
-
-const settingsSchema = z.object({
-    pageWidth: z.enum(options.pageWidth.map((option) => option.value) as [string, ...string[]]),
-});
-
-const defaultSettings: EditorSettings = {
-    mode: 'page',
-    pageWidth: '100%',
-};
-
-export function LocalSettingsProvider({ db, children }: LocalSettingsProviderProps) {
-    const [settings, setSettings] = useState<EditorSettings>();
+export function LocalSettingsProvider<TSettings>({ defaultSettings, validationSchema: schema, children }: LocalSettingsProviderProps<TSettings>) {
+    const db = useRxdb();
+    const [settings, setSettings] = useState<TSettings>();
 
     // Initialize settings from rxdb
     useEffect(() => {
         const setupRxState = async () => {
-            const rxState = await db.addState('local-settings') as RxState<{
-                editor: EditorSettings;
-            }>;
+            const rxState = await db.addState('local-settings') as RxState<TSettings>;
 
-            const stateValue = await rxState.get();
-            if (stateValue?.editor) {
-                setSettings(stateValue.editor);
+            const settings = await rxState.get();
+            if (settings) {
+                setSettings(settings);
             }
             else {
                 setSettings(defaultSettings);
@@ -46,7 +29,7 @@ export function LocalSettingsProvider({ db, children }: LocalSettingsProviderPro
         };
 
         setupRxState();
-    }, [db]);
+    }, [db, defaultSettings]);
 
     // Save settings to rxdb when settings change
     useEffect(() => {
@@ -66,13 +49,13 @@ export function LocalSettingsProvider({ db, children }: LocalSettingsProviderPro
         saveSettings();
     }, [db, settings]);
 
-    const setSettingByKey = useCallback((key: keyof EditorSettings, value: EditorSettingValue) => {
+    const setSettingByKey = useCallback((key: string, value: any) => {
         setSettings((prev) => {
             const nextState = { ...prev!, [key]: value };
-            settingsSchema.parse(nextState);
+            schema.parse(nextState);
             return nextState;
         });
-    }, []);
+    }, [schema]);
 
     const contextValue = useMemo(() => {
         if (!settings) {
@@ -80,11 +63,14 @@ export function LocalSettingsProvider({ db, children }: LocalSettingsProviderPro
         }
 
         return {
-            options,
             settings,
-            setSettings: setSettingByKey,
-        } satisfies LocalSettingsContextType;
+            setSetting: setSettingByKey,
+        } satisfies LocalSettingsContextType<TSettings>;
     }, [settings, setSettingByKey]);
 
-    return children(contextValue);
+    return (
+        <LocalSettingsContext.Provider value={contextValue}>
+            {children(contextValue)}
+        </LocalSettingsContext.Provider>
+    );
 };

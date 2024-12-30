@@ -1,15 +1,13 @@
 import { createFileRoute, Outlet, useParams } from '@tanstack/react-router';
 import { useWorkspace } from '@/hooks/helpers/useWorkspace';
-import { } from '@writefy/client-shared';
 import { useEffect, useState } from 'react';
-import { Entry, Project } from '@writefy/client-shared';
+import { Entry, Project, ProjectSync, useProjects } from '@writefy/client-business';
 import { useIsMobile } from '@writefy/client-shadcn';
 import { MasterLayoutMobile } from '@/components/layout/editor/EditorLayoutMobile';
 import { MasterLayout } from '@/components/layout/editor/EditorLayout';
 import { AppSidebarContext } from '@/components/layout/editor/sidebar/children/AppSidebarContext';
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
-import { useCurrentUser, useProjects } from '@writefy/client-shared';
-import { ProjectSync } from '@writefy/client-shared';
+import { useCurrentUser } from '@writefy/client-shared';
 import { setPageTitle } from '@/utils/pageUtils';
 
 export const Route = createFileRoute('/app/editor/$workspaceId')({

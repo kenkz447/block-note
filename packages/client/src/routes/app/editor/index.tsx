@@ -1,6 +1,6 @@
 import { LoadingScreen } from '@/components/layout/LoadingScreen';
-import { getUserId, useCurrentUser, Workspace } from '@writefy/client-shared';
-import { useWorkspaces } from '@writefy/client-shared';
+import { getUserId, useCurrentUser, } from '@writefy/client-shared';
+import { Workspace, useWorkspaces } from '@writefy/client-business';
 import { createFileRoute, Navigate } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { z } from 'zod';

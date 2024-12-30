@@ -1,11 +1,13 @@
-import React from 'react';
-import { usePopupDialogContext } from './usePopupDialogContext';
+import { useEventEmitter } from '@writefy/client-shared';
+import { popupEvents } from '../popupEvents';
+import { useCallback } from 'react';
 
 export const usePopupDialog = () => {
-    const popupDialogContext = usePopupDialogContext();
+    const emitShow = useEventEmitter(popupEvents.alert.show);
+    const emitHide = useEventEmitter(popupEvents.alert.hide);
 
-    return React.useMemo(() => ({
-        openDialog: popupDialogContext.openDialog,
-        closeDialog: popupDialogContext.closeDialog,
-    }), [popupDialogContext]);
+    return {
+        openDialog: emitShow,
+        closeDialog: useCallback(() => emitHide(undefined), [emitHide])
+    };
 };

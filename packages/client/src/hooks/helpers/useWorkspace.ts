@@ -1,5 +1,4 @@
-import { Workspace } from '@writefy/client-shared';
-import { useWorkspaces } from '@writefy/client-shared';
+import { useWorkspaces, Workspace } from '@writefy/client-business';
 import { useEffect, useState } from 'react';
 
 interface UserWorkspaceOptions {
