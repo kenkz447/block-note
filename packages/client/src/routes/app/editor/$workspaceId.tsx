@@ -26,7 +26,7 @@ function WithProjectSync() {
     }
 
     return (
-        <ProjectSync userId={currentUser.uid} workspaceId={workspaceId}>
+        <ProjectSync workspaceId={workspaceId}>
             {(synced) => {
                 if (!synced) {
                     return <LoadingScreen />;
