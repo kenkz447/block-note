@@ -3,8 +3,8 @@ import { popupEvents } from '../popupEvents';
 import { useCallback } from 'react';
 
 export const usePopupDialog = () => {
-    const emitShow = useEventEmitter(popupEvents.alert.show);
-    const emitHide = useEventEmitter(popupEvents.alert.hide);
+    const emitShow = useEventEmitter(popupEvents.dialog.show);
+    const emitHide = useEventEmitter(popupEvents.dialog.hide);
 
     return {
         openDialog: emitShow,

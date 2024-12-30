@@ -3,23 +3,23 @@ import { useRxdb, shallowEqualByKey, useRxdbReplication } from '@writefy/client-
 import type { AppRxCollections, Project } from '../Models';
 
 interface ProjectSyncProps {
-    readonly userId: string;
     readonly workspaceId: string;
     readonly children: (workspaceSynced: boolean) => React.ReactNode;
 }
 
-function ProjectSyncImpl({ userId, workspaceId, children }: ProjectSyncProps) {
+function ProjectSyncImpl({ workspaceId, children }: ProjectSyncProps) {
     const db = useRxdb<AppRxCollections>();
     const replicaState = useRxdbReplication<Project>(
-        db,
         useMemo(() => ({
-            userId,
             rxCollection: db.collections.projects,
-            remotePath: ['workspaces', workspaceId, 'projects'],
-            pushFilter: (doc) => doc.workspaceId === workspaceId,
-        }), [db.collections.projects, userId, workspaceId])
+            firestorePath: ['workspaces', workspaceId, 'projects'],
+            pull: {},
+            push: {
+                filter: (doc) => doc.workspaceId === workspaceId,
+            }
+        }), [db.collections.projects, workspaceId])
     );
     return children(replicaState !== undefined);
 }
 
-export const ProjectSync = memo(ProjectSyncImpl, shallowEqualByKey('userId', 'workspaceId'));
+export const ProjectSync = memo(ProjectSyncImpl, shallowEqualByKey('workspaceId'));

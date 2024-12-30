@@ -44,7 +44,10 @@ export const PopupAlert = () => {
     };
 
     return (
-        <AlertDialog open={alertState.visible} onOpenChange={onOpenChange}>
+        <AlertDialog
+            open={alertState.visible}
+            onOpenChange={onOpenChange}
+        >
             {alertState.content}
         </AlertDialog>
     );

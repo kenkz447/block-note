@@ -3,7 +3,8 @@ import { CreateFirebaseReplication, replicateCollection } from '../helpers/repli
 import { RxDatabase } from 'rxdb';
 import { RxFirestoreReplicationState } from 'rxdb/plugins/replication-firestore';
 
-export const useRxdbReplication = <T>(db: RxDatabase<any>, options: CreateFirebaseReplication<T>) => {
+export const useRxdbReplication = <T>(options: CreateFirebaseReplication<T>) => {
+    const db = options.rxCollection.database as RxDatabase;
     const [replicaState, setReplicateState] = useState<RxFirestoreReplicationState<T>>();
 
     useEffect(() => {
@@ -25,4 +26,6 @@ export const useRxdbReplication = <T>(db: RxDatabase<any>, options: CreateFireba
             stopReplication();
         };
     }, [db.closed, replicaState]);
+
+    return replicaState;
 };

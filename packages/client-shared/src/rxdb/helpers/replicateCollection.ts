@@ -5,30 +5,26 @@ import { replicateFirestore } from 'rxdb/plugins/replication-firestore';
 import { firstValueFrom, filter } from 'rxjs';
 
 export interface CreateFirebaseReplication<T> {
-    readonly userId: string;
     readonly rxCollection: RxCollection;
-    readonly remotePath: string[];
-    readonly pullFilter?: QueryFieldFilterConstraint | QueryFieldFilterConstraint[];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    readonly pullModifier?: (item: any) => MaybePromise<WithDeleted<T>>;
-    readonly pushFilter?: (item: WithDeleted<T>) => boolean;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    readonly pushModifier?: (item: T) => MaybePromise<any>;
+    readonly firestorePath: string[];
+    readonly pull: {
+        readonly filter?: QueryFieldFilterConstraint | QueryFieldFilterConstraint[] | undefined;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        readonly modifier?: (item: any) => MaybePromise<WithDeleted<T>>;
+    },
+    readonly push: {
+        readonly filter?: (item: WithDeleted<T>) => boolean;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        readonly modifier?: (item: T) => MaybePromise<any>;
+    };
 }
 
 export const replicateCollection = async <T>({
-    userId,
     rxCollection,
-    remotePath,
-    pullFilter,
-    pullModifier,
-    pushFilter,
-    pushModifier
+    firestorePath: remotePath,
+    pull,
+    push
 }: CreateFirebaseReplication<T>) => {
-    if (rxCollection.database.name !== `user_${userId.toLowerCase()}`) {
-        throw new Error('Database name does not match the user ID');
-    };
-
     const firestore = getFirestore();
     if (!firestore.app) {
         throw new Error('Firestore app not initialized');
@@ -49,8 +45,8 @@ export const replicateCollection = async <T>({
                 database: firestore,
                 collection: remoteCollection as CollectionReference<T>
             },
-            pull: { filter: pullFilter, modifier: pullModifier },
-            push: { filter: pushFilter, modifier: pushModifier },
+            pull,
+            push,
             live: true,
             serverTimestampField: 'serverTimestamp',
             autoStart: true

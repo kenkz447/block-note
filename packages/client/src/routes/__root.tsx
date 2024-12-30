@@ -6,6 +6,7 @@ import { ThemeProvider } from '@writefy/client-shadcn';
 import { CircleAlert } from 'lucide-react';
 import { rxdbSchema } from '@writefy/client-business';
 import { defaultLocalSettings, localSettingSchema } from '@/config/localSettings';
+import { Suspense } from 'react';
 
 export const Route = createRootRoute({
     component: () => (
@@ -50,49 +51,51 @@ function Initializer() {
     }
 
     return (
-        <AuthProvider>
-            {(authContext) => {
-                if (authContext.currentUser === undefined) {
-                    return <LoadingScreen />;
-                }
+        <Suspense>
+            <AuthProvider>
+                {(authContext) => {
+                    if (authContext.currentUser === undefined) {
+                        return <LoadingScreen />;
+                    }
 
-                const userId = authContext.currentUser?.uid ?? 'anonymous';
+                    const userId = authContext.currentUser?.uid ?? 'anonymous';
 
-                return (
-                    <RxdbProvider
-                        key={userId}
-                        dbName={`user-${userId.toLowerCase()}`}
-                        schema={rxdbSchema}
-                    >
-                        {(rxdbContext) => {
-                            if (!rxdbContext.db) {
-                                return <LoadingScreen />;
-                            }
+                    return (
+                        <RxdbProvider
+                            key={userId}
+                            dbName={`user-${userId.toLowerCase()}`}
+                            schema={rxdbSchema}
+                        >
+                            {(rxdbContext) => {
+                                if (!rxdbContext.db) {
+                                    return <LoadingScreen />;
+                                }
 
-                            return (
-                                <LocalSettingsProvider
-                                    validationSchema={localSettingSchema}
-                                    defaultSettings={defaultLocalSettings}
-                                >
-                                    {(localSettingsContext) => {
-                                        if (!localSettingsContext) {
-                                            return <LoadingScreen />;
-                                        }
+                                return (
+                                    <LocalSettingsProvider
+                                        validationSchema={localSettingSchema}
+                                        defaultSettings={defaultLocalSettings}
+                                    >
+                                        {(localSettingsContext) => {
+                                            if (!localSettingsContext) {
+                                                return <LoadingScreen />;
+                                            }
 
-                                        return (
-                                            <App>
-                                                <Outlet />
-                                                <PopupAlert />
-                                                <PopupDialog />
-                                            </App>
-                                        );
-                                    }}
-                                </LocalSettingsProvider>
-                            );
-                        }}
-                    </RxdbProvider>
-                );
-            }}
-        </AuthProvider>
+                                            return (
+                                                <App>
+                                                    <Outlet />
+                                                    <PopupAlert />
+                                                    <PopupDialog />
+                                                </App>
+                                            );
+                                        }}
+                                    </LocalSettingsProvider>
+                                );
+                            }}
+                        </RxdbProvider>
+                    );
+                }}
+            </AuthProvider>
+        </Suspense>
     );
 }

@@ -11,12 +11,13 @@ interface WorkspaceSyncProps {
 function WorkspaceSyncImpl({ userId, children }: WorkspaceSyncProps) {
     const db = useRxdb<AppRxCollections>();
     const replicaState = useRxdbReplication<Workspace>(
-        db,
         useMemo(() => ({
-            userId,
             rxCollection: db.collections.workspaces,
-            remotePath: ['workspaces'],
-            pullFilter: where('activeMembers', 'array-contains', userId),
+            firestorePath: ['workspaces'],
+            push: {},
+            pull: {
+                filter: where('activeMembers', 'array-contains', userId)
+            },
         }), [db.collections.workspaces, userId])
     );
 

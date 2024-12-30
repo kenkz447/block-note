@@ -166,15 +166,15 @@ const entrySchema = {
 };
 
 export const rxdbSchema = {
-    entry: {
+    entries: {
         schema: entrySchema,
         localDocuments: true
     } satisfies RxCollectionCreator,
-    project: {
+    projects: {
         schema: projectSchema,
         localDocuments: true
     } satisfies RxCollectionCreator,
-    workspace: {
+    workspaces: {
         schema: workspaceSchema,
         localDocuments: true
     } satisfies RxCollectionCreator
